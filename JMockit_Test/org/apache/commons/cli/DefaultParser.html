@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DefaultParser.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/DefaultParser.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Default parser.
+ * 
+ * @version $Id: DefaultParser.java 1783175 2017-02-16 07:52:05Z britter $
+ * @since 1.3
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>31</td><td class='count'>64</td>
+      <td><pre class='prettyprint covered' id='l31s0'>public class DefaultParser implements CommandLineParser</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>32</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>33</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The command-line instance. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>34</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected CommandLine cmd;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>36</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The current options. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>37</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected Options options;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Flag indicating how unrecognized tokens are handled. &lt;tt>true&lt;/tt> to stop
+     * the parsing and add the remaining tokens to the args list.
+     * &lt;tt>false&lt;/tt> to throw an exception. 
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>44</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected boolean stopAtNonOption;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>46</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The token currently processed. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>47</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected String currentToken;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>49</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The last option parsed. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>50</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected Option currentOption;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>52</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** Flag indicating if tokens should no longer be analyzed and simply added as arguments of the command line. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>53</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected boolean skipParsing;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>55</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The required options and groups expected to be found when parsing the command line. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>56</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected List expectedOpts;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>58</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public CommandLine parse(Options options, String[] arguments) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>59</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>60</td><td class='count'>52</td>
+      <td><pre class='prettyprint covered' id='l60s0'>        return parse(options, arguments, null);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>61</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Parse the arguments according to the specified options and properties.
+     *
+     * @param options    the specified Options
+     * @param arguments  the command line arguments
+     * @param properties command line option name-value pairs
+     * @return the list of atomic option and value tokens
+     *
+     * @throws ParseException if there are any problems encountered
+     * while parsing the command line tokens.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>74</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>75</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>76</td><td class='count'>63</td>
+      <td><pre class='prettyprint covered' id='l76s0'>        return parse(options, arguments, properties, false);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>77</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public CommandLine parse(Options options, String[] arguments, boolean stopAtNonOption) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>80</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l81s0'>        return parse(options, arguments, null, stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Parse the arguments according to the specified options and properties.
+     *
+     * @param options         the specified Options
+     * @param arguments       the command line arguments
+     * @param properties      command line option name-value pairs
+     * @param stopAtNonOption if &lt;tt>true&lt;/tt> an unrecognized argument stops
+     *     the parsing and the remaining arguments are added to the 
+     *     {@link CommandLine}s args list. If &lt;tt>false&lt;/tt> an unrecognized
+     *     argument triggers a ParseException.
+     *
+     * @return the list of atomic option and value tokens
+     * @throws ParseException if there are any problems encountered
+     * while parsing the command line tokens.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>101</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l102s0'>        this.options = options;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>103</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l103s0'>        this.stopAtNonOption = stopAtNonOption;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>104</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l104s0'>        skipParsing = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>105</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l105s0'>        currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>106</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l106s0'>        expectedOpts = new ArrayList(options.getRequiredOptions());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>108</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // clear the data from the groups</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>109</td><td class='count'>72</td>
+      <td><pre class='prettyprint jmp'>        <span id='l109s0' title='Executions: 72' class='covered'>for (OptionGroup group</span> : <span id='l109s1' title='Executions: 5' class='covered'>options.getOptionGroups())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>110</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l111s0'>            group.setSelected(null);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>112</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l112s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>114</td><td class='count'>72</td>
+      <td><pre class='prettyprint covered' id='l114s0'>        cmd = new CommandLine();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>116</td><td class='count'>72</td>
+      <td><pre class='prettyprint jmp'>        <span id='l116s0' title='Executions: 72' class='covered'>if (arguments != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>117</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>118</td><td class='count'>182</td>
+      <td><pre class='prettyprint jmp'>            <span id='l118s0' title='Executions: 182' class='covered'>for (String argument</span> : <span id='l118s1' title='Executions: 129' class='covered'>arguments)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>119</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>120</td><td class='count'>129</td>
+      <td><pre class='prettyprint covered' id='l120s0'>                handleToken(argument);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>121</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>122</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>124</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // check the arguments of the last option</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>125</td><td class='count'>62</td>
+      <td><pre class='prettyprint covered' id='l125s0'>        checkRequiredArgs();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>127</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // add the default options</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>128</td><td class='count'>59</td>
+      <td><pre class='prettyprint covered' id='l128s0'>        handleProperties(properties);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>130</td><td class='count'>58</td>
+      <td><pre class='prettyprint covered' id='l130s0'>        checkRequiredOptions();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>132</td><td class='count'>54</td>
+      <td><pre class='prettyprint covered' id='l132s0'>        return cmd;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the values of Options using the values in &lt;code>properties&lt;/code>.
+     *
+     * @param properties The value properties to be processed.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>140</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleProperties(Properties properties) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>141</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>142</td><td class='count'>59</td>
+      <td><pre class='prettyprint jmp'>        <span id='l142s0' title='Executions: 59' class='covered'>if (properties == null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>143</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>144</td><td class='count'>48</td>
+      <td><pre class='prettyprint covered' id='l144s0'>            return;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>145</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>147</td><td class='count'>11</td>
+      <td><pre class='prettyprint jmp'>        <span id='l147s0' title='Executions: 11' class='covered'>for (Enumeration&lt;?> e = properties.propertyNames(); e.hasMoreElements();)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>148</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>149</td><td class='count'>20</td>
+      <td><pre class='prettyprint covered' id='l149s0'>            String option = e.nextElement().toString();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>151</td><td class='count'>20</td>
+      <td><pre class='prettyprint covered' id='l151s0'>            Option opt = options.getOption(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>152</td><td class='count'>20</td>
+      <td><pre class='prettyprint jmp'>            <span id='l152s0' title='Executions: 20' class='covered'>if (opt == null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>153</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>154</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l154s0'>                throw new UnrecognizedOptionException("Default option wasn't defined", option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>155</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>157</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // if the option is part of a group, check if another option of the group has been selected</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>158</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l158s0'>            OptionGroup group = options.getOptionGroup(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>159</td><td class='count'>19</td>
+      <td><pre class='prettyprint jmp'>            <span id='l159s0' title='Executions: 19' class='covered'>boolean selected = group != null</span> && <span id='l159s1' title='Executions: 2' class='covered'>group.getSelected() != null;</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>161</td><td class='count'>19</td>
+      <td><pre class='prettyprint jmp'>            <span id='l161s0' title='Executions: 19' class='covered'>if (!cmd.hasOption(option)</span> && <span id='l161s1' title='Executions: 18' class='covered'>!selected)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>162</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>163</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // get the value from the properties</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>164</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l164s0'>                String value = properties.getProperty(option);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>166</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>                <span id='l166s0' title='Executions: 17' class='covered'>if (opt.hasArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>167</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td class='count'>6</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l168s0' title='Executions: 6' class='covered'>if (opt.getValues() == null</span> || <span id='l168s1' title='Executions: 3' class='covered'>opt.getValues().length == 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>170</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l170s0'>                        opt.addValueForProcessing(value);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>171</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>172</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>173</td><td class='count'>11</td>
+      <td><pre class='prettyprint jmp'>                else <span id='l173s0' title='Executions: 11' class='covered'>if (!("yes".equalsIgnoreCase(value)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>174</td><td class='count'>10</td>
+      <td><pre class='prettyprint jmp'>                        || <span id='l174s0' title='Executions: 10' class='covered'>"true".equalsIgnoreCase(value)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td class='count'>6</td>
+      <td><pre class='prettyprint jmp'>                        || <span id='l175s0' title='Executions: 6' class='covered'>"1".equalsIgnoreCase(value)))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>176</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>177</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // if the value is not yes, true or 1 then don't add the option to the CommandLine</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>178</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l178s0'>                    continue;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>179</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>181</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l181s0'>                handleOption(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>182</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l182s0'>                currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>183</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>184</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l184s0'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>185</td><td class='count'>10</td>
+      <td><pre class='prettyprint covered' id='l185s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Throws a {@link MissingOptionException} if all of the required options
+     * are not present.
+     *
+     * @throws MissingOptionException if any of the required Options
+     * are not present.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>194</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void checkRequiredOptions() throws MissingOptionException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>195</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>196</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if there are required options that have not been processed</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>197</td><td class='count'>58</td>
+      <td><pre class='prettyprint jmp'>        <span id='l197s0' title='Executions: 58' class='covered'>if (!expectedOpts.isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>198</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>199</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l199s0'>            throw new MissingOptionException(expectedOpts);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>200</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>201</td><td class='count'>54</td>
+      <td><pre class='prettyprint covered' id='l201s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Throw a {@link MissingArgumentException} if the current option
+     * didn't receive the number of arguments expected.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>207</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void checkRequiredArgs() throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>208</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>209</td><td class='count'>145</td>
+      <td><pre class='prettyprint jmp'>        <span id='l209s0' title='Executions: 145' class='covered'>if (currentOption != null</span> && <span id='l209s1' title='Executions: 11' class='covered'>currentOption.requiresArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>210</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>211</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l211s0'>            throw new MissingArgumentException(currentOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>212</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>213</td><td class='count'>142</td>
+      <td><pre class='prettyprint covered' id='l213s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handle any command line token.
+     *
+     * @param token the command line token to handle
+     * @throws ParseException
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>221</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleToken(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>222</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>223</td><td class='count'>129</td>
+      <td><pre class='prettyprint covered' id='l223s0'>        currentToken = token;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>225</td><td class='count'>129</td>
+      <td><pre class='prettyprint jmp'>        <span id='l225s0' title='Executions: 129' class='covered'>if (skipParsing)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>226</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>227</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l227s0'>            cmd.addArg(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>228</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>229</td><td class='count'>115</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l229s0' title='Executions: 115' class='covered'>if ("--".equals(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>230</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>231</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l231s0'>            skipParsing = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>232</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>233</td><td class='count'>113</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l233s0' title='Executions: 113' class='covered'>if (currentOption != null</span> && <span id='l233s1' title='Executions: 26' class='covered'>currentOption.acceptsArg()</span> && <span id='l233s2' title='Executions: 0' class='uncovered'>isArgument(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>234</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>235</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l235s0'>            currentOption.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(token));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>236</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>237</td><td class='count'>92</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l237s0' title='Executions: 92' class='covered'>if (token.startsWith("--"))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>238</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>239</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l239s0'>            handleLongOption(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>240</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>241</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l241s0' title='Executions: 75' class='covered'>if (token.startsWith("-")</span> && <span id='l241s1' title='Executions: 61' class='covered'>!"-".equals(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>242</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>243</td><td class='count'>60</td>
+      <td><pre class='prettyprint covered' id='l243s0'>            handleShortAndLongOption(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>244</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>245</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>246</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>247</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l247s0'>            handleUnknownToken(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>248</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>250</td><td class='count'>119</td>
+      <td><pre class='prettyprint jmp'>        <span id='l250s0' title='Executions: 119' class='covered'>if (currentOption != null</span> && <span id='l250s1' title='Executions: 52' class='covered'>!currentOption.acceptsArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>251</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>252</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l252s0'>            currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>253</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>254</td><td class='count'>119</td>
+      <td><pre class='prettyprint covered' id='l254s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns true is the token is a valid argument.
+     *
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>261</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isArgument(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>262</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>263</td><td class='count'>26</td>
+      <td><pre class='prettyprint jmp'>        <span id='l263s0' title='Executions: 26' class='covered'>return !isOption(token)</span> || <span id='l263s1' title='Executions: 6' class='covered'>isNegativeNumber(token);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>264</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Check if the token is a negative number.
+     *
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>271</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isNegativeNumber(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>272</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>273</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>274</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>275</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l275s0'>            Double.parseDouble(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>276</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l276s0'>            return true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>277</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>278</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l278s0'>        catch (NumberFormatException e)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>279</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>280</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l280s0'>            return false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>281</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>282</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Tells if the token looks like an option.
+     *
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>289</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isOption(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>290</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>291</td><td class='count'>26</td>
+      <td><pre class='prettyprint jmp'>        <span id='l291s0' title='Executions: 26' class='covered'>return isLongOption(token)</span> || <span id='l291s1' title='Executions: 25' class='covered'>isShortOption(token);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>292</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Tells if the token looks like a short option.
+     * 
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>299</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isShortOption(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>300</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>301</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // short options (-S, -SV, -S=V, -SV1=V2, -S1S2)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>302</td><td class='count'>25</td>
+      <td><pre class='prettyprint jmp'>        <span id='l302s0' title='Executions: 25' class='covered'>if (!token.startsWith("-")</span> || <span id='l302s1' title='Executions: 8' class='covered'>token.length() == 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>303</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>304</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l304s0'>            return false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>305</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>307</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // remove leading "-" and "=value"</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>308</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l308s0'>        int pos = token.indexOf("=");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>309</td><td class='count'>7</td>
+      <td><pre class='prettyprint jmp'>        <span id='l309s0' title='Executions: 7' class='covered'>String optName = pos == -1</span> ? <span id='l309s1' title='Executions: 7' class='covered'>token.substring(1)</span> : <span id='l309s2' title='Executions: 0' class='uncovered'>token.substring(1, pos);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>310</td><td class='count'>7</td>
+      <td><pre class='prettyprint jmp'>        <span id='l310s0' title='Executions: 7' class='covered'>if (options.hasShortOption(optName))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>311</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>312</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l312s0'>            return true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>313</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>314</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // check for several concatenated short options</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>315</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l315s0' title='Executions: 3' class='covered'>return optName.length() > 0</span> && <span id='l315s1' title='Executions: 3' class='covered'>options.hasShortOption(String.valueOf(optName.charAt(0)));</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>316</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Tells if the token looks like a long option.
+     *
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>323</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isLongOption(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>324</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>325</td><td class='count'>26</td>
+      <td><pre class='prettyprint jmp'>        <span id='l325s0' title='Executions: 26' class='covered'>if (!token.startsWith("-")</span> || <span id='l325s1' title='Executions: 9' class='covered'>token.length() == 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>326</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>327</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l327s0'>            return false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>328</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>330</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l330s0'>        int pos = token.indexOf("=");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>331</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>        <span id='l331s0' title='Executions: 8' class='covered'>String t = pos == -1</span> ? <span id='l331s1' title='Executions: 8' class='covered'>token</span> : <span id='l331s2' title='Executions: 0' class='uncovered'>token.substring(0, pos);</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>333</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>        <span id='l333s0' title='Executions: 8' class='covered'>if (!options.getMatchingOptions(t).isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>334</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>335</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // long or partial long options (--L, -L, --L=V, -L=V, --l, --l=V)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>336</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l336s0'>            return true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>337</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>338</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l338s0' title='Executions: 8' class='covered'>if (getLongPrefix(token) != null</span> && <span id='l338s1' title='Executions: 1' class='covered'>!token.startsWith("--"))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>339</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>340</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // -LV</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>341</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l341s0'>            return true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>342</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>344</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l344s0'>        return false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>345</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handles an unknown token. If the token starts with a dash an 
+     * UnrecognizedOptionException is thrown. Otherwise the token is added 
+     * to the arguments of the command line. If the stopAtNonOption flag 
+     * is set, this stops the parsing and the remaining tokens are added 
+     * as-is in the arguments of the command line.
+     *
+     * @param token the command line token to handle
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>356</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleUnknownToken(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>357</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>358</td><td class='count'>24</td>
+      <td><pre class='prettyprint jmp'>        <span id='l358s0' title='Executions: 24' class='covered'>if (token.startsWith("-")</span> && <span id='l358s1' title='Executions: 9' class='covered'>token.length() > 1</span> && <span id='l358s2' title='Executions: 0' class='uncovered'>!stopAtNonOption)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>359</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>360</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l360s0'>            throw new UnrecognizedOptionException("Unrecognized option: " + token, token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>361</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>363</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l363s0'>        cmd.addArg(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>364</td><td class='count'>19</td>
+      <td><pre class='prettyprint jmp'>        <span id='l364s0' title='Executions: 19' class='covered'>if (stopAtNonOption)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>365</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>366</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l366s0'>            skipParsing = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>367</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>368</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l368s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handles the following tokens:
+     *
+     * --L
+     * --L=V
+     * --L V
+     * --l
+     *
+     * @param token the command line token to handle
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>380</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleLongOption(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>381</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>382</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>        <span id='l382s0' title='Executions: 17' class='covered'>if (token.indexOf('=') == -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>383</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>384</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l384s0'>            handleLongOptionWithoutEqual(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>385</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>386</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>387</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>388</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l388s0'>            handleLongOptionWithEqual(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>389</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>390</td><td class='count'>13</td>
+      <td><pre class='prettyprint covered' id='l390s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handles the following tokens:
+     *
+     * --L
+     * -L
+     * --l
+     * -l
+     * 
+     * @param token the command line token to handle
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>402</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleLongOptionWithoutEqual(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>403</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>404</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l404s0'>        List&lt;String> matchingOpts = options.getMatchingOptions(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>405</td><td class='count'>15</td>
+      <td><pre class='prettyprint jmp'>        <span id='l405s0' title='Executions: 15' class='covered'>if (matchingOpts.isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>406</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>407</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l407s0'>            handleUnknownToken(currentToken);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>408</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>409</td><td class='count'>14</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l409s0' title='Executions: 14' class='covered'>if (matchingOpts.size() > 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>410</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>411</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l411s0'>            throw new AmbiguousOptionException(token, matchingOpts);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>412</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>413</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>414</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>415</td><td class='count'>11</td>
+      <td><pre class='prettyprint covered' id='l415s0'>            handleOption(options.getOption(matchingOpts.get(0)));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>416</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>417</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l417s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handles the following tokens:
+     *
+     * --L=V
+     * -L=V
+     * --l=V
+     * -l=V
+     *
+     * @param token the command line token to handle
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>429</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleLongOptionWithEqual(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>430</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>431</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l431s0'>        int pos = token.indexOf('=');</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>433</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l433s0'>        String value = token.substring(pos + 1);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>435</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l435s0'>        String opt = token.substring(0, pos);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>437</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l437s0'>        List&lt;String> matchingOpts = options.getMatchingOptions(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>438</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>        <span id='l438s0' title='Executions: 8' class='covered'>if (matchingOpts.isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>439</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>440</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l440s0'>            handleUnknownToken(currentToken);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>441</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>442</td><td class='count'>7</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l442s0' title='Executions: 7' class='covered'>if (matchingOpts.size() > 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>443</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>444</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l444s0'>            throw new AmbiguousOptionException(opt, matchingOpts);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>445</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>446</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>447</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>448</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l448s0'>            Option option = options.getOption(matchingOpts.get(0));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>450</td><td class='count'>5</td>
+      <td><pre class='prettyprint jmp'>            <span id='l450s0' title='Executions: 5' class='covered'>if (option.acceptsArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>451</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>452</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l452s0'>                handleOption(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>453</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l453s0'>                currentOption.addValueForProcessing(value);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>454</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l454s0'>                currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>455</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>456</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>457</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>458</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l458s0'>                handleUnknownToken(currentToken);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>459</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>460</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>461</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l461s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Handles the following tokens:
+     *
+     * -S
+     * -SV
+     * -S V
+     * -S=V
+     * -S1S2
+     * -S1S2 V
+     * -SV1=V2
+     *
+     * -L
+     * -LV
+     * -L V
+     * -L=V
+     * -l
+     *
+     * @param token the command line token to handle
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>482</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleShortAndLongOption(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>483</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>484</td><td class='count'>60</td>
+      <td><pre class='prettyprint covered' id='l484s0'>        String t = Util.stripLeadingHyphens(token);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>486</td><td class='count'>60</td>
+      <td><pre class='prettyprint covered' id='l486s0'>        int pos = t.indexOf('=');</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>488</td><td class='count'>60</td>
+      <td><pre class='prettyprint jmp'>        <span id='l488s0' title='Executions: 60' class='covered'>if (t.length() == 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>489</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>490</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // -S</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>491</td><td class='count'>35</td>
+      <td><pre class='prettyprint jmp'>            <span id='l491s0' title='Executions: 35' class='covered'>if (options.hasShortOption(t))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>492</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>493</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l493s0'>                handleOption(options.getOption(t));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>494</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>495</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>496</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>497</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l497s0'>                handleUnknownToken(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>498</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>499</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>500</td><td class='count'>25</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l500s0' title='Executions: 25' class='covered'>if (pos == -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>501</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>502</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // no equal sign found (-xxx)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>503</td><td class='count'>18</td>
+      <td><pre class='prettyprint jmp'>            <span id='l503s0' title='Executions: 18' class='covered'>if (options.hasShortOption(t))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>504</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>505</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l505s0'>                handleOption(options.getOption(t));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>506</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>507</td><td class='count'>14</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l507s0' title='Executions: 14' class='covered'>if (!options.getMatchingOptions(t).isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>508</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>509</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // -L or -l</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>510</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l510s0'>                handleLongOptionWithoutEqual(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>511</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>512</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>513</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>514</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // look for a long prefix (-Xmx512m)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>515</td><td class='count'>11</td>
+      <td><pre class='prettyprint covered' id='l515s0'>                String opt = getLongPrefix(t);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>517</td><td class='count'>11</td>
+      <td><pre class='prettyprint jmp'>                <span id='l517s0' title='Executions: 11' class='covered'>if (opt != null</span> && <span id='l517s1' title='Executions: 3' class='covered'>options.getOption(opt).acceptsArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>518</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>519</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l519s0'>                    handleOption(options.getOption(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>520</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l520s0'>                    currentOption.addValueForProcessing(t.substring(opt.length()));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>521</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l521s0'>                    currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>522</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>523</td><td class='count'>9</td>
+      <td><pre class='prettyprint jmp'>                else <span id='l523s0' title='Executions: 9' class='covered'>if (isJavaProperty(t))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>524</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>525</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // -SV1 (-Dflag)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>526</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l526s0'>                    handleOption(options.getOption(t.substring(0, 1)));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>527</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l527s0'>                    currentOption.addValueForProcessing(t.substring(1));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>528</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l528s0'>                    currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>529</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>530</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>531</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>532</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // -S1S2S3 or -S1S2V</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>533</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l533s0'>                    handleConcatenatedOptions(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>534</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>535</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l535s0'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>536</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>537</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>538</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>539</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // equal sign found (-xxx=yyy)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>540</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l540s0'>            String opt = t.substring(0, pos);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>541</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l541s0'>            String value = t.substring(pos + 1);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>543</td><td class='count'>7</td>
+      <td><pre class='prettyprint jmp'>            <span id='l543s0' title='Executions: 7' class='covered'>if (opt.length() == 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>544</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>545</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // -S=V</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>546</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l546s0'>                Option option = options.getOption(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>547</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>                <span id='l547s0' title='Executions: 2' class='covered'>if (option != null</span> && <span id='l547s1' title='Executions: 2' class='covered'>option.acceptsArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>548</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>549</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l549s0'>                    handleOption(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>550</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l550s0'>                    currentOption.addValueForProcessing(value);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>551</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l551s0'>                    currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>552</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>553</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>554</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>555</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l555s0'>                    handleUnknownToken(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>556</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>557</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l557s0'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>558</td><td class='count'>5</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l558s0' title='Executions: 5' class='covered'>if (isJavaProperty(opt))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>559</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>560</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // -SV1=V2 (-Dkey=value)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>561</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l561s0'>                handleOption(options.getOption(opt.substring(0, 1)));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>562</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l562s0'>                currentOption.addValueForProcessing(opt.substring(1));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>563</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l563s0'>                currentOption.addValueForProcessing(value);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>564</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l564s0'>                currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>565</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>566</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>567</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>568</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // -L=V or -l=V</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>569</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l569s0'>                handleLongOptionWithEqual(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>570</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>571</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>572</td><td class='count'>54</td>
+      <td><pre class='prettyprint covered' id='l572s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Search for a prefix that is the long name of an option (-Xmx512m)
+     *
+     * @param token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>579</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private String getLongPrefix(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>580</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>581</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l581s0'>        String t = Util.stripLeadingHyphens(token);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>583</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        int i;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>584</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l584s0'>        String opt = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>585</td><td class='count'>42</td>
+      <td><pre class='prettyprint jmp'>        <span id='l585s0' title='Executions: 42' class='covered'>for (i = t.length() - 2</span>; i > 1; i--)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>586</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>587</td><td class='count'>27</td>
+      <td><pre class='prettyprint covered' id='l587s0'>            String prefix = t.substring(0, i);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>588</td><td class='count'>27</td>
+      <td><pre class='prettyprint jmp'>            <span id='l588s0' title='Executions: 27' class='covered'>if (options.hasLongOption(prefix))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>589</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>590</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l590s0'>                opt = prefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>591</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l591s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>592</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>593</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>595</td><td class='count'>19</td>
+      <td><pre class='prettyprint covered' id='l595s0'>        return opt;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>596</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Check if the specified token is a Java-like property (-Dkey=value).
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>601</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean isJavaProperty(String token)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>602</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>603</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l603s0'>        String opt = token.substring(0, 1);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>604</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l604s0'>        Option option = options.getOption(opt);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>606</td><td class='count'>14</td>
+      <td><pre class='prettyprint jmp'>        <span id='l606s0' title='Executions: 14' class='covered'>return option != null</span> && (<span id='l606s1' title='Executions: 12' class='covered'>option.getArgs() >= 2</span> || <span id='l606s2' title='Executions: 11' class='covered'>option.getArgs() == Option.UNLIMITED_VALUES);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>607</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>609</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void handleOption(Option option) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>610</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>611</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // check the previous option before handling the next one</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>612</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l612s0'>        checkRequiredArgs();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>614</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l614s0'>        option = (Option) option.clone();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>616</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l616s0'>        updateRequiredOptions(option);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>618</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l618s0'>        cmd.addOption(option);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>620</td><td class='count'>83</td>
+      <td><pre class='prettyprint jmp'>        <span id='l620s0' title='Executions: 83' class='covered'>if (option.hasArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>621</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>622</td><td class='count'>45</td>
+      <td><pre class='prettyprint covered' id='l622s0'>            currentOption = option;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>623</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>624</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>625</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>626</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l626s0'>            currentOption = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>627</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>628</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l628s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Removes the option or its group from the list of expected elements.
+     *
+     * @param option
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>635</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void updateRequiredOptions(Option option) throws AlreadySelectedException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>636</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>637</td><td class='count'>83</td>
+      <td><pre class='prettyprint jmp'>        <span id='l637s0' title='Executions: 83' class='covered'>if (option.isRequired())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>638</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>639</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l639s0'>            expectedOpts.remove(option.getKey());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>640</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>642</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if the option is in an OptionGroup make that option the selected option of the group</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>643</td><td class='count'>83</td>
+      <td><pre class='prettyprint jmp'>        <span id='l643s0' title='Executions: 83' class='covered'>if (options.getOptionGroup(option) != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>644</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>645</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l645s0'>            OptionGroup group = options.getOptionGroup(option);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>647</td><td class='count'>4</td>
+      <td><pre class='prettyprint jmp'>            <span id='l647s0' title='Executions: 4' class='covered'>if (group.isRequired())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>648</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>649</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l649s0'>                expectedOpts.remove(group);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>650</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>652</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l652s0'>            group.setSelected(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>653</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>654</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l654s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Breaks &lt;code>token&lt;/code> into its constituent parts
+     * using the following algorithm.
+     *
+     * &lt;ul>
+     *  &lt;li>ignore the first character ("&lt;b>-&lt;/b>")&lt;/li>
+     *  &lt;li>for each remaining character check if an {@link Option}
+     *  exists with that id.&lt;/li>
+     *  &lt;li>if an {@link Option} does exist then add that character
+     *  prepended with "&lt;b>-&lt;/b>" to the list of processed tokens.&lt;/li>
+     *  &lt;li>if the {@link Option} can have an argument value and there
+     *  are remaining characters in the token then add the remaining
+     *  characters as a token to the list of processed tokens.&lt;/li>
+     *  &lt;li>if an {@link Option} does &lt;b>NOT&lt;/b> exist &lt;b>AND&lt;/b>
+     *  &lt;code>stopAtNonOption&lt;/code> &lt;b>IS&lt;/b> set then add the special token
+     *  "&lt;b>--&lt;/b>" followed by the remaining characters and also
+     *  the remaining tokens directly to the processed tokens list.&lt;/li>
+     *  &lt;li>if an {@link Option} does &lt;b>NOT&lt;/b> exist &lt;b>AND&lt;/b>
+     *  &lt;code>stopAtNonOption&lt;/code> &lt;b>IS NOT&lt;/b> set then add that
+     *  character prepended with "&lt;b>-&lt;/b>".&lt;/li>
+     * &lt;/ul>
+     *
+     * @param token The current token to be &lt;b>burst&lt;/b>
+     * at the first non-Option encountered.
+     * @throws ParseException if there are any problems encountered
+     *                        while parsing the command line token.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>683</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected void handleConcatenatedOptions(String token) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>684</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>685</td><td class='count'>18</td>
+      <td><pre class='prettyprint jmp'>        <span id='l685s0' title='Executions: 18' class='covered'>for (int i = 1</span>; i &lt; token.length(); i++)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>686</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>687</td><td class='count'>16</td>
+      <td><pre class='prettyprint covered' id='l687s0'>            String ch = String.valueOf(token.charAt(i));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>689</td><td class='count'>16</td>
+      <td><pre class='prettyprint jmp'>            <span id='l689s0' title='Executions: 16' class='covered'>if (options.hasOption(ch))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>690</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>691</td><td class='count'>13</td>
+      <td><pre class='prettyprint covered' id='l691s0'>                handleOption(options.getOption(ch));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>693</td><td class='count'>13</td>
+      <td><pre class='prettyprint jmp'>                <span id='l693s0' title='Executions: 13' class='covered'>if (currentOption != null</span> && <span id='l693s1' title='Executions: 4' class='covered'>token.length() != i + 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>694</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>695</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // add the trail as an argument of the option</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>696</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l696s0'>                    currentOption.addValueForProcessing(token.substring(i + 1));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>697</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l697s0'>                    break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>698</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>699</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>700</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>701</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>702</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>                <span id='l702s0' title='Executions: 3' class='covered'>handleUnknownToken(stopAtNonOption</span> && <span id='l702s1' title='Executions: 1' class='covered'>i > 1</span> ? <span id='l702s2' title='Executions: 2' class='covered'>token.substring(i)</span> : <span id='l702s3' title='Executions: 1' class='covered'>token);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>703</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l703s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>704</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>705</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>706</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l706s0'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>707</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

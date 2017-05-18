@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PosixParser.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/PosixParser.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * The class PosixParser provides an implementation of the
+ * {@link Parser#flatten(Options,String[],boolean) flatten} method.
+ *
+ * @version $Id: PosixParser.java 1783175 2017-02-16 07:52:05Z britter $
+ * @deprecated since 1.3, use the {@link DefaultParser} instead
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>32</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>@Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>33</td><td class='count'>122</td>
+      <td><pre class='prettyprint covered' id='l33s0'>public class PosixParser extends Parser</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>34</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>35</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** holder for flattened tokens */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>36</td><td class='count'>122</td>
+      <td><pre class='prettyprint covered' id='l36s0'>    private final List&lt;String> tokens = new ArrayList&lt;String>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>38</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** specifies if bursting should continue */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>39</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private boolean eatTheRest;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>41</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** holder for the current option */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>42</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private Option currentOption;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>44</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** the command line Options */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>45</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private Options options;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Resets the members to their original state i.e. remove
+     * all of &lt;code>tokens&lt;/code> entries and set &lt;code>eatTheRest&lt;/code>
+     * to false.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>52</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void init()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>53</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>54</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l54s0'>        eatTheRest = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>55</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l55s0'>        tokens.clear();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>56</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l56s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * &lt;p>An implementation of {@link Parser}'s abstract
+     * {@link Parser#flatten(Options,String[],boolean) flatten} method.&lt;/p>
+     *
+     * &lt;p>The following are the rules used by this flatten method.&lt;/p>
+     * &lt;ol>
+     *  &lt;li>if &lt;code>stopAtNonOption&lt;/code> is &lt;b>true&lt;/b> then do not
+     *  burst anymore of &lt;code>arguments&lt;/code> entries, just add each
+     *  successive entry without further processing.  Otherwise, ignore
+     *  &lt;code>stopAtNonOption&lt;/code>.&lt;/li>
+     *  &lt;li>if the current &lt;code>arguments&lt;/code> entry is "&lt;b>--&lt;/b>"
+     *  just add the entry to the list of processed tokens&lt;/li>
+     *  &lt;li>if the current &lt;code>arguments&lt;/code> entry is "&lt;b>-&lt;/b>"
+     *  just add the entry to the list of processed tokens&lt;/li>
+     *  &lt;li>if the current &lt;code>arguments&lt;/code> entry is two characters
+     *  in length and the first character is "&lt;b>-&lt;/b>" then check if this
+     *  is a valid {@link Option} id.  If it is a valid id, then add the
+     *  entry to the list of processed tokens and set the current {@link Option}
+     *  member.  If it is not a valid id and &lt;code>stopAtNonOption&lt;/code>
+     *  is true, then the remaining entries are copied to the list of
+     *  processed tokens.  Otherwise, the current entry is ignored.&lt;/li>
+     *  &lt;li>if the current &lt;code>arguments&lt;/code> entry is more than two
+     *  characters in length and the first character is "&lt;b>-&lt;/b>" then
+     *  we need to burst the entry to determine its constituents.  For more
+     *  information on the bursting algorithm see
+     *  {@link PosixParser#burstToken(String, boolean) burstToken}.&lt;/li>
+     *  &lt;li>if the current &lt;code>arguments&lt;/code> entry is not handled
+     *  by any of the previous rules, then the entry is added to the list
+     *  of processed tokens.&lt;/li>
+     * &lt;/ol>
+     *
+     * @param options The command line {@link Options}
+     * @param arguments The command line arguments to be parsed
+     * @param stopAtNonOption Specifies whether to stop flattening
+     * when an non option is found.
+     * @return The flattened &lt;code>arguments&lt;/code> String array.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>95</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    @Override</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected String[] flatten(Options options, String[] arguments, boolean stopAtNonOption) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l98s0'>        init();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l99s0'>        this.options = options;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>101</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // an iterator for the command line tokens</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td class='count'>134</td>
+      <td><pre class='prettyprint covered' id='l102s0'>        Iterator&lt;String> iter = Arrays.asList(arguments).iterator();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>104</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // process each command line token</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>105</td><td class='count'>632</td>
+      <td><pre class='prettyprint jmp'>        <span id='l105s0' title='Executions: 632' class='covered'>while (iter.hasNext())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>106</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>107</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // get the next command line token</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>108</td><td class='count'>501</td>
+      <td><pre class='prettyprint covered' id='l108s0'>            String token = iter.next();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>110</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // single or double hyphen</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td class='count'>501</td>
+      <td><pre class='prettyprint jmp'>            <span id='l111s0' title='Executions: 501' class='covered'>if ("-".equals(token)</span> || <span id='l111s1' title='Executions: 499' class='covered'>"--".equals(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>112</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l113s0'>                tokens.add(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>116</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // handle long option --foo or --foo=bar</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>117</td><td class='count'>498</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l117s0' title='Executions: 498' class='covered'>if (token.startsWith("--"))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>118</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>119</td><td class='count'>65</td>
+      <td><pre class='prettyprint covered' id='l119s0'>                int pos = token.indexOf('=');</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>120</td><td class='count'>65</td>
+      <td><pre class='prettyprint jmp'>                <span id='l120s0' title='Executions: 65' class='covered'>String opt = pos == -1</span> ? <span id='l120s1' title='Executions: 60' class='covered'>token</span> : <span id='l120s2' title='Executions: 5' class='covered'>token.substring(0, pos); // --foo</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>122</td><td class='count'>65</td>
+      <td><pre class='prettyprint covered' id='l122s0'>                List&lt;String> matchingOpts = options.getMatchingOptions(opt);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>124</td><td class='count'>65</td>
+      <td><pre class='prettyprint jmp'>                <span id='l124s0' title='Executions: 65' class='covered'>if (matchingOpts.isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>125</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>126</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l126s0'>                    processNonOptionToken(token, stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>127</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>128</td><td class='count'>63</td>
+      <td><pre class='prettyprint jmp'>                else <span id='l128s0' title='Executions: 63' class='covered'>if (matchingOpts.size() > 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>129</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>130</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l130s0'>                    throw new AmbiguousOptionException(opt, matchingOpts);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>131</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>132</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>134</td><td class='count'>61</td>
+      <td><pre class='prettyprint covered' id='l134s0'>                    currentOption = options.getOption(matchingOpts.get(0));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>136</td><td class='count'>61</td>
+      <td><pre class='prettyprint covered' id='l136s0'>                    tokens.add("--" + currentOption.getLongOpt());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>137</td><td class='count'>61</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l137s0' title='Executions: 61' class='covered'>if (pos != -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>138</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>139</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l139s0'>                        tokens.add(token.substring(pos + 1));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>140</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>141</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>142</td><td class='count'>63</td>
+      <td><pre class='prettyprint covered' id='l142s0'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>144</td><td class='count'>433</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l144s0' title='Executions: 433' class='covered'>if (token.startsWith("-"))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>145</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>146</td><td class='count'>235</td>
+      <td><pre class='prettyprint jmp'>                <span id='l146s0' title='Executions: 235' class='covered'>if (token.length() == 2</span> || <span id='l146s1' title='Executions: 52' class='covered'>options.hasOption(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>147</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>148</td><td class='count'>187</td>
+      <td><pre class='prettyprint covered' id='l148s0'>                    processOptionToken(token, stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>149</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>150</td><td class='count'>48</td>
+      <td><pre class='prettyprint jmp'>                else <span id='l150s0' title='Executions: 48' class='covered'>if (!options.getMatchingOptions(token).isEmpty())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>151</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>152</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l152s0'>                    List&lt;String> matchingOpts = options.getMatchingOptions(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>153</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l153s0' title='Executions: 3' class='covered'>if (matchingOpts.size() > 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>154</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>155</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l155s0'>                        throw new AmbiguousOptionException(token, matchingOpts);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>156</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>157</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l157s0'>                    Option opt = options.getOption(matchingOpts.get(0));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>158</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l158s0'>                    processOptionToken("-" + opt.getLongOpt(), stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>159</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l159s0'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>160</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // requires bursting</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>161</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>162</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>163</td><td class='count'>45</td>
+      <td><pre class='prettyprint covered' id='l163s0'>                    burstToken(token, stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>164</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>165</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>166</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>167</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td class='count'>198</td>
+      <td><pre class='prettyprint covered' id='l168s0'>                processNonOptionToken(token, stopAtNonOption);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>171</td><td class='count'>498</td>
+      <td><pre class='prettyprint covered' id='l171s0'>            gobble(iter);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>172</td><td class='count'>498</td>
+      <td><pre class='prettyprint covered' id='l172s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>174</td><td class='count'>131</td>
+      <td><pre class='prettyprint covered' id='l174s0'>        return tokens.toArray(new String[tokens.size()]);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Adds the remaining tokens to the processed tokens list.
+     *
+     * @param iter An iterator over the remaining tokens
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>182</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void gobble(Iterator&lt;String> iter)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>183</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>184</td><td class='count'>498</td>
+      <td><pre class='prettyprint jmp'>        <span id='l184s0' title='Executions: 498' class='covered'>if (eatTheRest)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>185</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>186</td><td class='count'>19</td>
+      <td><pre class='prettyprint jmp'>            <span id='l186s0' title='Executions: 19' class='covered'>while (iter.hasNext())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>187</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>188</td><td class='count'>11</td>
+      <td><pre class='prettyprint covered' id='l188s0'>                tokens.add(iter.next());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>189</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>190</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>191</td><td class='count'>498</td>
+      <td><pre class='prettyprint covered' id='l191s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Add the special token "&lt;b>--&lt;/b>" and the current &lt;code>value&lt;/code>
+     * to the processed tokens list. Then add all the remaining
+     * &lt;code>argument&lt;/code> values to the processed tokens list.
+     *
+     * @param value The current token
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>200</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void processNonOptionToken(String value, boolean stopAtNonOption)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>201</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>202</td><td class='count'>201</td>
+      <td><pre class='prettyprint jmp'>        <span id='l202s0' title='Executions: 201' class='covered'>if (stopAtNonOption</span> && (<span id='l202s1' title='Executions: 9' class='covered'>currentOption == null</span> || <span id='l202s2' title='Executions: 0' class='uncovered'>!currentOption.hasArg()))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>203</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>204</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l204s0'>            eatTheRest = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>205</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l205s0'>            tokens.add("--");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>206</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>208</td><td class='count'>201</td>
+      <td><pre class='prettyprint covered' id='l208s0'>        tokens.add(value);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>209</td><td class='count'>201</td>
+      <td><pre class='prettyprint covered' id='l209s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * &lt;p>If an {@link Option} exists for &lt;code>token&lt;/code> then
+     * add the token to the processed list.&lt;/p>
+     *
+     * &lt;p>If an {@link Option} does not exist and &lt;code>stopAtNonOption&lt;/code>
+     * is set then add the remaining tokens to the processed tokens list
+     * directly.&lt;/p>
+     *
+     * @param token The current option token
+     * @param stopAtNonOption Specifies whether flattening should halt
+     * at the first non option.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>223</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void processOptionToken(String token, boolean stopAtNonOption)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>224</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>225</td><td class='count'>189</td>
+      <td><pre class='prettyprint jmp'>        <span id='l225s0' title='Executions: 189' class='covered'>if (stopAtNonOption</span> && <span id='l225s1' title='Executions: 6' class='covered'>!options.hasOption(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>226</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>227</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l227s0'>            eatTheRest = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>228</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>230</td><td class='count'>189</td>
+      <td><pre class='prettyprint jmp'>        <span id='l230s0' title='Executions: 189' class='covered'>if (options.hasOption(token))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>231</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>232</td><td class='count'>186</td>
+      <td><pre class='prettyprint covered' id='l232s0'>            currentOption = options.getOption(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>233</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>235</td><td class='count'>189</td>
+      <td><pre class='prettyprint covered' id='l235s0'>        tokens.add(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>236</td><td class='count'>189</td>
+      <td><pre class='prettyprint covered' id='l236s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Breaks &lt;code>token&lt;/code> into its constituent parts
+     * using the following algorithm.
+     *
+     * &lt;ul>
+     *  &lt;li>ignore the first character ("&lt;b>-&lt;/b>")&lt;/li>
+     *  &lt;li>for each remaining character check if an {@link Option}
+     *  exists with that id.&lt;/li>
+     *  &lt;li>if an {@link Option} does exist then add that character
+     *  prepended with "&lt;b>-&lt;/b>" to the list of processed tokens.&lt;/li>
+     *  &lt;li>if the {@link Option} can have an argument value and there
+     *  are remaining characters in the token then add the remaining
+     *  characters as a token to the list of processed tokens.&lt;/li>
+     *  &lt;li>if an {@link Option} does &lt;b>NOT&lt;/b> exist &lt;b>AND&lt;/b>
+     *  &lt;code>stopAtNonOption&lt;/code> &lt;b>IS&lt;/b> set then add the special token
+     *  "&lt;b>--&lt;/b>" followed by the remaining characters and also
+     *  the remaining tokens directly to the processed tokens list.&lt;/li>
+     *  &lt;li>if an {@link Option} does &lt;b>NOT&lt;/b> exist &lt;b>AND&lt;/b>
+     *  &lt;code>stopAtNonOption&lt;/code> &lt;b>IS NOT&lt;/b> set then add that
+     *  character prepended with "&lt;b>-&lt;/b>".&lt;/li>
+     * &lt;/ul>
+     *
+     * @param token The current token to be &lt;b>burst&lt;/b>
+     * @param stopAtNonOption Specifies whether to stop processing
+     * at the first non-Option encountered.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>264</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected void burstToken(String token, boolean stopAtNonOption)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>265</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>266</td><td class='count'>57</td>
+      <td><pre class='prettyprint jmp'>        <span id='l266s0' title='Executions: 57' class='covered'>for (int i = 1</span>; i &lt; token.length(); i++)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>267</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>268</td><td class='count'>55</td>
+      <td><pre class='prettyprint covered' id='l268s0'>            String ch = String.valueOf(token.charAt(i));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>270</td><td class='count'>55</td>
+      <td><pre class='prettyprint jmp'>            <span id='l270s0' title='Executions: 55' class='covered'>if (options.hasOption(ch))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>271</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>272</td><td class='count'>50</td>
+      <td><pre class='prettyprint covered' id='l272s0'>                tokens.add("-" + ch);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>273</td><td class='count'>50</td>
+      <td><pre class='prettyprint covered' id='l273s0'>                currentOption = options.getOption(ch);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>275</td><td class='count'>50</td>
+      <td><pre class='prettyprint jmp'>                <span id='l275s0' title='Executions: 50' class='covered'>if (currentOption.hasArg()</span> && <span id='l275s1' title='Executions: 39' class='covered'>token.length() != i + 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>276</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>277</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l277s0'>                    tokens.add(token.substring(i + 1));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>279</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l279s0'>                    break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>280</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>281</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>282</td><td class='count'>5</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l282s0' title='Executions: 5' class='covered'>if (stopAtNonOption)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>283</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>284</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l284s0'>                processNonOptionToken(token.substring(i), true);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>285</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l285s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>286</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>287</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>288</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>289</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l289s0'>                tokens.add(token);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>290</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l290s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>291</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>292</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>293</td><td class='count'>45</td>
+      <td><pre class='prettyprint covered' id='l293s0'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>294</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

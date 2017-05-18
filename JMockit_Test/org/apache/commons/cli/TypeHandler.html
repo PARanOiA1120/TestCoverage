@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TypeHandler.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/TypeHandler.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.io.File;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import java.util.Date;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * This is a temporary implementation. TypeHandler will handle the
+ * pluggableness of OptionTypes and it will direct all of these types
+ * of conversion functionalities to ConvertUtils component in Commons
+ * already. BeanUtils I think.
+ *
+ * @version $Id: TypeHandler.java 1677452 2015-05-03 17:10:00Z ggregory $
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>35</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l35s0'>public class TypeHandler</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>36</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the &lt;code>Object&lt;/code> of type &lt;code>obj&lt;/code>
+     * with the value of &lt;code>str&lt;/code>.
+     *
+     * @param str the command line value
+     * @param obj the type of argument
+     * @return The instance of &lt;code>obj&lt;/code> initialised with
+     * the value of &lt;code>str&lt;/code>.
+     * @throws ParseException if the value creation for the given object type failed
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>47</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Object createValue(String str, Object obj) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>48</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>49</td><td class='count'>29</td>
+      <td><pre class='prettyprint covered' id='l49s0'>        return createValue(str, (Class&lt;?>) obj);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>50</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the &lt;code>Object&lt;/code> of type &lt;code>clazz&lt;/code>
+     * with the value of &lt;code>str&lt;/code>.
+     *
+     * @param str the command line value
+     * @param clazz the type of argument
+     * @return The instance of &lt;code>clazz&lt;/code> initialised with
+     * the value of &lt;code>str&lt;/code>.
+     * @throws ParseException if the value creation for the given class failed
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>62</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Object createValue(String str, Class&lt;?> clazz) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>63</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>64</td><td class='count'>29</td>
+      <td><pre class='prettyprint jmp'>        <span id='l64s0' title='Executions: 29' class='covered'>if (PatternOptionBuilder.STRING_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>65</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>66</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l66s0'>            return str;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>67</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>68</td><td class='count'>26</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l68s0' title='Executions: 26' class='covered'>if (PatternOptionBuilder.OBJECT_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>69</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>70</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l70s0'>            return createObject(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>71</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>72</td><td class='count'>21</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l72s0' title='Executions: 21' class='covered'>if (PatternOptionBuilder.NUMBER_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>73</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>74</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l74s0'>            return createNumber(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>75</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>76</td><td class='count'>13</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l76s0' title='Executions: 13' class='covered'>if (PatternOptionBuilder.DATE_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>77</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>78</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l78s0'>            return createDate(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>80</td><td class='count'>12</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l80s0' title='Executions: 12' class='covered'>if (PatternOptionBuilder.CLASS_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l82s0'>            return createClass(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>83</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>84</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l84s0' title='Executions: 8' class='covered'>if (PatternOptionBuilder.FILE_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>85</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>86</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l86s0'>            return createFile(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>87</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td class='count'>6</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l88s0' title='Executions: 6' class='covered'>if (PatternOptionBuilder.EXISTING_FILE_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>89</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>90</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l90s0'>            return createFile(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>91</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>92</td><td class='count'>5</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l92s0' title='Executions: 5' class='covered'>if (PatternOptionBuilder.FILES_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>93</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>94</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l94s0'>            return createFiles(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>95</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td class='count'>4</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l96s0' title='Executions: 4' class='covered'>if (PatternOptionBuilder.URL_VALUE == clazz)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l98s0'>            return createURL(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>101</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l102s0'>            return null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>103</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>104</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+      * Create an Object from the classname and empty constructor.
+      *
+      * @param classname the argument value
+      * @return the initialised object
+      * @throws ParseException if the class could not be found or the object could not be created
+      */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>113</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Object createObject(String classname) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>115</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        Class&lt;?> cl;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>117</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>118</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>119</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l119s0'>            cl = Class.forName(classname);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>120</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>121</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l121s0'>        catch (ClassNotFoundException cnfe)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>122</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>123</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l123s0'>            throw new ParseException("Unable to find the class: " + classname);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>124</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l124s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>126</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>127</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>128</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l128s0'>            return cl.newInstance();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>129</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>130</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l130s0'>        catch (Exception e)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>131</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>132</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l132s0'>            throw new ParseException(e.getClass().getName() + "; Unable to create an instance of: " + classname);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>134</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Create a number from a String. If a . is present, it creates a
+     * Double, otherwise a Long.
+     *
+     * @param str the value
+     * @return the number represented by &lt;code>str&lt;/code>
+     * @throws ParseException if &lt;code>str&lt;/code> is not a number
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>144</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Number createNumber(String str) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>145</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>146</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>147</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>148</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>            <span id='l148s0' title='Executions: 8' class='covered'>if (str.indexOf('.') != -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>149</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>150</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l150s0'>                return Double.valueOf(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>151</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>152</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l152s0'>            return Long.valueOf(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>153</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>154</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l154s0'>        catch (NumberFormatException e)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>155</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>156</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l156s0'>            throw new ParseException(e.getMessage());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>157</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>158</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the class whose name is &lt;code>classname&lt;/code>.
+     *
+     * @param classname the class name
+     * @return The class if it is found
+     * @throws ParseException if the class could not be found
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>167</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Class&lt;?> createClass(String classname) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>170</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>171</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l171s0'>            return Class.forName(classname);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>172</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>173</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l173s0'>        catch (ClassNotFoundException e)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>174</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l175s0'>            throw new ParseException("Unable to find the class: " + classname);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>176</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>177</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the date represented by &lt;code>str&lt;/code>.
+     * &lt;p>
+     * This method is not yet implemented and always throws an
+     * {@link UnsupportedOperationException}.
+     *
+     * @param str the date string
+     * @return The date if &lt;code>str&lt;/code> is a valid date string,
+     * otherwise return null.
+     * @throws UnsupportedOperationException always
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>190</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Date createDate(String str)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>191</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>192</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l192s0'>        throw new UnsupportedOperationException("Not yet implemented");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>193</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the URL represented by &lt;code>str&lt;/code>.
+     *
+     * @param str the URL string
+     * @return The URL in &lt;code>str&lt;/code> is well-formed
+     * @throws ParseException if the URL in &lt;code>str&lt;/code> is not well-formed
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>202</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static URL createURL(String str) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>203</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>204</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>205</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>206</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l206s0'>            return new URL(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>207</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>208</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l208s0'>        catch (MalformedURLException e)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>209</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>210</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l210s0'>            throw new ParseException("Unable to parse the URL: " + str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>211</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>212</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the File represented by &lt;code>str&lt;/code>.
+     *
+     * @param str the File location
+     * @return The file represented by &lt;code>str&lt;/code>.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>220</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static File createFile(String str)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>221</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>222</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l222s0'>        return new File(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>223</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the File[] represented by &lt;code>str&lt;/code>.
+     * &lt;p>
+     * This method is not yet implemented and always throws an
+     * {@link UnsupportedOperationException}.
+     *
+     * @param str the paths to the files
+     * @return The File[] represented by &lt;code>str&lt;/code>.
+     * @throws UnsupportedOperationException always
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>235</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static File[] createFiles(String str)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>236</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>237</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // to implement/port:</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>238</td><td>&nbsp;</td>
+      <td><pre class='comment'>        //        return FileW.findFiles(str);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>239</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l239s0'>        throw new UnsupportedOperationException("Not yet implemented");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>240</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>241</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GnuParser.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/GnuParser.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.util.ArrayList;
+import java.util.List;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * The class GnuParser provides an implementation of the
+ * {@link Parser#flatten(Options, String[], boolean) flatten} method.
+ *
+ * @version $Id: GnuParser.java 1445352 2013-02-12 20:48:19Z tn $
+ * @deprecated since 1.3, use the {@link DefaultParser} instead
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>30</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>@Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>31</td><td class='count'>42</td>
+      <td><pre class='prettyprint covered' id='l31s0'>public class GnuParser extends Parser</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>32</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * This flatten method does so using the following rules:
+     * &lt;ol>
+     *   &lt;li>If an {@link Option} exists for the first character of
+     *   the &lt;code>arguments&lt;/code> entry &lt;b>AND&lt;/b> an {@link Option}
+     *   does not exist for the whole &lt;code>argument&lt;/code> then
+     *   add the first character as an option to the processed tokens
+     *   list e.g. "-D" and add the rest of the entry to the also.&lt;/li>
+     *   &lt;li>Otherwise just add the token to the processed tokens list.&lt;/li>
+     * &lt;/ol>
+     *
+     * @param options         The Options to parse the arguments by.
+     * @param arguments       The arguments that have to be flattened.
+     * @param stopAtNonOption specifies whether to stop flattening when
+     *                        a non option has been encountered
+     * @return a String array of the flattened arguments
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>50</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    @Override</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>51</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected String[] flatten(Options options, String[] arguments, boolean stopAtNonOption)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>52</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>53</td><td class='count'>50</td>
+      <td><pre class='prettyprint covered' id='l53s0'>        List&lt;String> tokens = new ArrayList&lt;String>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>55</td><td class='count'>50</td>
+      <td><pre class='prettyprint covered' id='l55s0'>        boolean eatTheRest = false;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>57</td><td class='count'>154</td>
+      <td><pre class='prettyprint jmp'>        <span id='l57s0' title='Executions: 154' class='covered'>for (int i = 0</span>; i &lt; arguments.length; i++)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>58</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>59</td><td class='count'>104</td>
+      <td><pre class='prettyprint covered' id='l59s0'>            String arg = arguments[i];</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>61</td><td class='count'>104</td>
+      <td><pre class='prettyprint jmp'>            <span id='l61s0' title='Executions: 104' class='covered'>if ("--".equals(arg))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>62</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>63</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l63s0'>                eatTheRest = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>64</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l64s0'>                tokens.add("--");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>65</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>66</td><td class='count'>103</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l66s0' title='Executions: 103' class='covered'>if ("-".equals(arg))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>67</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>68</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l68s0'>                tokens.add("-");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>69</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>70</td><td class='count'>101</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l70s0' title='Executions: 101' class='covered'>if (arg.startsWith("-"))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>71</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>72</td><td class='count'>68</td>
+      <td><pre class='prettyprint covered' id='l72s0'>                String opt = Util.stripLeadingHyphens(arg);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>74</td><td class='count'>68</td>
+      <td><pre class='prettyprint jmp'>                <span id='l74s0' title='Executions: 68' class='covered'>if (options.hasOption(opt))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>75</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>76</td><td class='count'>48</td>
+      <td><pre class='prettyprint covered' id='l76s0'>                    tokens.add(arg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>77</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>78</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>80</td><td class='count'>20</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l80s0' title='Executions: 20' class='covered'>if (opt.indexOf('=') != -1</span> && <span id='l80s1' title='Executions: 11' class='covered'>options.hasOption(opt.substring(0, opt.indexOf('='))))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td>&nbsp;</td>
+      <td><pre class='comment'>                        // the format is --foo=value or -foo=value</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>83</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l83s0'>                        tokens.add(arg.substring(0, arg.indexOf('='))); // --foo</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>84</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l84s0'>                        tokens.add(arg.substring(arg.indexOf('=') + 1)); // value</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>85</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>86</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>                    else <span id='l86s0' title='Executions: 17' class='covered'>if (options.hasOption(arg.substring(0, 2)))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>87</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td>&nbsp;</td>
+      <td><pre class='comment'>                        // the format is a special properties option (-Dproperty=value)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>89</td><td class='count'>10</td>
+      <td><pre class='prettyprint covered' id='l89s0'>                        tokens.add(arg.substring(0, 2)); // -D</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>90</td><td class='count'>10</td>
+      <td><pre class='prettyprint covered' id='l90s0'>                        tokens.add(arg.substring(2)); // property=value</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>91</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>92</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>93</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>94</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l94s0'>                        eatTheRest = stopAtNonOption;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>95</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l95s0'>                        tokens.add(arg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td class='count'>68</td>
+      <td><pre class='prettyprint covered' id='l98s0'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>101</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l101s0'>                tokens.add(arg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>104</td><td class='count'>104</td>
+      <td><pre class='prettyprint jmp'>            <span id='l104s0' title='Executions: 104' class='covered'>if (eatTheRest)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>105</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>106</td><td class='count'>12</td>
+      <td><pre class='prettyprint jmp'>                <span id='l106s0' title='Executions: 12' class='covered'>for (i++</span>; i &lt; arguments.length; i++) //NOPMD</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>107</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>108</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l108s0'>                    tokens.add(arguments[i]);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>109</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>110</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>50</td>
+      <td><pre class='prettyprint covered' id='l113s0'>        return tokens.toArray(new String[tokens.size()]);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>115</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

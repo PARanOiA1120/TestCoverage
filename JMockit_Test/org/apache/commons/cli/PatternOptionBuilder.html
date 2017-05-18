@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PatternOptionBuilder.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/PatternOptionBuilder.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
+import java.util.Date;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * &lt;p>Allows Options to be created from a single String.
+ * The pattern contains various single character flags and via
+ * an optional punctuation character, their expected type.
+ * &lt;/p>
+ * 
+ * &lt;table border="1">
+ *   &lt;caption>Overview of PatternOptionBuilder patterns&lt;/caption>
+ *   &lt;tr>&lt;td>a&lt;/td>&lt;td>-a flag&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>b@&lt;/td>&lt;td>-b [classname]&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>c&gt;&lt;/td>&lt;td>-c [filename]&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>d+&lt;/td>&lt;td>-d [classname] (creates object via empty constructor)&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>e%&lt;/td>&lt;td>-e [number] (creates Double/Long instance depending on existing of a '.')&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>f/&lt;/td>&lt;td>-f [url]&lt;/td>&lt;/tr>
+ *   &lt;tr>&lt;td>g:&lt;/td>&lt;td>-g [string]&lt;/td>&lt;/tr>
+ * &lt;/table>
+ * 
+ * &lt;p>
+ * For example, the following allows command line flags of '-v -p string-value -f /dir/file'.
+ * The exclamation mark precede a mandatory option.
+ * &lt;/p>
+ *
+ * &lt;pre>
+ *     Options options = PatternOptionBuilder.parsePattern("vp:!f/");
+ * &lt;/pre>
+ *
+ * &lt;p>
+ * TODO: These need to break out to OptionType and also to be pluggable.
+ * &lt;/p>
+ *
+ * @version $Id: PatternOptionBuilder.java 1677406 2015-05-03 14:27:31Z britter $
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>57</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l57s0'>public class PatternOptionBuilder</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>58</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>59</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** String class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>60</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l60s0'>    public static final Class&lt;String> STRING_VALUE = String.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>62</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** Object class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>63</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l63s0'>    public static final Class&lt;Object> OBJECT_VALUE = Object.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>65</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** Number class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>66</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l66s0'>    public static final Class&lt;Number> NUMBER_VALUE = Number.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>68</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** Date class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>69</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l69s0'>    public static final Class&lt;Date> DATE_VALUE = Date.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>71</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** Class class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>72</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l72s0'>    public static final Class&lt;?> CLASS_VALUE = Class.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>74</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /// can we do this one??</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>75</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // is meant to check that the file exists, else it errors.</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>76</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // ie) it's for reading not writing.</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>78</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** FileInputStream class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l79s0'>    public static final Class&lt;FileInputStream> EXISTING_FILE_VALUE = FileInputStream.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>81</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** File class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l82s0'>    public static final Class&lt;File> FILE_VALUE = File.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>84</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** File array class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>85</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l85s0'>    public static final Class&lt;File[]> FILES_VALUE = File[].class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>87</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** URL class */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l88s0'>    public static final Class&lt;URL> URL_VALUE = URL.class;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Retrieve the class that &lt;code>ch&lt;/code> represents.
+     *
+     * @param ch the specified character
+     * @return The class that &lt;code>ch&lt;/code> represents
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Object getValueClass(char ch)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l98s0'>        switch (ch)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '@':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>101</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l101s0'>                return PatternOptionBuilder.OBJECT_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case ':':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>103</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l103s0'>                return PatternOptionBuilder.STRING_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>104</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '%':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>105</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l105s0'>                return PatternOptionBuilder.NUMBER_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>106</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '+':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>107</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l107s0'>                return PatternOptionBuilder.CLASS_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>108</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '#':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>109</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l109s0'>                return PatternOptionBuilder.DATE_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>110</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '&lt;':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l111s0'>                return PatternOptionBuilder.EXISTING_FILE_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>112</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '>':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l113s0'>                return PatternOptionBuilder.FILE_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '*':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>115</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l115s0'>                return PatternOptionBuilder.FILES_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>116</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case '/':</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>117</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l117s0'>                return PatternOptionBuilder.URL_VALUE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>118</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>120</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l120s0'>        return null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>121</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns whether &lt;code>ch&lt;/code> is a value code, i.e.
+     * whether it represents a class in a pattern.
+     *
+     * @param ch the specified character
+     * @return true if &lt;code>ch&lt;/code> is a value code, otherwise false.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>130</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static boolean isValueCode(char ch)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>131</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>132</td><td class='count'>48</td>
+      <td><pre class='prettyprint jmp'>        <span id='l132s0' title='Executions: 48' class='covered'>return ch == '@'</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == ':'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>134</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '%'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>135</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '+'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>136</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '#'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>137</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '&lt;'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>138</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '>'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>139</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '*'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>140</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '/'</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>141</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                || ch == '!';</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>142</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the {@link Options} instance represented by &lt;code>pattern&lt;/code>.
+     *
+     * @param pattern the pattern string
+     * @return The {@link Options} instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>150</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Options parsePattern(String pattern)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>151</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>152</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l152s0'>        char opt = ' ';</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>153</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l153s0'>        boolean required = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>154</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l154s0'>        Class&lt;?> type = null;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>156</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l156s0'>        Options options = new Options();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>158</td><td class='count'>57</td>
+      <td><pre class='prettyprint jmp'>        <span id='l158s0' title='Executions: 57' class='covered'>for (int i = 0</span>; i &lt; pattern.length(); i++)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>159</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>160</td><td class='count'>48</td>
+      <td><pre class='prettyprint covered' id='l160s0'>            char ch = pattern.charAt(i);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>162</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // a value code comes after an option and specifies</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>163</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // details about it</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>164</td><td class='count'>48</td>
+      <td><pre class='prettyprint jmp'>            <span id='l164s0' title='Executions: 48' class='covered'>if (!isValueCode(ch))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>165</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>166</td><td class='count'>26</td>
+      <td><pre class='prettyprint jmp'>                <span id='l166s0' title='Executions: 26' class='covered'>if (opt != ' ')</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>167</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td class='count'>18</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l168s0' title='Executions: 18' class='covered'>final Option option = Option.builder(String.valueOf(opt))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l169s0'>                        .hasArg(type != null)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>170</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l170s0'>                        .required(required)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>171</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l171s0'>                        .type(type)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>172</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l172s0'>                        .build();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>174</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // we have a previous one to deal with</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l175s0'>                    options.addOption(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>176</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l176s0'>                    required = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>177</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l177s0'>                    type = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>178</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l178s0'>                    opt = ' ';</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>179</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>181</td><td class='count'>26</td>
+      <td><pre class='prettyprint covered' id='l181s0'>                opt = ch;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>182</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>183</td><td class='count'>22</td>
+      <td><pre class='prettyprint jmp'>            else <span id='l183s0' title='Executions: 22' class='covered'>if (ch == '!')</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>184</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>185</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l185s0'>                required = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>186</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>187</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>188</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>189</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l189s0'>                type = (Class&lt;?>) getValueClass(ch);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>190</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>191</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>193</td><td class='count'>9</td>
+      <td><pre class='prettyprint jmp'>        <span id='l193s0' title='Executions: 9' class='covered'>if (opt != ' ')</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>194</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>195</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>            <span id='l195s0' title='Executions: 8' class='covered'>final Option option = Option.builder(String.valueOf(opt))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>196</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l196s0'>                .hasArg(type != null)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>197</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l197s0'>                .required(required)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>198</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l198s0'>                .type(type)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>199</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l199s0'>                .build();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>201</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // we have a final one to deal with</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>202</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l202s0'>            options.addOption(option);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>203</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>205</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l205s0'>        return options;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>206</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>207</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

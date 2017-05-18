@@ -1,0 +1,2758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HelpFormatter.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/HelpFormatter.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * A formatter of help messages for command line options.
+ *
+ * &lt;p>Example:&lt;/p>
+ * 
+ * &lt;pre>
+ * Options options = new Options();
+ * options.addOption(OptionBuilder.withLongOpt("file")
+ *                                .withDescription("The file to be processed")
+ *                                .hasArg()
+ *                                .withArgName("FILE")
+ *                                .isRequired()
+ *                                .create('f'));
+ * options.addOption(OptionBuilder.withLongOpt("version")
+ *                                .withDescription("Print the version of the application")
+ *                                .create('v'));
+ * options.addOption(OptionBuilder.withLongOpt("help").create('h'));
+ * 
+ * String header = "Do something useful with an input file\n\n";
+ * String footer = "\nPlease report issues at http://example.com/issues";
+ * 
+ * HelpFormatter formatter = new HelpFormatter();
+ * formatter.printHelp("myapp", header, options, footer, true);
+ * &lt;/pre>
+ * 
+ * This produces the following output:
+ * 
+ * &lt;pre>
+ * usage: myapp -f &lt;FILE&gt; [-h] [-v]
+ * Do something useful with an input file
+ * 
+ *  -f,--file &lt;FILE&gt;   The file to be processed
+ *  -h,--help
+ *  -v,--version       Print the version of the application
+ * 
+ * Please report issues at http://example.com/issues
+ * &lt;/pre>
+ * 
+ * @version $Id: HelpFormatter.java 1677407 2015-05-03 14:31:12Z britter $
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>73</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l73s0'>public class HelpFormatter</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>74</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>75</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // --------------------------------------------------------------- Constants</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>77</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** default number of characters per line */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>78</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final int DEFAULT_WIDTH = 74;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>80</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** default padding to the left of each line */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final int DEFAULT_LEFT_PAD = 1;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>83</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** number of space characters to be prefixed to each description line */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>84</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final int DEFAULT_DESC_PAD = 3;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>86</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** the string to display at the beginning of the usage statement */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>87</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final String DEFAULT_SYNTAX_PREFIX = "usage: ";</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>89</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** default prefix for shortOpts */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>90</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final String DEFAULT_OPT_PREFIX = "-";</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>92</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** default prefix for long Option */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>93</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final String DEFAULT_LONG_OPT_PREFIX = "--";</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * default separator displayed between a long Option and its value
+     * 
+     * @since 1.3
+     **/</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final String DEFAULT_LONG_OPT_SEPARATOR = " ";</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>102</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** default name for an argument */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>103</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static final String DEFAULT_ARG_NAME = "arg";</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>105</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // -------------------------------------------------------------- Attributes</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * number of characters per line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setWidth methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l113s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int defaultWidth = DEFAULT_WIDTH;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * amount of padding to the left of each line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLeftPadding methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>122</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l122s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>123</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int defaultLeftPad = DEFAULT_LEFT_PAD;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the number of characters of padding to be prefixed
+     * to each description line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setDescPadding methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>132</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l132s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int defaultDescPad = DEFAULT_DESC_PAD;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the string to display at the beginning of the usage statement
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setSyntaxPrefix methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>141</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l141s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>142</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the new line string
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setNewLine methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>150</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l150s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>151</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l151s0'>    public String defaultNewLine = System.getProperty("line.separator");</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the shortOpt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setOptPrefix methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>159</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l159s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>160</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String defaultOptPrefix = DEFAULT_OPT_PREFIX;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the long Opt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLongOptPrefix methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l168s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * the name of the argument
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setArgName methods instead.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>177</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l177s0'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>178</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String defaultArgName = DEFAULT_ARG_NAME;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Comparator used to sort the options when they output in help text
+     * 
+     * Defaults to case-insensitive alphabetical sorting by option key
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>185</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l185s0'>    protected Comparator&lt;Option> optionComparator = new OptionComparator();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>187</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The separator displayed between the long option and its value. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>188</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l188s0'>    private String longOptSeparator = DEFAULT_LONG_OPT_SEPARATOR;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'width'.
+     *
+     * @param width the new value of 'width'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>195</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setWidth(int width)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>196</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>197</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l197s0'>        this.defaultWidth = width;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>198</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l198s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'width'.
+     *
+     * @return the 'width'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>205</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int getWidth()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>206</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>207</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l207s0'>        return defaultWidth;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>208</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'leftPadding'.
+     *
+     * @param padding the new value of 'leftPadding'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>215</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setLeftPadding(int padding)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>216</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>217</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l217s0'>        this.defaultLeftPad = padding;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>218</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l218s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'leftPadding'.
+     *
+     * @return the 'leftPadding'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>225</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int getLeftPadding()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>226</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>227</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l227s0'>        return defaultLeftPad;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>228</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'descPadding'.
+     *
+     * @param padding the new value of 'descPadding'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>235</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setDescPadding(int padding)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>236</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>237</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l237s0'>        this.defaultDescPad = padding;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>238</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l238s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'descPadding'.
+     *
+     * @return the 'descPadding'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>245</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int getDescPadding()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>246</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>247</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l247s0'>        return defaultDescPad;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>248</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'syntaxPrefix'.
+     *
+     * @param prefix the new value of 'syntaxPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>255</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setSyntaxPrefix(String prefix)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>256</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>257</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l257s0'>        this.defaultSyntaxPrefix = prefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>258</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l258s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'syntaxPrefix'.
+     *
+     * @return the 'syntaxPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>265</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getSyntaxPrefix()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>266</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>267</td><td class='count'>30</td>
+      <td><pre class='prettyprint covered' id='l267s0'>        return defaultSyntaxPrefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>268</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'newLine'.
+     *
+     * @param newline the new value of 'newLine'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>275</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setNewLine(String newline)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>276</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>277</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l277s0'>        this.defaultNewLine = newline;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>278</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l278s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'newLine'.
+     *
+     * @return the 'newLine'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>285</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getNewLine()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>286</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>287</td><td class='count'>156</td>
+      <td><pre class='prettyprint covered' id='l287s0'>        return defaultNewLine;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>288</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'optPrefix'.
+     *
+     * @param prefix the new value of 'optPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>295</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setOptPrefix(String prefix)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>296</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>297</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l297s0'>        this.defaultOptPrefix = prefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>298</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l298s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'optPrefix'.
+     *
+     * @return the 'optPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>305</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getOptPrefix()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>306</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>307</td><td class='count'>71</td>
+      <td><pre class='prettyprint covered' id='l307s0'>        return defaultOptPrefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>308</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'longOptPrefix'.
+     *
+     * @param prefix the new value of 'longOptPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>315</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setLongOptPrefix(String prefix)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>316</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>317</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l317s0'>        this.defaultLongOptPrefix = prefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>318</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l318s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'longOptPrefix'.
+     *
+     * @return the 'longOptPrefix'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>325</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getLongOptPrefix()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>326</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>327</td><td class='count'>69</td>
+      <td><pre class='prettyprint covered' id='l327s0'>        return defaultLongOptPrefix;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>328</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Set the separator displayed between a long option and its value.
+     * Ensure that the separator specified is supported by the parser used,
+     * typically ' ' or '='.
+     * 
+     * @param longOptSeparator the separator, typically ' ' or '='.
+     * @since 1.3
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>338</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setLongOptSeparator(String longOptSeparator)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>339</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>340</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l340s0'>        this.longOptSeparator = longOptSeparator;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>341</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l341s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the separator displayed between a long option and its value.
+     * 
+     * @return the separator
+     * @since 1.3
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>349</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getLongOptSeparator()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>350</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>351</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l351s0'>        return longOptSeparator;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>352</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Sets the 'argName'.
+     *
+     * @param name the new value of 'argName'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>359</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setArgName(String name)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>360</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>361</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l361s0'>        this.defaultArgName = name;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>362</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l362s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the 'argName'.
+     *
+     * @return the 'argName'
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>369</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getArgName()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>370</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>371</td><td class='count'>43</td>
+      <td><pre class='prettyprint covered' id='l371s0'>        return defaultArgName;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>372</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Comparator used to sort the options when they output in help text.
+     * Defaults to case-insensitive alphabetical sorting by option key.
+     *
+     * @return the {@link Comparator} currently in use to sort the options
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>381</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Comparator&lt;Option> getOptionComparator()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>382</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>383</td><td class='count'>68</td>
+      <td><pre class='prettyprint covered' id='l383s0'>        return optionComparator;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>384</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Set the comparator used to sort the options when they output in help text.
+     * Passing in a null comparator will keep the options in the order they were declared.
+     *
+     * @param comparator the {@link Comparator} to use for sorting the options
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>393</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void setOptionComparator(Comparator&lt;Option> comparator)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>394</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>395</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l395s0'>        this.optionComparator = comparator;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>396</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l396s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>406</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(String cmdLineSyntax, Options options)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>407</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>408</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l408s0'>        printHelp(getWidth(), cmdLineSyntax, null, options, null, false);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>409</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l409s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>421</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(String cmdLineSyntax, Options options, boolean autoUsage)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>422</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>423</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l423s0'>        printHelp(getWidth(), cmdLineSyntax, null, options, null, autoUsage);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>424</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l424s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>436</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(String cmdLineSyntax, String header, Options options, String footer)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>437</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>438</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l438s0'>        printHelp(cmdLineSyntax, header, options, footer, false);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>439</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l439s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>453</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(String cmdLineSyntax, String header, Options options, String footer, boolean autoUsage)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>454</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>455</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l455s0'>        printHelp(getWidth(), cmdLineSyntax, header, options, footer, autoUsage);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>456</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l456s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>469</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(int width, String cmdLineSyntax, String header, Options options, String footer)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>470</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>471</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l471s0'>        printHelp(width, cmdLineSyntax, header, options, footer, false);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>472</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l472s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated 
+     * usage statement
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>487</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(int width, String cmdLineSyntax, String header,</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>488</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                          Options options, String footer, boolean autoUsage)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>489</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>490</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l490s0'>        PrintWriter pw = new PrintWriter(System.out);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>492</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l492s0'>        printHelp(pw, width, cmdLineSyntax, header, options, getLeftPadding(), getDescPadding(), footer, autoUsage);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>493</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l493s0'>        pw.flush();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>494</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l494s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.
+     *
+     * @param pw the writer to which the help will be written
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     * @param footer the banner to display at the end of the help
+     *
+     * @throws IllegalStateException if there is no room to print a line
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>513</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax, </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>514</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                          String header, Options options, int leftPad, </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>515</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                          int descPad, String footer)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>516</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>517</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l517s0'>        printHelp(pw, width, cmdLineSyntax, header, options, leftPad, descPad, footer, false);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>518</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l518s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for &lt;code>options&lt;/code> with the specified
+     * command line syntax.
+     *
+     * @param pw the writer to which the help will be written
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     *
+     * @throws IllegalStateException if there is no room to print a line
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>540</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>541</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                          String header, Options options, int leftPad,</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>542</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                          int descPad, String footer, boolean autoUsage)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>543</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>544</td><td class='count'>14</td>
+      <td><pre class='prettyprint jmp'>        <span id='l544s0' title='Executions: 14' class='covered'>if (cmdLineSyntax == null</span> || <span id='l544s1' title='Executions: 13' class='covered'>cmdLineSyntax.length() == 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>545</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>546</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l546s0'>            throw new IllegalArgumentException("cmdLineSyntax not provided");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>547</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>549</td><td class='count'>12</td>
+      <td><pre class='prettyprint jmp'>        <span id='l549s0' title='Executions: 12' class='covered'>if (autoUsage)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>550</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>551</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l551s0'>            printUsage(pw, width, cmdLineSyntax, options);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>552</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>553</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>554</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>555</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l555s0'>            printUsage(pw, width, cmdLineSyntax);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>556</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>558</td><td class='count'>12</td>
+      <td><pre class='prettyprint jmp'>        <span id='l558s0' title='Executions: 12' class='covered'>if (header != null</span> && <span id='l558s1' title='Executions: 8' class='covered'>header.trim().length() > 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>559</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>560</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l560s0'>            printWrapped(pw, width, header);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>561</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>563</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l563s0'>        printOptions(pw, width, options, leftPad, descPad);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>565</td><td class='count'>12</td>
+      <td><pre class='prettyprint jmp'>        <span id='l565s0' title='Executions: 12' class='covered'>if (footer != null</span> && <span id='l565s1' title='Executions: 8' class='covered'>footer.trim().length() > 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>566</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>567</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l567s0'>            printWrapped(pw, width, footer);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>568</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>569</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l569s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Prints the usage statement for the specified application.
+     *
+     * @param pw The PrintWriter to print the usage statement 
+     * @param width The number of characters to display per line
+     * @param app The application name
+     * @param options The command line Options
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>579</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printUsage(PrintWriter pw, int width, String app, Options options)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>580</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>581</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // initialise the string buffer</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>582</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l582s0'>        StringBuffer buff = new StringBuffer(getSyntaxPrefix()).append(app).append(" ");</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>584</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // create a list for processed option groups</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>585</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l585s0'>        Collection&lt;OptionGroup> processedGroups = new ArrayList&lt;OptionGroup>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>587</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l587s0'>        List&lt;Option> optList = new ArrayList&lt;Option>(options.getOptions());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>588</td><td class='count'>15</td>
+      <td><pre class='prettyprint jmp'>        <span id='l588s0' title='Executions: 15' class='covered'>if (getOptionComparator() != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>589</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>590</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l590s0'>            Collections.sort(optList, getOptionComparator());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>591</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>592</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // iterate over the options</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>593</td><td class='count'>15</td>
+      <td><pre class='prettyprint jmp'>        <span id='l593s0' title='Executions: 15' class='covered'>for (Iterator&lt;Option> it = optList.iterator(); it.hasNext();)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>594</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>595</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // get the next Option</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>596</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l596s0'>            Option option = it.next();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>598</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // check if the option is part of an OptionGroup</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>599</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l599s0'>            OptionGroup group = options.getOptionGroup(option);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>601</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // if the option is part of a group </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>602</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>            <span id='l602s0' title='Executions: 38' class='covered'>if (group != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>603</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>604</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // and if the group has not already been processed</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>605</td><td class='count'>6</td>
+      <td><pre class='prettyprint jmp'>                <span id='l605s0' title='Executions: 6' class='covered'>if (!processedGroups.contains(group))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>606</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>607</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // add the group to the processed list</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>608</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l608s0'>                    processedGroups.add(group);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>611</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // add the usage clause</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>612</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l612s0'>                    appendOptionGroup(buff, group);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>613</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>615</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // otherwise the option was displayed in the group</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>616</td><td>&nbsp;</td>
+      <td><pre class='comment'>                // previously so ignore it.</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>617</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>619</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // if the Option is not part of an OptionGroup</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>620</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>621</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>622</td><td class='count'>32</td>
+      <td><pre class='prettyprint covered' id='l622s0'>                appendOption(buff, option, option.isRequired());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>623</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>625</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>            <span id='l625s0' title='Executions: 38' class='covered'>if (it.hasNext())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>626</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>627</td><td class='count'>25</td>
+      <td><pre class='prettyprint covered' id='l627s0'>                buff.append(" ");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>628</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>629</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l629s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>632</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // call printWrapped</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>633</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l633s0'>        printWrapped(pw, width, buff.toString().indexOf(' ') + 1, buff.toString());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>634</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l634s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Appends the usage clause for an OptionGroup to a StringBuffer.  
+     * The clause is wrapped in square brackets if the group is required.
+     * The display of the options is handled by appendOption
+     * @param buff the StringBuffer to append to
+     * @param group the group to append
+     * @see #appendOption(StringBuffer,Option,boolean)
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>644</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void appendOptionGroup(StringBuffer buff, OptionGroup group)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>645</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>646</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l646s0' title='Executions: 2' class='covered'>if (!group.isRequired())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>647</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>648</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l648s0'>            buff.append("[");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>649</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>651</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l651s0'>        List&lt;Option> optList = new ArrayList&lt;Option>(group.getOptions());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>652</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l652s0' title='Executions: 2' class='covered'>if (getOptionComparator() != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>653</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>654</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l654s0'>            Collections.sort(optList, getOptionComparator());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>655</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>656</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // for each option in the OptionGroup</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>657</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l657s0' title='Executions: 2' class='covered'>for (Iterator&lt;Option> it = optList.iterator(); it.hasNext();)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>658</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>659</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // whether the option is required or not is handled at group level</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>660</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l660s0'>            appendOption(buff, it.next(), true);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>662</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l662s0'>            if (it.hasNext())</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>663</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>664</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l664s0'>                buff.append(" | ");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>665</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>666</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>668</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l668s0' title='Executions: 2' class='covered'>if (!group.isRequired())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>669</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>670</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l670s0'>            buff.append("]");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>671</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>672</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l672s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Appends the usage clause for an Option to a StringBuffer.  
+     *
+     * @param buff the StringBuffer to append to
+     * @param option the Option to append
+     * @param required whether the Option is required or not
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>681</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private void appendOption(StringBuffer buff, Option option, boolean required)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>682</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>683</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>        <span id='l683s0' title='Executions: 38' class='covered'>if (!required)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>684</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>685</td><td class='count'>30</td>
+      <td><pre class='prettyprint covered' id='l685s0'>            buff.append("[");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>686</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>688</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>        <span id='l688s0' title='Executions: 38' class='covered'>if (option.getOpt() != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>689</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>690</td><td class='count'>34</td>
+      <td><pre class='prettyprint covered' id='l690s0'>            buff.append("-").append(option.getOpt());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>691</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>692</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>693</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>694</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l694s0'>            buff.append("--").append(option.getLongOpt());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>695</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>697</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if the Option has a value and a non blank argname</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>698</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>        <span id='l698s0' title='Executions: 38' class='covered'>if (option.hasArg()</span> && (<span id='l698s1' title='Executions: 10' class='covered'>option.getArgName() == null</span> || <span id='l698s2' title='Executions: 0' class='uncovered'>option.getArgName().length() != 0))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>699</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>700</td><td class='count'>9</td>
+      <td><pre class='prettyprint jmp'>            <span id='l700s0' title='Executions: 9' class='covered'>buff.append(option.getOpt() == null</span> ? <span id='l700s1' title='Executions: 2' class='covered'>longOptSeparator</span> : <span id='l700s2' title='Executions: 7' class='covered'>" ");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>701</td><td class='count'>9</td>
+      <td><pre class='prettyprint jmp'>            <span id='l701s0' title='Executions: 9' class='covered'>buff.append("&lt;").append(option.getArgName() != null</span> ? <span id='l701s1' title='Executions: 1' class='covered'>option.getArgName()</span> : <span id='l701s2' title='Executions: 8' class='covered'>getArgName()).append(">");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>702</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>704</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if the Option is not a required option</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>705</td><td class='count'>38</td>
+      <td><pre class='prettyprint jmp'>        <span id='l705s0' title='Executions: 38' class='covered'>if (!required)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>706</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>707</td><td class='count'>30</td>
+      <td><pre class='prettyprint covered' id='l707s0'>            buff.append("]");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>708</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>709</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l709s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the cmdLineSyntax to the specified writer, using the
+     * specified width.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters per line for the usage statement.
+     * @param cmdLineSyntax The usage statement.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>719</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printUsage(PrintWriter pw, int width, String cmdLineSyntax)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>720</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>721</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l721s0'>        int argPos = cmdLineSyntax.indexOf(' ') + 1;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>723</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l723s0'>        printWrapped(pw, width, getSyntaxPrefix().length() + argPos, getSyntaxPrefix() + cmdLineSyntax);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>724</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l724s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the help for the specified Options to the specified writer, 
+     * using the specified width, left padding and description padding.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param options The command line Options
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>738</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printOptions(PrintWriter pw, int width, Options options, </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>739</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                             int leftPad, int descPad)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>740</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>741</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l741s0'>        StringBuffer sb = new StringBuffer();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>743</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l743s0'>        renderOptions(sb, width, options, leftPad, descPad);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>744</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l744s0'>        pw.println(sb.toString());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>745</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l745s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the specified text to the specified PrintWriter.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param text The text to be written to the PrintWriter
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>754</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printWrapped(PrintWriter pw, int width, String text)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>755</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>756</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l756s0'>        printWrapped(pw, width, 0, text);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>757</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l757s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Print the specified text to the specified PrintWriter.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param nextLineTabStop The position on the next line for the first tab.
+     * @param text The text to be written to the PrintWriter
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>767</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void printWrapped(PrintWriter pw, int width, int nextLineTabStop, String text)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>768</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>769</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l769s0'>        StringBuffer sb = new StringBuffer(text.length());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>771</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l771s0'>        renderWrappedTextBlock(sb, width, nextLineTabStop, text);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>772</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l772s0'>        pw.println(sb.toString());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>773</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l773s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>775</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // --------------------------------------------------------------- Protected</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Render the specified Options and return the rendered Options
+     * in a StringBuffer.
+     *
+     * @param sb The StringBuffer to place the rendered Options into.
+     * @param width The number of characters to display per line
+     * @param options The command line Options
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     *
+     * @return the StringBuffer with the rendered Options contents.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>791</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected StringBuffer renderOptions(StringBuffer sb, int width, Options options, int leftPad, int descPad)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>792</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>793</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l793s0'>        final String lpad = createPadding(leftPad);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>794</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l794s0'>        final String dpad = createPadding(descPad);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>796</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // first create list containing only &lt;lpad>-a,--aaa where </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>797</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // -a is opt and --aaa is long opt; in parallel look for </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>798</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // the longest opt string this list will be then used to </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>799</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // sort options ascending</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>800</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l800s0'>        int max = 0;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>801</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l801s0'>        List&lt;StringBuffer> prefixList = new ArrayList&lt;StringBuffer>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>803</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l803s0'>        List&lt;Option> optList = options.helpOptions();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>805</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>        <span id='l805s0' title='Executions: 17' class='covered'>if (getOptionComparator() != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>806</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>807</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l807s0'>            Collections.sort(optList, getOptionComparator());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>808</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>810</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>        <span id='l810s0' title='Executions: 17' class='covered'>for (Option option</span> : <span id='l810s1' title='Executions: 75' class='covered'>optList)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>811</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>812</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l812s0'>            StringBuffer optBuf = new StringBuffer();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>814</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l814s0' title='Executions: 75' class='covered'>if (option.getOpt() == null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>815</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>816</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l816s0'>                optBuf.append(lpad).append("   ").append(getLongOptPrefix()).append(option.getLongOpt());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>817</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>818</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>819</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>820</td><td class='count'>70</td>
+      <td><pre class='prettyprint covered' id='l820s0'>                optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>822</td><td class='count'>70</td>
+      <td><pre class='prettyprint jmp'>                <span id='l822s0' title='Executions: 70' class='covered'>if (option.hasLongOpt())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>823</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>824</td><td class='count'>63</td>
+      <td><pre class='prettyprint covered' id='l824s0'>                    optBuf.append(',').append(getLongOptPrefix()).append(option.getLongOpt());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>825</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>826</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>828</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l828s0' title='Executions: 75' class='covered'>if (option.hasArg())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>829</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>830</td><td class='count'>35</td>
+      <td><pre class='prettyprint covered' id='l830s0'>                String argName = option.getArgName();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>831</td><td class='count'>35</td>
+      <td><pre class='prettyprint jmp'>                <span id='l831s0' title='Executions: 35' class='covered'>if (argName != null</span> && <span id='l831s1' title='Executions: 1' class='covered'>argName.length() == 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>832</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>833</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // if the option has a blank argname</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>834</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l834s0'>                    optBuf.append(' ');</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>835</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>836</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>837</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>838</td><td class='count'>35</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l838s0' title='Executions: 35' class='covered'>optBuf.append(option.hasLongOpt()</span> ? <span id='l838s1' title='Executions: 33' class='covered'>longOptSeparator</span> : <span id='l838s2' title='Executions: 2' class='covered'>" ");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>839</td><td class='count'>35</td>
+      <td><pre class='prettyprint jmp'>                    <span id='l839s0' title='Executions: 35' class='covered'>optBuf.append("&lt;").append(argName != null</span> ? <span id='l839s1' title='Executions: 1' class='covered'>option.getArgName()</span> : <span id='l839s2' title='Executions: 34' class='covered'>getArgName()).append(">");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>840</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>841</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>843</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l843s0'>            prefixList.add(optBuf);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>844</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l844s0' title='Executions: 75' class='covered'>max = optBuf.length() > max</span> ? <span id='l844s1' title='Executions: 28' class='covered'>optBuf.length()</span> : <span id='l844s2' title='Executions: 47' class='covered'>max;</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>845</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l845s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>847</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l847s0'>        int x = 0;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>849</td><td class='count'>17</td>
+      <td><pre class='prettyprint jmp'>        <span id='l849s0' title='Executions: 17' class='covered'>for (Iterator&lt;Option> it = optList.iterator(); it.hasNext();)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>850</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>851</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l851s0'>            Option option = it.next();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>852</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l852s0'>            StringBuilder optBuf = new StringBuilder(prefixList.get(x++).toString());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>854</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l854s0' title='Executions: 75' class='covered'>if (optBuf.length() &lt; max)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>855</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>856</td><td class='count'>56</td>
+      <td><pre class='prettyprint covered' id='l856s0'>                optBuf.append(createPadding(max - optBuf.length()));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>857</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>859</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l859s0'>            optBuf.append(dpad);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>861</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l861s0'>            int nextLineTabStop = max + descPad;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>863</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l863s0' title='Executions: 75' class='covered'>if (option.getDescription() != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>864</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>865</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l865s0'>                optBuf.append(option.getDescription());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>866</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>868</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l868s0'>            renderWrappedText(sb, width, nextLineTabStop, optBuf.toString());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>870</td><td class='count'>75</td>
+      <td><pre class='prettyprint jmp'>            <span id='l870s0' title='Executions: 75' class='covered'>if (it.hasNext())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>871</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>872</td><td class='count'>60</td>
+      <td><pre class='prettyprint covered' id='l872s0'>                sb.append(getNewLine());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>873</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>874</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l874s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>876</td><td class='count'>17</td>
+      <td><pre class='prettyprint covered' id='l876s0'>        return sb;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>877</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Render the specified text and return the rendered Options
+     * in a StringBuffer.
+     *
+     * @param sb The StringBuffer to place the rendered text into.
+     * @param width The number of characters to display per line
+     * @param nextLineTabStop The position on the next line for the first tab.
+     * @param text The text to be rendered.
+     *
+     * @return the StringBuffer with the rendered Options contents.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>890</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected StringBuffer renderWrappedText(StringBuffer sb, int width, </pre></td>
+    </tr>
+    <tr>
+      <td class='line'>891</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                                             int nextLineTabStop, String text)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>892</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>893</td><td class='count'>121</td>
+      <td><pre class='prettyprint covered' id='l893s0'>        int pos = findWrapPos(text, width, 0);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>895</td><td class='count'>121</td>
+      <td><pre class='prettyprint jmp'>        <span id='l895s0' title='Executions: 121' class='covered'>if (pos == -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>896</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>897</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l897s0'>            sb.append(rtrim(text));</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>899</td><td class='count'>75</td>
+      <td><pre class='prettyprint covered' id='l899s0'>            return sb;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>900</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>901</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l901s0'>        sb.append(rtrim(text.substring(0, pos))).append(getNewLine());</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>903</td><td class='count'>46</td>
+      <td><pre class='prettyprint jmp'>        <span id='l903s0' title='Executions: 46' class='covered'>if (nextLineTabStop >= width)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>904</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>905</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // stops infinite loop happening</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>906</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l906s0'>            nextLineTabStop = 1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>907</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>909</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // all following lines must be padded with nextLineTabStop space characters</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>910</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l910s0'>        final String padding = createPadding(nextLineTabStop);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>912</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        while (true)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>913</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>914</td><td class='count'>91</td>
+      <td><pre class='prettyprint covered' id='l914s0'>            text = padding + text.substring(pos).trim();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>915</td><td class='count'>91</td>
+      <td><pre class='prettyprint covered' id='l915s0'>            pos = findWrapPos(text, width, 0);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>917</td><td class='count'>91</td>
+      <td><pre class='prettyprint jmp'>            <span id='l917s0' title='Executions: 91' class='covered'>if (pos == -1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>918</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>919</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l919s0'>                sb.append(text);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>921</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l921s0'>                return sb;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>922</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>924</td><td class='count'>45</td>
+      <td><pre class='prettyprint jmp'>            <span id='l924s0' title='Executions: 45' class='covered'>if (text.length() > width</span> && <span id='l924s1' title='Executions: 43' class='covered'>pos == nextLineTabStop - 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>925</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>926</td><td class='count'>14</td>
+      <td><pre class='prettyprint covered' id='l926s0'>                pos = width;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>927</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>929</td><td class='count'>45</td>
+      <td><pre class='prettyprint covered' id='l929s0'>            sb.append(rtrim(text.substring(0, pos))).append(getNewLine());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>930</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>931</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Render the specified text width a maximum width. This method differs
+     * from renderWrappedText by not removing leading spaces after a new line.
+     *
+     * @param sb The StringBuffer to place the rendered text into.
+     * @param width The number of characters to display per line
+     * @param nextLineTabStop The position on the next line for the first tab.
+     * @param text The text to be rendered.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>942</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private Appendable renderWrappedTextBlock(StringBuffer sb, int width, int nextLineTabStop, String text)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>943</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>944</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>945</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>946</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l946s0'>            BufferedReader in = new BufferedReader(new StringReader(text));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>947</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            String line;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>948</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l948s0'>            boolean firstLine = true;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>949</td><td class='count'>76</td>
+      <td><pre class='prettyprint jmp'>            <span id='l949s0' title='Executions: 76' class='covered'>while ((line = in.readLine()) != null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>950</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>951</td><td class='count'>40</td>
+      <td><pre class='prettyprint jmp'>                <span id='l951s0' title='Executions: 40' class='covered'>if (!firstLine)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>952</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>953</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l953s0'>                    sb.append(getNewLine());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>954</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>955</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                else</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>956</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>957</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l957s0'>                    firstLine = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>958</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>959</td><td class='count'>40</td>
+      <td><pre class='prettyprint covered' id='l959s0'>                renderWrappedText(sb, width, nextLineTabStop, line);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>960</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>961</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>962</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l962s0'>        catch (IOException e) //NOPMD</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>963</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>964</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // cannot happen</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>965</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l965s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>967</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l967s0'>        return sb;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>968</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Finds the next text wrap position after &lt;code>startPos&lt;/code> for the
+     * text in &lt;code>text&lt;/code> with the column width &lt;code>width&lt;/code>.
+     * The wrap point is the last position before startPos+width having a 
+     * whitespace character (space, \n, \r). If there is no whitespace character
+     * before startPos+width, it will return startPos+width.
+     *
+     * @param text The text being searched for the wrap position
+     * @param width width of the wrapped text
+     * @param startPos position from which to start the lookup whitespace
+     * character
+     * @return position on which the text must be wrapped or -1 if the wrap
+     * position is at the end of the text
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>984</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected int findWrapPos(String text, int width, int startPos)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>985</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>986</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // the line ends before the max wrap pos or a new line char found</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>987</td><td class='count'>219</td>
+      <td><pre class='prettyprint covered' id='l987s0'>        int pos = text.indexOf('\n', startPos);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>988</td><td class='count'>219</td>
+      <td><pre class='prettyprint jmp'>        <span id='l988s0' title='Executions: 219' class='covered'>if (pos != -1</span> && <span id='l988s1' title='Executions: 8' class='covered'>pos &lt;= width)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>989</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>990</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l990s0'>            return pos + 1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>991</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>993</td><td class='count'>212</td>
+      <td><pre class='prettyprint covered' id='l993s0'>        pos = text.indexOf('\t', startPos);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>994</td><td class='count'>212</td>
+      <td><pre class='prettyprint jmp'>        <span id='l994s0' title='Executions: 212' class='covered'>if (pos != -1</span> && <span id='l994s1' title='Executions: 1' class='covered'>pos &lt;= width)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>995</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>996</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l996s0'>            return pos + 1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>997</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>999</td><td class='count'>211</td>
+      <td><pre class='prettyprint jmp'>        <span id='l999s0' title='Executions: 211' class='covered'>if (startPos + width >= text.length())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1000</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1001</td><td class='count'>123</td>
+      <td><pre class='prettyprint covered' id='l1001s0'>            return -1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1002</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1004</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // look for the last whitespace character before startPos+width</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1005</td><td class='count'>663</td>
+      <td><pre class='prettyprint jmp'>        <span id='l1005s0' title='Executions: 663' class='covered'>for (pos = startPos + width</span>; pos >= startPos; --pos)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1006</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1007</td><td class='count'>661</td>
+      <td><pre class='prettyprint covered' id='l1007s0'>            final char c = text.charAt(pos);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1008</td><td class='count'>661</td>
+      <td><pre class='prettyprint jmp'>            <span id='l1008s0' title='Executions: 661' class='covered'>if (c == ' '</span> || <span id='l1008s1' title='Executions: 575' class='covered'>c == '\n'</span> || <span id='l1008s2' title='Executions: 0' class='uncovered'>c == '\r')</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1009</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1010</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l1010s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1011</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1012</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1014</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if we found it - just return</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1015</td><td class='count'>88</td>
+      <td><pre class='prettyprint jmp'>        <span id='l1015s0' title='Executions: 88' class='covered'>if (pos > startPos)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1016</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1017</td><td class='count'>86</td>
+      <td><pre class='prettyprint covered' id='l1017s0'>            return pos;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1018</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1020</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // if we didn't find one, simply chop at startPos+width</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1021</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l1021s0'>        pos = startPos + width;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1023</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l1023s0' title='Executions: 2' class='covered'>return pos == text.length()</span> ? <span id='l1023s1' title='Executions: 0' class='uncovered'>-1</span> : <span id='l1023s2' title='Executions: 2' class='covered'>pos;</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1024</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Return a String of padding of length &lt;code>len&lt;/code>.
+     *
+     * @param len The length of the String of padding to create.
+     *
+     * @return The String of padding
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>1033</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected String createPadding(int len)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1034</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1035</td><td class='count'>142</td>
+      <td><pre class='prettyprint covered' id='l1035s0'>        char[] padding = new char[len];</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1036</td><td class='count'>142</td>
+      <td><pre class='prettyprint covered' id='l1036s0'>        Arrays.fill(padding, ' ');</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1038</td><td class='count'>142</td>
+      <td><pre class='prettyprint covered' id='l1038s0'>        return new String(padding);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1039</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Remove the trailing whitespace from the specified String.
+     *
+     * @param s The String to remove the trailing padding from.
+     *
+     * @return The String of without the trailing padding
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>1048</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected String rtrim(String s)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1049</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1050</td><td class='count'>169</td>
+      <td><pre class='prettyprint jmp'>        <span id='l1050s0' title='Executions: 169' class='covered'>if (s == null</span> || <span id='l1050s1' title='Executions: 168' class='covered'>s.length() == 0)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1051</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1052</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l1052s0'>            return s;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1053</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1055</td><td class='count'>166</td>
+      <td><pre class='prettyprint covered' id='l1055s0'>        int pos = s.length();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1057</td><td class='count'>184</td>
+      <td><pre class='prettyprint jmp'>        <span id='l1057s0' title='Executions: 184' class='covered'>while (pos > 0</span> && <span id='l1057s1' title='Executions: 184' class='covered'>Character.isWhitespace(s.charAt(pos - 1)))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1058</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1059</td><td class='count'>18</td>
+      <td><pre class='prettyprint covered' id='l1059s0'>            --pos;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1060</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1062</td><td class='count'>166</td>
+      <td><pre class='prettyprint covered' id='l1062s0'>        return s.substring(0, pos);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1063</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1065</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // ------------------------------------------------------ Package protected</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1066</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // ---------------------------------------------------------------- Private</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1067</td><td>&nbsp;</td>
+      <td><pre class='comment'>    // ---------------------------------------------------------- Inner classes</pre></td>
+    </tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * This class implements the &lt;code>Comparator&lt;/code> interface
+     * for comparing Options.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>1072</td><td class='count'>33</td>
+      <td><pre class='prettyprint covered' id='l1072s0'>    private static class OptionComparator implements Comparator&lt;Option>, Serializable</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1073</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1074</td><td>&nbsp;</td>
+      <td><pre class='comment'>        /** The serial version UID. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1075</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        private static final long serialVersionUID = 5305467873966684014L;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>        /**
+         * Compares its two arguments for order. Returns a negative
+         * integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         *
+         * @param opt1 The first Option to be compared.
+         * @param opt2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as
+         *         the first argument is less than, equal to, or greater than the
+         *         second.
+         */</div><span>        /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>1088</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        public int compare(Option opt1, Option opt2)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1089</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1090</td><td class='count'>246</td>
+      <td><pre class='prettyprint covered' id='l1090s0'>            return opt1.getKey().compareToIgnoreCase(opt2.getKey());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1091</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>1092</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>1094</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

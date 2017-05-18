@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MissingOptionException.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/MissingOptionException.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.util.List;
+import java.util.Iterator;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Thrown when a required option has not been provided.
+ *
+ * @version $Id: MissingOptionException.java 1443102 2013-02-06 18:12:16Z tn $
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>28</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>public class MissingOptionException extends ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>29</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>30</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** This exception {@code serialVersionUID}. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>31</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static final long serialVersionUID = 8161889051578563249L;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>33</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The list of missing options and groups */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>34</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private List missingOptions;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Construct a new &lt;code>MissingSelectedException&lt;/code>
+     * with the specified detail message.
+     *
+     * @param message the detail message
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>42</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public MissingOptionException(String message)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>43</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>44</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l44s0'>        super(message);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>45</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l45s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Constructs a new &lt;code>MissingSelectedException&lt;/code> with the
+     * specified list of missing options.
+     *
+     * @param missingOptions the list of missing options and groups
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>54</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public MissingOptionException(List missingOptions)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>55</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>56</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l56s0'>        this(createMessage(missingOptions));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>57</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l57s0'>        this.missingOptions = missingOptions;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>58</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l58s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns the list of options or option groups missing in the command line parsed.
+     *
+     * @return the missing options, consisting of String instances for simple
+     *         options, and OptionGroup instances for required option groups.
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>67</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public List getMissingOptions()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>68</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>69</td><td class='count'>22</td>
+      <td><pre class='prettyprint covered' id='l69s0'>        return missingOptions;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>70</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Build the exception message from the specified list of options.
+     *
+     * @param missingOptions the list of missing options and groups
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>78</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static String createMessage(List&lt;?> missingOptions)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>80</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l80s0'>        StringBuilder buf = new StringBuilder("Missing required option");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td class='count'>21</td>
+      <td><pre class='prettyprint jmp'>        <span id='l81s0' title='Executions: 21' class='covered'>buf.append(missingOptions.size() == 1</span> ? <span id='l81s1' title='Executions: 16' class='covered'>""</span> : <span id='l81s2' title='Executions: 5' class='covered'>"s");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l82s0'>        buf.append(": ");</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>84</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l84s0'>        Iterator&lt;?> it = missingOptions.iterator();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>85</td><td class='count'>47</td>
+      <td><pre class='prettyprint jmp'>        <span id='l85s0' title='Executions: 47' class='covered'>while (it.hasNext())</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>86</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>87</td><td class='count'>26</td>
+      <td><pre class='prettyprint covered' id='l87s0'>            buf.append(it.next());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td class='count'>26</td>
+      <td><pre class='prettyprint covered' id='l88s0'>            if (it.hasNext())</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>89</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>90</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l90s0'>                buf.append(", ");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>91</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>92</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>94</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l94s0'>        return buf.toString();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>95</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

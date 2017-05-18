@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OptionBuilder.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/OptionBuilder.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * OptionBuilder allows the user to create Options using descriptive methods.
+ * &lt;p>
+ * Details on the Builder pattern can be found at
+ * &lt;a href="http://c2.com/cgi-bin/wiki?BuilderPattern">http://c2.com/cgi-bin/wiki?BuilderPattern&lt;/a>.
+ * &lt;p>
+ * This class is NOT thread safe. See &lt;a href="https://issues.apache.org/jira/browse/CLI-209">CLI-209&lt;/a>
+ * 
+ * @version $Id: OptionBuilder.java 1677400 2015-05-03 13:46:08Z britter $
+ * @since 1.0
+ * @deprecated since 1.3, use {@link Option#builder(String)} instead
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>32</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>@Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>33</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>public final class OptionBuilder</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>34</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>35</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** long option */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>36</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static String longopt;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>38</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** option description */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>39</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static String description;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>41</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** argument name */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>42</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static String argName;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>44</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** is required? */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>45</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static boolean required;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>47</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** the number of arguments */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>48</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l48s0'>    private static int numberOfArgs = Option.UNINITIALIZED;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>50</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** option type */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>51</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static Class&lt;?> type;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>53</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** option can have an optional argument value */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>54</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static boolean optionalArg;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>56</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** value separator for argument value */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>57</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static char valuesep;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>59</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** option builder instance */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>60</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l60s0'>    private static final OptionBuilder INSTANCE = new OptionBuilder();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>62</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    static</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>63</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>64</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // ensure the consistency of the initial values</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>65</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l65s0'>        reset();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>66</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l66s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * private constructor to prevent instances being created
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>71</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private OptionBuilder()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>72</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l72s0'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>73</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // hide the constructor</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>74</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l74s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Resets the member variables to their default values.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static void reset()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>80</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>81</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l81s0'>        description = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>82</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l82s0'>        argName = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>83</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l83s0'>        longopt = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>84</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l84s0'>        type = String.class;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>85</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l85s0'>        required = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>86</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l86s0'>        numberOfArgs = Option.UNINITIALIZED;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>87</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l87s0'>        optionalArg = false;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l88s0'>        valuesep = (char) 0;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>89</td><td class='count'>345</td>
+      <td><pre class='prettyprint covered' id='l89s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will have the following long option value.
+     *
+     * @param newLongopt the long option value
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withLongOpt(String newLongopt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td class='count'>198</td>
+      <td><pre class='prettyprint covered' id='l99s0'>        OptionBuilder.longopt = newLongopt;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>101</td><td class='count'>198</td>
+      <td><pre class='prettyprint covered' id='l101s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>102</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will require an argument value.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>109</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasArg()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>110</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td class='count'>69</td>
+      <td><pre class='prettyprint covered' id='l111s0'>        OptionBuilder.numberOfArgs = 1;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>69</td>
+      <td><pre class='prettyprint covered' id='l113s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will require an argument value if
+     * &lt;code>hasArg&lt;/code> is true.
+     *
+     * @param hasArg if true then the Option has an argument value
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>123</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasArg(boolean hasArg)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>124</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>125</td><td class='count'>6</td>
+      <td><pre class='prettyprint jmp'>        <span id='l125s0' title='Executions: 6' class='covered'>OptionBuilder.numberOfArgs = hasArg</span> ? <span id='l125s1' title='Executions: 1' class='covered'>1</span> : <span id='l125s2' title='Executions: 5' class='covered'>Option.UNINITIALIZED;</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>127</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l127s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>128</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will have the specified argument value name.
+     *
+     * @param name the name for the argument value
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>136</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withArgName(String name)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>137</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>138</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l138s0'>        OptionBuilder.argName = name;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>140</td><td class='count'>8</td>
+      <td><pre class='prettyprint covered' id='l140s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>141</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will be required.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>148</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder isRequired()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>149</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>150</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l150s0'>        OptionBuilder.required = true;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>152</td><td class='count'>38</td>
+      <td><pre class='prettyprint covered' id='l152s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>153</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created uses &lt;code>sep&lt;/code> as a means to
+     * separate argument values.
+     * &lt;p>
+     * &lt;b>Example:&lt;/b>
+     * &lt;pre>
+     * Option opt = OptionBuilder.withValueSeparator('=')
+     *                           .create('D');
+     *
+     * String args = "-Dkey=value";
+     * CommandLine line = parser.parse(args);
+     * String propertyName = opt.getValue(0);  // will be "key"
+     * String propertyValue = opt.getValue(1); // will be "value"
+     * &lt;/pre>
+     *
+     * @param sep The value separator to be used for the argument values.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>174</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withValueSeparator(char sep)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>176</td><td class='count'>20</td>
+      <td><pre class='prettyprint covered' id='l176s0'>        OptionBuilder.valuesep = sep;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>178</td><td class='count'>20</td>
+      <td><pre class='prettyprint covered' id='l178s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>179</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created uses '&lt;code>=&lt;/code>' as a means to
+     * separate argument values.
+     *
+     * &lt;b>Example:&lt;/b>
+     * &lt;pre>
+     * Option opt = OptionBuilder.withValueSeparator()
+     *                           .create('D');
+     *
+     * CommandLine line = parser.parse(args);
+     * String propertyName = opt.getValue(0);
+     * String propertyValue = opt.getValue(1);
+     * &lt;/pre>
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>197</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withValueSeparator()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>198</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>199</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l199s0'>        OptionBuilder.valuesep = '=';</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>201</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l201s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>202</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will be required if &lt;code>required&lt;/code>
+     * is true.
+     *
+     * @param newRequired if true then the Option is required
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>211</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder isRequired(boolean newRequired)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>212</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>213</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l213s0'>        OptionBuilder.required = newRequired;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>215</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l215s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>216</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created can have unlimited argument values.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>223</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasArgs()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>224</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>225</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l225s0'>        OptionBuilder.numberOfArgs = Option.UNLIMITED_VALUES;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>227</td><td class='count'>46</td>
+      <td><pre class='prettyprint covered' id='l227s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>228</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created can have &lt;code>num&lt;/code> argument values.
+     *
+     * @param num the number of args that the option can have
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>236</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasArgs(int num)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>237</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>238</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l238s0'>        OptionBuilder.numberOfArgs = num;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>240</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l240s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>241</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option can have an optional argument.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>248</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasOptionalArg()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>249</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>250</td><td class='count'>41</td>
+      <td><pre class='prettyprint covered' id='l250s0'>        OptionBuilder.numberOfArgs = 1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>251</td><td class='count'>41</td>
+      <td><pre class='prettyprint covered' id='l251s0'>        OptionBuilder.optionalArg = true;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>253</td><td class='count'>41</td>
+      <td><pre class='prettyprint covered' id='l253s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>254</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option can have an unlimited number of optional arguments.
+     *
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>261</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasOptionalArgs()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>262</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>263</td><td class='count'>28</td>
+      <td><pre class='prettyprint covered' id='l263s0'>        OptionBuilder.numberOfArgs = Option.UNLIMITED_VALUES;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>264</td><td class='count'>28</td>
+      <td><pre class='prettyprint covered' id='l264s0'>        OptionBuilder.optionalArg = true;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>266</td><td class='count'>28</td>
+      <td><pre class='prettyprint covered' id='l266s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>267</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option can have the specified number of optional arguments.
+     *
+     * @param numArgs - the maximum number of optional arguments
+     * the next Option created can have.
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>276</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder hasOptionalArgs(int numArgs)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>277</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>278</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l278s0'>        OptionBuilder.numberOfArgs = numArgs;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>279</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l279s0'>        OptionBuilder.optionalArg = true;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>281</td><td class='count'>36</td>
+      <td><pre class='prettyprint covered' id='l281s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>282</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will have a value that will be an instance
+     * of &lt;code>type&lt;/code>.
+     * &lt;p>
+     * &lt;b>Note:&lt;/b> this method is kept for binary compatibility and the
+     * input type is supposed to be a {@link Class} object. 
+     *
+     * @param newType the type of the Options argument value
+     * @return the OptionBuilder instance
+     * @deprecated since 1.3, use {@link #withType(Class)} instead
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>295</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>296</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withType(Object newType)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>297</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>298</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l298s0'>        return withType((Class&lt;?>) newType);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>299</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will have a value that will be an instance
+     * of &lt;code>type&lt;/code>.
+     *
+     * @param newType the type of the Options argument value
+     * @return the OptionBuilder instance
+     * @since 1.3
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>309</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withType(Class&lt;?> newType)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>310</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>311</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l311s0'>        OptionBuilder.type = newType;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>313</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l313s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>314</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * The next Option created will have the specified description
+     *
+     * @param newDescription a description of the Option's purpose
+     * @return the OptionBuilder instance
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>322</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static OptionBuilder withDescription(String newDescription)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>323</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>324</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l324s0'>        OptionBuilder.description = newDescription;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>326</td><td class='count'>83</td>
+      <td><pre class='prettyprint covered' id='l326s0'>        return INSTANCE;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>327</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Create an Option using the current settings and with
+     * the specified Option &lt;code>char&lt;/code>.
+     *
+     * @param opt the character representation of the Option
+     * @return the Option instance
+     * @throws IllegalArgumentException if &lt;code>opt&lt;/code> is not
+     * a valid character.  See Option.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>338</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Option create(char opt) throws IllegalArgumentException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>339</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>340</td><td class='count'>205</td>
+      <td><pre class='prettyprint covered' id='l340s0'>        return create(String.valueOf(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>341</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Create an Option using the current settings
+     *
+     * @return the Option instance
+     * @throws IllegalArgumentException if &lt;code>longOpt&lt;/code> has not been set.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>349</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Option create() throws IllegalArgumentException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>350</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>351</td><td class='count'>88</td>
+      <td><pre class='prettyprint jmp'>        <span id='l351s0' title='Executions: 88' class='covered'>if (longopt == null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>352</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>353</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l353s0'>            OptionBuilder.reset();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>354</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l354s0'>            throw new IllegalArgumentException("must specify longopt");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>355</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>357</td><td class='count'>86</td>
+      <td><pre class='prettyprint covered' id='l357s0'>        return create(null);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>358</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Create an Option using the current settings and with
+     * the specified Option &lt;code>char&lt;/code>.
+     *
+     * @param opt the &lt;code>java.lang.String&lt;/code> representation
+     * of the Option
+     * @return the Option instance
+     * @throws IllegalArgumentException if &lt;code>opt&lt;/code> is not
+     * a valid character.  See Option.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>370</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static Option create(String opt) throws IllegalArgumentException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>371</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>372</td><td class='count'>342</td>
+      <td><pre class='prettyprint covered' id='l372s0'>        Option option = null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>373</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>374</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>375</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // create the option</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>376</td><td class='count'>342</td>
+      <td><pre class='prettyprint covered' id='l376s0'>            option = new Option(opt, description);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>378</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // set the option properties</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>379</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l379s0'>            option.setLongOpt(longopt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>380</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l380s0'>            option.setRequired(required);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>381</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l381s0'>            option.setOptionalArg(optionalArg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>382</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l382s0'>            option.setArgs(numberOfArgs);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>383</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l383s0'>            option.setType(type);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>384</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l384s0'>            option.setValueSeparator(valuesep);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>385</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l385s0'>            option.setArgName(argName);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>386</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>387</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        finally</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>388</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>389</td><td>&nbsp;</td>
+      <td><pre class='comment'>            // reset the OptionBuilder properties</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>390</td><td class='count'>342</td>
+      <td><pre class='prettyprint covered' id='l390s0'>            OptionBuilder.reset();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>391</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l391s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>393</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // return the Option instance</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>394</td><td class='count'>338</td>
+      <td><pre class='prettyprint covered' id='l394s0'>        return option;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>395</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>396</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>

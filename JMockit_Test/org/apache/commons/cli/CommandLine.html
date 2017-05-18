@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CommandLine.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../../../../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../../../../logo.png'/>
+  <script type='text/javascript' src='../../../../coverage.js'></script>
+  <script type='text/javascript' src='../../../../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>commons-cli-1.4-src/src/main/java/org/apache/commons/cli/CommandLine.java</caption>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package org.apache.commons.cli;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td><pre class='imports prettyprint' onclick='showHideLines(this)'><div>import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+</div><span>import ...</span></pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Represents list of arguments parsed against a {@link Options} descriptor.
+ * &lt;p>
+ * It allows querying of a boolean {@link #hasOption(String opt)},
+ * in addition to retrieving the {@link #getOptionValue(String opt)}
+ * for options requiring arguments.
+ * &lt;p>
+ * Additionally, any left-over or unrecognized arguments,
+ * are available for further processing.
+ *
+ * @version $Id: CommandLine.java 1786144 2017-03-09 11:34:57Z britter $
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>40</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>public class CommandLine implements Serializable</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>41</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>{</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>42</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** The serial version UID. */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>43</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private static final long serialVersionUID = 1L;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>45</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** the unrecognized options/arguments */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>46</td><td class='count'>299</td>
+      <td><pre class='prettyprint covered' id='l46s0'>    private final List&lt;String> args = new LinkedList&lt;String>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>48</td><td>&nbsp;</td>
+      <td><pre class='comment'>    /** the processed options */</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>49</td><td class='count'>299</td>
+      <td><pre class='prettyprint covered' id='l49s0'>    private final List&lt;Option> options = new ArrayList&lt;Option>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Creates a command line.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>54</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected CommandLine()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>55</td><td class='count'>299</td>
+      <td><pre class='prettyprint covered' id='l55s0'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>56</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // nothing to do</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>57</td><td class='count'>299</td>
+      <td><pre class='prettyprint covered' id='l57s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Query to see if an option has been set.
+     *
+     * @param opt Short name of the option
+     * @return true if set, false if not
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>65</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public boolean hasOption(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>66</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>67</td><td class='count'>414</td>
+      <td><pre class='prettyprint covered' id='l67s0'>        return options.contains(resolveOption(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>68</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Query to see if an option has been set.
+     *
+     * @param opt character name of the option
+     * @return true if set, false if not
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>76</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public boolean hasOption(char opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>77</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>78</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l78s0'>        return hasOption(String.valueOf(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>79</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Return the &lt;code>Object&lt;/code> type of this &lt;code>Option&lt;/code>.
+     *
+     * @param opt the name of the option
+     * @return the type of this &lt;code>Option&lt;/code>
+     * @deprecated due to System.err message. Instead use getParsedOptionValue(String)
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>88</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    @Deprecated</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>89</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Object getOptionObject(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>90</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>91</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        try</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>92</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>93</td><td class='count'>30</td>
+      <td><pre class='prettyprint covered' id='l93s0'>            return getParsedOptionValue(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>94</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>95</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l95s0'>        catch (ParseException pe)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>96</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>97</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l97s0'>            System.err.println("Exception found converting " + opt + " to desired type: " + pe.getMessage());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>98</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l98s0'>            return null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>99</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>100</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Return a version of this &lt;code>Option&lt;/code> converted to a particular type. 
+     *
+     * @param opt the name of the option
+     * @return the value parsed into a particular object
+     * @throws ParseException if there are problems turning the option value into the desired type
+     * @see PatternOptionBuilder
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>111</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Object getParsedOptionValue(String opt) throws ParseException</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>112</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>113</td><td class='count'>32</td>
+      <td><pre class='prettyprint covered' id='l113s0'>        String res = getOptionValue(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>114</td><td class='count'>32</td>
+      <td><pre class='prettyprint covered' id='l114s0'>        Option option = resolveOption(opt);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>116</td><td class='count'>32</td>
+      <td><pre class='prettyprint jmp'>        <span id='l116s0' title='Executions: 32' class='covered'>if (option == null</span> || <span id='l116s1' title='Executions: 32' class='covered'>res == null)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>117</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>118</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l118s0'>            return null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>119</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>121</td><td class='count'>29</td>
+      <td><pre class='prettyprint covered' id='l121s0'>        return TypeHandler.createValue(res, option.getType());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>122</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Return the &lt;code>Object&lt;/code> type of this &lt;code>Option&lt;/code>.
+     *
+     * @param opt the name of the option
+     * @return the type of opt
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>130</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Object getOptionObject(char opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>131</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>132</td><td class='count'>11</td>
+      <td><pre class='prettyprint covered' id='l132s0'>        return getOptionObject(String.valueOf(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>133</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve the first argument, if any, of this option.
+     *
+     * @param opt the name of the option
+     * @return Value of the argument if option is set, and has an argument,
+     * otherwise null.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>142</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getOptionValue(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>143</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>144</td><td class='count'>156</td>
+      <td><pre class='prettyprint covered' id='l144s0'>        String[] values = getOptionValues(opt);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>146</td><td class='count'>156</td>
+      <td><pre class='prettyprint jmp'>        <span id='l146s0' title='Executions: 156' class='covered'>return (values == null)</span> ? <span id='l146s1' title='Executions: 11' class='covered'>null</span> : <span id='l146s2' title='Executions: 145' class='covered'>values[0];</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>147</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve the first argument, if any, of this option.
+     *
+     * @param opt the character name of the option
+     * @return Value of the argument if option is set, and has an argument,
+     * otherwise null.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>156</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getOptionValue(char opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>157</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>158</td><td class='count'>13</td>
+      <td><pre class='prettyprint covered' id='l158s0'>        return getOptionValue(String.valueOf(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>159</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieves the array of values, if any, of an option.
+     *
+     * @param opt string name of the option
+     * @return Values of the argument if option is set, and has an argument,
+     * otherwise null.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>168</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String[] getOptionValues(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>169</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>170</td><td class='count'>195</td>
+      <td><pre class='prettyprint covered' id='l170s0'>        List&lt;String> values = new ArrayList&lt;String>();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>172</td><td class='count'>195</td>
+      <td><pre class='prettyprint jmp'>        <span id='l172s0' title='Executions: 195' class='covered'>for (Option option</span> : <span id='l172s1' title='Executions: 662' class='covered'>options)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>173</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>174</td><td class='count'>662</td>
+      <td><pre class='prettyprint jmp'>            <span id='l174s0' title='Executions: 662' class='covered'>if (opt.equals(option.getOpt())</span> || <span id='l174s1' title='Executions: 495' class='covered'>opt.equals(option.getLongOpt()))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>175</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>176</td><td class='count'>203</td>
+      <td><pre class='prettyprint covered' id='l176s0'>                values.addAll(option.getValuesList());</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>177</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>178</td><td class='count'>662</td>
+      <td><pre class='prettyprint covered' id='l178s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>180</td><td class='count'>195</td>
+      <td><pre class='prettyprint jmp'>        <span id='l180s0' title='Executions: 195' class='covered'>return values.isEmpty()</span> ? <span id='l180s1' title='Executions: 13' class='covered'>null</span> : <span id='l180s2' title='Executions: 182' class='covered'>values.toArray(new String[values.size()]);</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>181</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Retrieves the option object given the long or short option as a String
+     * 
+     * @param opt short or long name of the option
+     * @return Canonicalized option
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>189</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    private Option resolveOption(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>190</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>191</td><td class='count'>446</td>
+      <td><pre class='prettyprint covered' id='l191s0'>        opt = Util.stripLeadingHyphens(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>192</td><td class='count'>446</td>
+      <td><pre class='prettyprint jmp'>        <span id='l192s0' title='Executions: 446' class='covered'>for (Option option</span> : <span id='l192s1' title='Executions: 683' class='covered'>options)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>193</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>194</td><td class='count'>683</td>
+      <td><pre class='prettyprint jmp'>            <span id='l194s0' title='Executions: 683' class='covered'>if (opt.equals(option.getOpt()))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>195</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>196</td><td class='count'>233</td>
+      <td><pre class='prettyprint covered' id='l196s0'>                return option;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>197</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>199</td><td class='count'>450</td>
+      <td><pre class='prettyprint jmp'>            <span id='l199s0' title='Executions: 450' class='covered'>if (opt.equals(option.getLongOpt()))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>200</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>201</td><td class='count'>26</td>
+      <td><pre class='prettyprint covered' id='l201s0'>                return option;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>202</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>204</td><td class='count'>424</td>
+      <td><pre class='prettyprint covered' id='l204s0'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>205</td><td class='count'>187</td>
+      <td><pre class='prettyprint covered' id='l205s0'>        return null;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>206</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieves the array of values, if any, of an option.
+     *
+     * @param opt character name of the option
+     * @return Values of the argument if option is set, and has an argument,
+     * otherwise null.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>215</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String[] getOptionValues(char opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>216</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>217</td><td class='count'>9</td>
+      <td><pre class='prettyprint covered' id='l217s0'>        return getOptionValues(String.valueOf(opt));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>218</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve the first argument, if any, of an option.
+     *
+     * @param opt name of the option
+     * @param defaultValue is the default value to be returned if the option
+     * is not specified
+     * @return Value of the argument if option is set, and has an argument,
+     * otherwise &lt;code>defaultValue&lt;/code>.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>229</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getOptionValue(String opt, String defaultValue)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>230</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>231</td><td class='count'>3</td>
+      <td><pre class='prettyprint covered' id='l231s0'>        String answer = getOptionValue(opt);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>233</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l233s0' title='Executions: 3' class='covered'>return (answer != null)</span> ? <span id='l233s1' title='Executions: 1' class='covered'>answer</span> : <span id='l233s2' title='Executions: 2' class='covered'>defaultValue;</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>234</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve the argument, if any, of an option.
+     *
+     * @param opt character name of the option
+     * @param defaultValue is the default value to be returned if the option
+     * is not specified
+     * @return Value of the argument if option is set, and has an argument,
+     * otherwise &lt;code>defaultValue&lt;/code>.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>245</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String getOptionValue(char opt, String defaultValue)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>246</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>247</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l247s0'>        return getOptionValue(String.valueOf(opt), defaultValue);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>248</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Retrieve the map of values associated to the option. This is convenient
+     * for options specifying Java properties like &lt;tt>-Dparam1=value1
+     * -Dparam2=value2&lt;/tt>. The first argument of the option is the key, and
+     * the 2nd argument is the value. If the option has only one argument
+     * (&lt;tt>-Dfoo&lt;/tt>) it is considered as a boolean flag and the value is
+     * &lt;tt>"true"&lt;/tt>.
+     *
+     * @param opt name of the option
+     * @return The Properties mapped by the option, never &lt;tt>null&lt;/tt>
+     *         even if the option doesn't exists
+     * @since 1.2
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>263</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Properties getOptionProperties(String opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>264</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>265</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l265s0'>        Properties props = new Properties();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>267</td><td class='count'>5</td>
+      <td><pre class='prettyprint jmp'>        <span id='l267s0' title='Executions: 5' class='covered'>for (Option option</span> : <span id='l267s1' title='Executions: 21' class='covered'>options)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>268</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>269</td><td class='count'>21</td>
+      <td><pre class='prettyprint jmp'>            <span id='l269s0' title='Executions: 21' class='covered'>if (opt.equals(option.getOpt())</span> || <span id='l269s1' title='Executions: 7' class='covered'>opt.equals(option.getLongOpt()))</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>270</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>271</td><td class='count'>15</td>
+      <td><pre class='prettyprint covered' id='l271s0'>                List&lt;String> values = option.getValuesList();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>272</td><td class='count'>15</td>
+      <td><pre class='prettyprint jmp'>                <span id='l272s0' title='Executions: 15' class='covered'>if (values.size() >= 2)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>273</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>274</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // use the first 2 arguments as the key/value pair</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>275</td><td class='count'>7</td>
+      <td><pre class='prettyprint covered' id='l275s0'>                    props.put(values.get(0), values.get(1));</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>276</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>277</td><td class='count'>8</td>
+      <td><pre class='prettyprint jmp'>                else <span id='l277s0' title='Executions: 8' class='covered'>if (values.size() == 1)</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>278</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>279</td><td>&nbsp;</td>
+      <td><pre class='comment'>                    // no explicit value, handle it as a boolean</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>280</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l280s0'>                    props.put(values.get(0), "true");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>281</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>                }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>282</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>283</td><td class='count'>21</td>
+      <td><pre class='prettyprint covered' id='l283s0'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>285</td><td class='count'>5</td>
+      <td><pre class='prettyprint covered' id='l285s0'>        return props;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>286</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve any left-over non-recognized options and arguments
+     *
+     * @return remaining items passed in but not parsed as an array
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>293</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public String[] getArgs()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>294</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>295</td><td class='count'>23</td>
+      <td><pre class='prettyprint covered' id='l295s0'>        String[] answer = new String[args.size()];</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>297</td><td class='count'>23</td>
+      <td><pre class='prettyprint covered' id='l297s0'>        args.toArray(answer);</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>299</td><td class='count'>23</td>
+      <td><pre class='prettyprint covered' id='l299s0'>        return answer;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>300</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * Retrieve any left-over non-recognized options and arguments
+     *
+     * @return remaining items passed in but not parsed as a &lt;code>List&lt;/code>.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>307</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public List&lt;String> getArgList()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>308</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>309</td><td class='count'>154</td>
+      <td><pre class='prettyprint covered' id='l309s0'>        return args;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>310</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /** 
+     * jkeyes
+     * - commented out until it is implemented properly
+     * &lt;p>Dump state, suitable for debugging.&lt;/p>
+     *
+     * @return Stringified form of this object
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /*
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+            
+        buf.append("[ CommandLine: [ options: ");
+        buf.append(options.toString());
+        buf.append(" ] [ args: ");
+        buf.append(args.toString());
+        buf.append(" ] ]");
+            
+        return buf.toString();
+    }
+    */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Add left-over unrecognized option/argument.
+     *
+     * @param arg the unrecognized option/argument.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>339</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected void addArg(String arg)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>340</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>341</td><td class='count'>147</td>
+      <td><pre class='prettyprint covered' id='l341s0'>        args.add(arg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>342</td><td class='count'>147</td>
+      <td><pre class='prettyprint covered' id='l342s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Add an option to the command line.  The values of the option are stored.
+     *
+     * @param opt the processed option
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>349</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    protected void addOption(Option opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>350</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>351</td><td class='count'>498</td>
+      <td><pre class='prettyprint covered' id='l351s0'>        options.add(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>352</td><td class='count'>498</td>
+      <td><pre class='prettyprint covered' id='l352s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns an iterator over the Option members of CommandLine.
+     *
+     * @return an &lt;code>Iterator&lt;/code> over the processed {@link Option}
+     * members of this {@link CommandLine}
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>360</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Iterator&lt;Option> iterator()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>361</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>362</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l362s0'>        return options.iterator();</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>363</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * Returns an array of the processed {@link Option}s.
+     *
+     * @return an array of the processed {@link Option}s.
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>370</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public Option[] getOptions()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>371</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>372</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l372s0'>        Collection&lt;Option> processed = options;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>374</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // reinitialise array</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>375</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l375s0'>        Option[] optionsArray = new Option[processed.size()];</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>377</td><td>&nbsp;</td>
+      <td><pre class='comment'>        // return the array</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>378</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l378s0'>        return processed.toArray(optionsArray);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>379</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>    /**
+     * A nested builder class to create &lt;code>CommandLine&lt;/code> instance
+     * using descriptive methods.
+     * 
+     * @since 1.4
+     */</div><span>    /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>387</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l387s0'>    public static final class Builder</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>388</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>        /**
+         * CommandLine that is being build by this Builder.
+         */</div><span>        /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>392</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l392s0'>        private final CommandLine commandLine = new CommandLine();</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>        /**
+         * Add an option to the command line. The values of the option are stored.
+         *
+         * @param opt the processed option
+         *
+         * @return this Builder instance for method chaining.
+         */</div><span>        /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>401</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        public Builder addOption(Option opt)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>402</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>403</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l403s0'>            commandLine.addOption(opt);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>404</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l404s0'>            return this;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>405</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>        /**
+         * Add left-over unrecognized option/argument.
+         *
+         * @param arg the unrecognized option/argument.
+         *
+         * @return this Builder instance for method chaining.
+         */</div><span>        /*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>414</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        public Builder addArg(String arg)</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>415</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>416</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l416s0'>            commandLine.addArg(arg);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>417</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l417s0'>            return this;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>418</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>420</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        public CommandLine build()</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>421</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>422</td><td class='count'>1</td>
+      <td><pre class='prettyprint covered' id='l422s0'>            return commandLine;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>423</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>424</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>425</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>
