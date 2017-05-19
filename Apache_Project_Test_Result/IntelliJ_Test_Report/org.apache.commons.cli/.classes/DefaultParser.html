@@ -1,0 +1,790 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DefaultParser</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.apache.commons.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DefaultParser (org.apache.commons.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DefaultParser</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    99%
+  </span>
+  <span class="absValue">
+    (191/ 193)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Licensed to the Apache Software Foundation (ASF) under one or more
+<i>3</i>&nbsp; * contributor license agreements.  See the NOTICE file distributed with
+<i>4</i>&nbsp; * this work for additional information regarding copyright ownership.
+<i>5</i>&nbsp; * The ASF licenses this file to You under the Apache License, Version 2.0
+<i>6</i>&nbsp; * (the &quot;License&quot;); you may not use this file except in compliance with
+<i>7</i>&nbsp; * the License.  You may obtain a copy of the License at
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; *     http://www.apache.org/licenses/LICENSE-2.0
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>12</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>13</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>14</i>&nbsp; * See the License for the specific language governing permissions and
+<i>15</i>&nbsp; * limitations under the License.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;package org.apache.commons.cli;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import java.util.ArrayList;
+<i>21</i>&nbsp;import java.util.Enumeration;
+<i>22</i>&nbsp;import java.util.List;
+<i>23</i>&nbsp;import java.util.Properties;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * Default parser.
+<i>27</i>&nbsp; * 
+<i>28</i>&nbsp; * @version $Id: DefaultParser.java 1783175 2017-02-16 07:52:05Z britter $
+<i>29</i>&nbsp; * @since 1.3
+<i>30</i>&nbsp; */
+<b class="fc"><i>31</i>&nbsp;public class DefaultParser implements CommandLineParser</b>
+<i>32</i>&nbsp;{
+<i>33</i>&nbsp;    /** The command-line instance. */
+<i>34</i>&nbsp;    protected CommandLine cmd;
+<i>35</i>&nbsp;    
+<i>36</i>&nbsp;    /** The current options. */
+<i>37</i>&nbsp;    protected Options options;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /**
+<i>40</i>&nbsp;     * Flag indicating how unrecognized tokens are handled. &lt;tt&gt;true&lt;/tt&gt; to stop
+<i>41</i>&nbsp;     * the parsing and add the remaining tokens to the args list.
+<i>42</i>&nbsp;     * &lt;tt&gt;false&lt;/tt&gt; to throw an exception. 
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    protected boolean stopAtNonOption;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /** The token currently processed. */
+<i>47</i>&nbsp;    protected String currentToken;
+<i>48</i>&nbsp; 
+<i>49</i>&nbsp;    /** The last option parsed. */
+<i>50</i>&nbsp;    protected Option currentOption;
+<i>51</i>&nbsp; 
+<i>52</i>&nbsp;    /** Flag indicating if tokens should no longer be analyzed and simply added as arguments of the command line. */
+<i>53</i>&nbsp;    protected boolean skipParsing;
+<i>54</i>&nbsp; 
+<i>55</i>&nbsp;    /** The required options and groups expected to be found when parsing the command line. */
+<i>56</i>&nbsp;    protected List expectedOpts;
+<i>57</i>&nbsp; 
+<i>58</i>&nbsp;    public CommandLine parse(Options options, String[] arguments) throws ParseException
+<i>59</i>&nbsp;    {
+<b class="fc"><i>60</i>&nbsp;        return parse(options, arguments, null);</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     * Parse the arguments according to the specified options and properties.
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @param options    the specified Options
+<i>67</i>&nbsp;     * @param arguments  the command line arguments
+<i>68</i>&nbsp;     * @param properties command line option name-value pairs
+<i>69</i>&nbsp;     * @return the list of atomic option and value tokens
+<i>70</i>&nbsp;     *
+<i>71</i>&nbsp;     * @throws ParseException if there are any problems encountered
+<i>72</i>&nbsp;     * while parsing the command line tokens.
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    public CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException
+<i>75</i>&nbsp;    {
+<b class="fc"><i>76</i>&nbsp;        return parse(options, arguments, properties, false);</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public CommandLine parse(Options options, String[] arguments, boolean stopAtNonOption) throws ParseException
+<i>80</i>&nbsp;    {
+<b class="fc"><i>81</i>&nbsp;        return parse(options, arguments, null, stopAtNonOption);</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    /**
+<i>85</i>&nbsp;     * Parse the arguments according to the specified options and properties.
+<i>86</i>&nbsp;     *
+<i>87</i>&nbsp;     * @param options         the specified Options
+<i>88</i>&nbsp;     * @param arguments       the command line arguments
+<i>89</i>&nbsp;     * @param properties      command line option name-value pairs
+<i>90</i>&nbsp;     * @param stopAtNonOption if &lt;tt&gt;true&lt;/tt&gt; an unrecognized argument stops
+<i>91</i>&nbsp;     *     the parsing and the remaining arguments are added to the 
+<i>92</i>&nbsp;     *     {@link CommandLine}s args list. If &lt;tt&gt;false&lt;/tt&gt; an unrecognized
+<i>93</i>&nbsp;     *     argument triggers a ParseException.
+<i>94</i>&nbsp;     *
+<i>95</i>&nbsp;     * @return the list of atomic option and value tokens
+<i>96</i>&nbsp;     * @throws ParseException if there are any problems encountered
+<i>97</i>&nbsp;     * while parsing the command line tokens.
+<i>98</i>&nbsp;     */
+<i>99</i>&nbsp;    public CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)
+<i>100</i>&nbsp;            throws ParseException
+<i>101</i>&nbsp;    {
+<b class="fc"><i>102</i>&nbsp;        this.options = options;</b>
+<b class="fc"><i>103</i>&nbsp;        this.stopAtNonOption = stopAtNonOption;</b>
+<b class="fc"><i>104</i>&nbsp;        skipParsing = false;</b>
+<b class="fc"><i>105</i>&nbsp;        currentOption = null;</b>
+<b class="fc"><i>106</i>&nbsp;        expectedOpts = new ArrayList(options.getRequiredOptions());</b>
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;        // clear the data from the groups
+<b class="fc"><i>109</i>&nbsp;        for (OptionGroup group : options.getOptionGroups())</b>
+<i>110</i>&nbsp;        {
+<b class="fc"><i>111</i>&nbsp;            group.setSelected(null);</b>
+<b class="fc"><i>112</i>&nbsp;        }</b>
+<i>113</i>&nbsp;
+<b class="fc"><i>114</i>&nbsp;        cmd = new CommandLine();</b>
+<i>115</i>&nbsp;
+<b class="fc"><i>116</i>&nbsp;        if (arguments != null)</b>
+<i>117</i>&nbsp;        {
+<b class="fc"><i>118</i>&nbsp;            for (String argument : arguments)</b>
+<i>119</i>&nbsp;            {
+<b class="fc"><i>120</i>&nbsp;                handleToken(argument);</b>
+<i>121</i>&nbsp;            }
+<i>122</i>&nbsp;        }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;        // check the arguments of the last option
+<b class="fc"><i>125</i>&nbsp;        checkRequiredArgs();</b>
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;        // add the default options
+<b class="fc"><i>128</i>&nbsp;        handleProperties(properties);</b>
+<i>129</i>&nbsp;
+<b class="fc"><i>130</i>&nbsp;        checkRequiredOptions();</b>
+<i>131</i>&nbsp;
+<b class="fc"><i>132</i>&nbsp;        return cmd;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * Sets the values of Options using the values in &lt;code&gt;properties&lt;/code&gt;.
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * @param properties The value properties to be processed.
+<i>139</i>&nbsp;     */
+<i>140</i>&nbsp;    private void handleProperties(Properties properties) throws ParseException
+<i>141</i>&nbsp;    {
+<b class="fc"><i>142</i>&nbsp;        if (properties == null)</b>
+<i>143</i>&nbsp;        {
+<b class="fc"><i>144</i>&nbsp;            return;</b>
+<i>145</i>&nbsp;        }
+<i>146</i>&nbsp;
+<b class="fc"><i>147</i>&nbsp;        for (Enumeration&lt;?&gt; e = properties.propertyNames(); e.hasMoreElements();)</b>
+<i>148</i>&nbsp;        {
+<b class="fc"><i>149</i>&nbsp;            String option = e.nextElement().toString();</b>
+<i>150</i>&nbsp;
+<b class="fc"><i>151</i>&nbsp;            Option opt = options.getOption(option);</b>
+<b class="fc"><i>152</i>&nbsp;            if (opt == null)</b>
+<i>153</i>&nbsp;            {
+<b class="fc"><i>154</i>&nbsp;                throw new UnrecognizedOptionException(&quot;Default option wasn&#39;t defined&quot;, option);</b>
+<i>155</i>&nbsp;            }
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;            // if the option is part of a group, check if another option of the group has been selected
+<b class="fc"><i>158</i>&nbsp;            OptionGroup group = options.getOptionGroup(opt);</b>
+<b class="fc"><i>159</i>&nbsp;            boolean selected = group != null &amp;&amp; group.getSelected() != null;</b>
+<i>160</i>&nbsp;
+<b class="fc"><i>161</i>&nbsp;            if (!cmd.hasOption(option) &amp;&amp; !selected)</b>
+<i>162</i>&nbsp;            {
+<i>163</i>&nbsp;                // get the value from the properties
+<b class="fc"><i>164</i>&nbsp;                String value = properties.getProperty(option);</b>
+<i>165</i>&nbsp;
+<b class="fc"><i>166</i>&nbsp;                if (opt.hasArg())</b>
+<i>167</i>&nbsp;                {
+<b class="fc"><i>168</i>&nbsp;                    if (opt.getValues() == null || opt.getValues().length == 0)</b>
+<i>169</i>&nbsp;                    {
+<b class="fc"><i>170</i>&nbsp;                        opt.addValueForProcessing(value);</b>
+<i>171</i>&nbsp;                    }
+<i>172</i>&nbsp;                }
+<b class="fc"><i>173</i>&nbsp;                else if (!(&quot;yes&quot;.equalsIgnoreCase(value)</b>
+<b class="fc"><i>174</i>&nbsp;                        || &quot;true&quot;.equalsIgnoreCase(value)</b>
+<b class="fc"><i>175</i>&nbsp;                        || &quot;1&quot;.equalsIgnoreCase(value)))</b>
+<i>176</i>&nbsp;                {
+<i>177</i>&nbsp;                    // if the value is not yes, true or 1 then don&#39;t add the option to the CommandLine
+<b class="fc"><i>178</i>&nbsp;                    continue;</b>
+<i>179</i>&nbsp;                }
+<i>180</i>&nbsp;
+<b class="fc"><i>181</i>&nbsp;                handleOption(opt);</b>
+<b class="fc"><i>182</i>&nbsp;                currentOption = null;</b>
+<i>183</i>&nbsp;            }
+<b class="fc"><i>184</i>&nbsp;        }</b>
+<b class="fc"><i>185</i>&nbsp;    }</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /**
+<i>188</i>&nbsp;     * Throws a {@link MissingOptionException} if all of the required options
+<i>189</i>&nbsp;     * are not present.
+<i>190</i>&nbsp;     *
+<i>191</i>&nbsp;     * @throws MissingOptionException if any of the required Options
+<i>192</i>&nbsp;     * are not present.
+<i>193</i>&nbsp;     */
+<i>194</i>&nbsp;    private void checkRequiredOptions() throws MissingOptionException
+<i>195</i>&nbsp;    {
+<i>196</i>&nbsp;        // if there are required options that have not been processed
+<b class="fc"><i>197</i>&nbsp;        if (!expectedOpts.isEmpty())</b>
+<i>198</i>&nbsp;        {
+<b class="fc"><i>199</i>&nbsp;            throw new MissingOptionException(expectedOpts);</b>
+<i>200</i>&nbsp;        }
+<b class="fc"><i>201</i>&nbsp;    }</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    /**
+<i>204</i>&nbsp;     * Throw a {@link MissingArgumentException} if the current option
+<i>205</i>&nbsp;     * didn&#39;t receive the number of arguments expected.
+<i>206</i>&nbsp;     */
+<i>207</i>&nbsp;    private void checkRequiredArgs() throws ParseException
+<i>208</i>&nbsp;    {
+<b class="fc"><i>209</i>&nbsp;        if (currentOption != null &amp;&amp; currentOption.requiresArg())</b>
+<i>210</i>&nbsp;        {
+<b class="fc"><i>211</i>&nbsp;            throw new MissingArgumentException(currentOption);</b>
+<i>212</i>&nbsp;        }
+<b class="fc"><i>213</i>&nbsp;    }</b>
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;    /**
+<i>216</i>&nbsp;     * Handle any command line token.
+<i>217</i>&nbsp;     *
+<i>218</i>&nbsp;     * @param token the command line token to handle
+<i>219</i>&nbsp;     * @throws ParseException
+<i>220</i>&nbsp;     */
+<i>221</i>&nbsp;    private void handleToken(String token) throws ParseException
+<i>222</i>&nbsp;    {
+<b class="fc"><i>223</i>&nbsp;        currentToken = token;</b>
+<i>224</i>&nbsp;
+<b class="fc"><i>225</i>&nbsp;        if (skipParsing)</b>
+<i>226</i>&nbsp;        {
+<b class="fc"><i>227</i>&nbsp;            cmd.addArg(token);</b>
+<i>228</i>&nbsp;        }
+<b class="fc"><i>229</i>&nbsp;        else if (&quot;--&quot;.equals(token))</b>
+<i>230</i>&nbsp;        {
+<b class="fc"><i>231</i>&nbsp;            skipParsing = true;</b>
+<i>232</i>&nbsp;        }
+<b class="fc"><i>233</i>&nbsp;        else if (currentOption != null &amp;&amp; currentOption.acceptsArg() &amp;&amp; isArgument(token))</b>
+<i>234</i>&nbsp;        {
+<b class="fc"><i>235</i>&nbsp;            currentOption.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(token));</b>
+<i>236</i>&nbsp;        }
+<b class="fc"><i>237</i>&nbsp;        else if (token.startsWith(&quot;--&quot;))</b>
+<i>238</i>&nbsp;        {
+<b class="fc"><i>239</i>&nbsp;            handleLongOption(token);</b>
+<i>240</i>&nbsp;        }
+<b class="fc"><i>241</i>&nbsp;        else if (token.startsWith(&quot;-&quot;) &amp;&amp; !&quot;-&quot;.equals(token))</b>
+<i>242</i>&nbsp;        {
+<b class="fc"><i>243</i>&nbsp;            handleShortAndLongOption(token);</b>
+<i>244</i>&nbsp;        }
+<i>245</i>&nbsp;        else
+<i>246</i>&nbsp;        {
+<b class="fc"><i>247</i>&nbsp;            handleUnknownToken(token);</b>
+<i>248</i>&nbsp;        }
+<i>249</i>&nbsp;
+<b class="fc"><i>250</i>&nbsp;        if (currentOption != null &amp;&amp; !currentOption.acceptsArg())</b>
+<i>251</i>&nbsp;        {
+<b class="fc"><i>252</i>&nbsp;            currentOption = null;</b>
+<i>253</i>&nbsp;        }
+<b class="fc"><i>254</i>&nbsp;    }</b>
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    /**
+<i>257</i>&nbsp;     * Returns true is the token is a valid argument.
+<i>258</i>&nbsp;     *
+<i>259</i>&nbsp;     * @param token
+<i>260</i>&nbsp;     */
+<i>261</i>&nbsp;    private boolean isArgument(String token)
+<i>262</i>&nbsp;    {
+<b class="fc"><i>263</i>&nbsp;        return !isOption(token) || isNegativeNumber(token);</b>
+<i>264</i>&nbsp;    }
+<i>265</i>&nbsp;
+<i>266</i>&nbsp;    /**
+<i>267</i>&nbsp;     * Check if the token is a negative number.
+<i>268</i>&nbsp;     *
+<i>269</i>&nbsp;     * @param token
+<i>270</i>&nbsp;     */
+<i>271</i>&nbsp;    private boolean isNegativeNumber(String token)
+<i>272</i>&nbsp;    {
+<i>273</i>&nbsp;        try
+<i>274</i>&nbsp;        {
+<b class="fc"><i>275</i>&nbsp;            Double.parseDouble(token);</b>
+<b class="fc"><i>276</i>&nbsp;            return true;</b>
+<i>277</i>&nbsp;        }
+<b class="fc"><i>278</i>&nbsp;        catch (NumberFormatException e)</b>
+<i>279</i>&nbsp;        {
+<b class="fc"><i>280</i>&nbsp;            return false;</b>
+<i>281</i>&nbsp;        }
+<i>282</i>&nbsp;    }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    /**
+<i>285</i>&nbsp;     * Tells if the token looks like an option.
+<i>286</i>&nbsp;     *
+<i>287</i>&nbsp;     * @param token
+<i>288</i>&nbsp;     */
+<i>289</i>&nbsp;    private boolean isOption(String token)
+<i>290</i>&nbsp;    {
+<b class="fc"><i>291</i>&nbsp;        return isLongOption(token) || isShortOption(token);</b>
+<i>292</i>&nbsp;    }
+<i>293</i>&nbsp;
+<i>294</i>&nbsp;    /**
+<i>295</i>&nbsp;     * Tells if the token looks like a short option.
+<i>296</i>&nbsp;     * 
+<i>297</i>&nbsp;     * @param token
+<i>298</i>&nbsp;     */
+<i>299</i>&nbsp;    private boolean isShortOption(String token)
+<i>300</i>&nbsp;    {
+<i>301</i>&nbsp;        // short options (-S, -SV, -S=V, -SV1=V2, -S1S2)
+<b class="fc"><i>302</i>&nbsp;        if (!token.startsWith(&quot;-&quot;) || token.length() == 1)</b>
+<i>303</i>&nbsp;        {
+<b class="fc"><i>304</i>&nbsp;            return false;</b>
+<i>305</i>&nbsp;        }
+<i>306</i>&nbsp;
+<i>307</i>&nbsp;        // remove leading &quot;-&quot; and &quot;=value&quot;
+<b class="fc"><i>308</i>&nbsp;        int pos = token.indexOf(&quot;=&quot;);</b>
+<b class="fc"><i>309</i>&nbsp;        String optName = pos == -1 ? token.substring(1) : token.substring(1, pos);</b>
+<b class="fc"><i>310</i>&nbsp;        if (options.hasShortOption(optName))</b>
+<i>311</i>&nbsp;        {
+<b class="fc"><i>312</i>&nbsp;            return true;</b>
+<i>313</i>&nbsp;        }
+<i>314</i>&nbsp;        // check for several concatenated short options
+<b class="fc"><i>315</i>&nbsp;        return optName.length() &gt; 0 &amp;&amp; options.hasShortOption(String.valueOf(optName.charAt(0)));</b>
+<i>316</i>&nbsp;    }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    /**
+<i>319</i>&nbsp;     * Tells if the token looks like a long option.
+<i>320</i>&nbsp;     *
+<i>321</i>&nbsp;     * @param token
+<i>322</i>&nbsp;     */
+<i>323</i>&nbsp;    private boolean isLongOption(String token)
+<i>324</i>&nbsp;    {
+<b class="fc"><i>325</i>&nbsp;        if (!token.startsWith(&quot;-&quot;) || token.length() == 1)</b>
+<i>326</i>&nbsp;        {
+<b class="fc"><i>327</i>&nbsp;            return false;</b>
+<i>328</i>&nbsp;        }
+<i>329</i>&nbsp;
+<b class="fc"><i>330</i>&nbsp;        int pos = token.indexOf(&quot;=&quot;);</b>
+<b class="fc"><i>331</i>&nbsp;        String t = pos == -1 ? token : token.substring(0, pos);</b>
+<i>332</i>&nbsp;
+<b class="fc"><i>333</i>&nbsp;        if (!options.getMatchingOptions(t).isEmpty())</b>
+<i>334</i>&nbsp;        {
+<i>335</i>&nbsp;            // long or partial long options (--L, -L, --L=V, -L=V, --l, --l=V)
+<b class="nc"><i>336</i>&nbsp;            return true;</b>
+<i>337</i>&nbsp;        }
+<b class="fc"><i>338</i>&nbsp;        else if (getLongPrefix(token) != null &amp;&amp; !token.startsWith(&quot;--&quot;))</b>
+<i>339</i>&nbsp;        {
+<i>340</i>&nbsp;            // -LV
+<b class="fc"><i>341</i>&nbsp;            return true;</b>
+<i>342</i>&nbsp;        }
+<i>343</i>&nbsp;
+<b class="fc"><i>344</i>&nbsp;        return false;</b>
+<i>345</i>&nbsp;    }
+<i>346</i>&nbsp;
+<i>347</i>&nbsp;    /**
+<i>348</i>&nbsp;     * Handles an unknown token. If the token starts with a dash an 
+<i>349</i>&nbsp;     * UnrecognizedOptionException is thrown. Otherwise the token is added 
+<i>350</i>&nbsp;     * to the arguments of the command line. If the stopAtNonOption flag 
+<i>351</i>&nbsp;     * is set, this stops the parsing and the remaining tokens are added 
+<i>352</i>&nbsp;     * as-is in the arguments of the command line.
+<i>353</i>&nbsp;     *
+<i>354</i>&nbsp;     * @param token the command line token to handle
+<i>355</i>&nbsp;     */
+<i>356</i>&nbsp;    private void handleUnknownToken(String token) throws ParseException
+<i>357</i>&nbsp;    {
+<b class="fc"><i>358</i>&nbsp;        if (token.startsWith(&quot;-&quot;) &amp;&amp; token.length() &gt; 1 &amp;&amp; !stopAtNonOption)</b>
+<i>359</i>&nbsp;        {
+<b class="fc"><i>360</i>&nbsp;            throw new UnrecognizedOptionException(&quot;Unrecognized option: &quot; + token, token);</b>
+<i>361</i>&nbsp;        }
+<i>362</i>&nbsp;
+<b class="fc"><i>363</i>&nbsp;        cmd.addArg(token);</b>
+<b class="fc"><i>364</i>&nbsp;        if (stopAtNonOption)</b>
+<i>365</i>&nbsp;        {
+<b class="fc"><i>366</i>&nbsp;            skipParsing = true;</b>
+<i>367</i>&nbsp;        }
+<b class="fc"><i>368</i>&nbsp;    }</b>
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;    /**
+<i>371</i>&nbsp;     * Handles the following tokens:
+<i>372</i>&nbsp;     *
+<i>373</i>&nbsp;     * --L
+<i>374</i>&nbsp;     * --L=V
+<i>375</i>&nbsp;     * --L V
+<i>376</i>&nbsp;     * --l
+<i>377</i>&nbsp;     *
+<i>378</i>&nbsp;     * @param token the command line token to handle
+<i>379</i>&nbsp;     */
+<i>380</i>&nbsp;    private void handleLongOption(String token) throws ParseException
+<i>381</i>&nbsp;    {
+<b class="fc"><i>382</i>&nbsp;        if (token.indexOf(&#39;=&#39;) == -1)</b>
+<i>383</i>&nbsp;        {
+<b class="fc"><i>384</i>&nbsp;            handleLongOptionWithoutEqual(token);</b>
+<i>385</i>&nbsp;        }
+<i>386</i>&nbsp;        else
+<i>387</i>&nbsp;        {
+<b class="fc"><i>388</i>&nbsp;            handleLongOptionWithEqual(token);</b>
+<i>389</i>&nbsp;        }
+<b class="fc"><i>390</i>&nbsp;    }</b>
+<i>391</i>&nbsp;
+<i>392</i>&nbsp;    /**
+<i>393</i>&nbsp;     * Handles the following tokens:
+<i>394</i>&nbsp;     *
+<i>395</i>&nbsp;     * --L
+<i>396</i>&nbsp;     * -L
+<i>397</i>&nbsp;     * --l
+<i>398</i>&nbsp;     * -l
+<i>399</i>&nbsp;     * 
+<i>400</i>&nbsp;     * @param token the command line token to handle
+<i>401</i>&nbsp;     */
+<i>402</i>&nbsp;    private void handleLongOptionWithoutEqual(String token) throws ParseException
+<i>403</i>&nbsp;    {
+<b class="fc"><i>404</i>&nbsp;        List&lt;String&gt; matchingOpts = options.getMatchingOptions(token);</b>
+<b class="fc"><i>405</i>&nbsp;        if (matchingOpts.isEmpty())</b>
+<i>406</i>&nbsp;        {
+<b class="fc"><i>407</i>&nbsp;            handleUnknownToken(currentToken);</b>
+<i>408</i>&nbsp;        }
+<b class="fc"><i>409</i>&nbsp;        else if (matchingOpts.size() &gt; 1)</b>
+<i>410</i>&nbsp;        {
+<b class="fc"><i>411</i>&nbsp;            throw new AmbiguousOptionException(token, matchingOpts);</b>
+<i>412</i>&nbsp;        }
+<i>413</i>&nbsp;        else
+<i>414</i>&nbsp;        {
+<b class="fc"><i>415</i>&nbsp;            handleOption(options.getOption(matchingOpts.get(0)));</b>
+<i>416</i>&nbsp;        }
+<b class="fc"><i>417</i>&nbsp;    }</b>
+<i>418</i>&nbsp;
+<i>419</i>&nbsp;    /**
+<i>420</i>&nbsp;     * Handles the following tokens:
+<i>421</i>&nbsp;     *
+<i>422</i>&nbsp;     * --L=V
+<i>423</i>&nbsp;     * -L=V
+<i>424</i>&nbsp;     * --l=V
+<i>425</i>&nbsp;     * -l=V
+<i>426</i>&nbsp;     *
+<i>427</i>&nbsp;     * @param token the command line token to handle
+<i>428</i>&nbsp;     */
+<i>429</i>&nbsp;    private void handleLongOptionWithEqual(String token) throws ParseException
+<i>430</i>&nbsp;    {
+<b class="fc"><i>431</i>&nbsp;        int pos = token.indexOf(&#39;=&#39;);</b>
+<i>432</i>&nbsp;
+<b class="fc"><i>433</i>&nbsp;        String value = token.substring(pos + 1);</b>
+<i>434</i>&nbsp;
+<b class="fc"><i>435</i>&nbsp;        String opt = token.substring(0, pos);</b>
+<i>436</i>&nbsp;
+<b class="fc"><i>437</i>&nbsp;        List&lt;String&gt; matchingOpts = options.getMatchingOptions(opt);</b>
+<b class="fc"><i>438</i>&nbsp;        if (matchingOpts.isEmpty())</b>
+<i>439</i>&nbsp;        {
+<b class="fc"><i>440</i>&nbsp;            handleUnknownToken(currentToken);</b>
+<i>441</i>&nbsp;        }
+<b class="fc"><i>442</i>&nbsp;        else if (matchingOpts.size() &gt; 1)</b>
+<i>443</i>&nbsp;        {
+<b class="fc"><i>444</i>&nbsp;            throw new AmbiguousOptionException(opt, matchingOpts);</b>
+<i>445</i>&nbsp;        }
+<i>446</i>&nbsp;        else
+<i>447</i>&nbsp;        {
+<b class="fc"><i>448</i>&nbsp;            Option option = options.getOption(matchingOpts.get(0));</b>
+<i>449</i>&nbsp;
+<b class="fc"><i>450</i>&nbsp;            if (option.acceptsArg())</b>
+<i>451</i>&nbsp;            {
+<b class="fc"><i>452</i>&nbsp;                handleOption(option);</b>
+<b class="fc"><i>453</i>&nbsp;                currentOption.addValueForProcessing(value);</b>
+<b class="fc"><i>454</i>&nbsp;                currentOption = null;</b>
+<i>455</i>&nbsp;            }
+<i>456</i>&nbsp;            else
+<i>457</i>&nbsp;            {
+<b class="fc"><i>458</i>&nbsp;                handleUnknownToken(currentToken);</b>
+<i>459</i>&nbsp;            }
+<i>460</i>&nbsp;        }
+<b class="fc"><i>461</i>&nbsp;    }</b>
+<i>462</i>&nbsp;
+<i>463</i>&nbsp;    /**
+<i>464</i>&nbsp;     * Handles the following tokens:
+<i>465</i>&nbsp;     *
+<i>466</i>&nbsp;     * -S
+<i>467</i>&nbsp;     * -SV
+<i>468</i>&nbsp;     * -S V
+<i>469</i>&nbsp;     * -S=V
+<i>470</i>&nbsp;     * -S1S2
+<i>471</i>&nbsp;     * -S1S2 V
+<i>472</i>&nbsp;     * -SV1=V2
+<i>473</i>&nbsp;     *
+<i>474</i>&nbsp;     * -L
+<i>475</i>&nbsp;     * -LV
+<i>476</i>&nbsp;     * -L V
+<i>477</i>&nbsp;     * -L=V
+<i>478</i>&nbsp;     * -l
+<i>479</i>&nbsp;     *
+<i>480</i>&nbsp;     * @param token the command line token to handle
+<i>481</i>&nbsp;     */
+<i>482</i>&nbsp;    private void handleShortAndLongOption(String token) throws ParseException
+<i>483</i>&nbsp;    {
+<b class="fc"><i>484</i>&nbsp;        String t = Util.stripLeadingHyphens(token);</b>
+<i>485</i>&nbsp;
+<b class="fc"><i>486</i>&nbsp;        int pos = t.indexOf(&#39;=&#39;);</b>
+<i>487</i>&nbsp;
+<b class="fc"><i>488</i>&nbsp;        if (t.length() == 1)</b>
+<i>489</i>&nbsp;        {
+<i>490</i>&nbsp;            // -S
+<b class="fc"><i>491</i>&nbsp;            if (options.hasShortOption(t))</b>
+<i>492</i>&nbsp;            {
+<b class="fc"><i>493</i>&nbsp;                handleOption(options.getOption(t));</b>
+<i>494</i>&nbsp;            }
+<i>495</i>&nbsp;            else
+<i>496</i>&nbsp;            {
+<b class="fc"><i>497</i>&nbsp;                handleUnknownToken(token);</b>
+<i>498</i>&nbsp;            }
+<i>499</i>&nbsp;        }
+<b class="fc"><i>500</i>&nbsp;        else if (pos == -1)</b>
+<i>501</i>&nbsp;        {
+<i>502</i>&nbsp;            // no equal sign found (-xxx)
+<b class="fc"><i>503</i>&nbsp;            if (options.hasShortOption(t))</b>
+<i>504</i>&nbsp;            {
+<b class="fc"><i>505</i>&nbsp;                handleOption(options.getOption(t));</b>
+<i>506</i>&nbsp;            }
+<b class="fc"><i>507</i>&nbsp;            else if (!options.getMatchingOptions(t).isEmpty())</b>
+<i>508</i>&nbsp;            {
+<i>509</i>&nbsp;                // -L or -l
+<b class="fc"><i>510</i>&nbsp;                handleLongOptionWithoutEqual(token);</b>
+<i>511</i>&nbsp;            }
+<i>512</i>&nbsp;            else
+<i>513</i>&nbsp;            {
+<i>514</i>&nbsp;                // look for a long prefix (-Xmx512m)
+<b class="fc"><i>515</i>&nbsp;                String opt = getLongPrefix(t);</b>
+<i>516</i>&nbsp;
+<b class="fc"><i>517</i>&nbsp;                if (opt != null &amp;&amp; options.getOption(opt).acceptsArg())</b>
+<i>518</i>&nbsp;                {
+<b class="fc"><i>519</i>&nbsp;                    handleOption(options.getOption(opt));</b>
+<b class="fc"><i>520</i>&nbsp;                    currentOption.addValueForProcessing(t.substring(opt.length()));</b>
+<b class="fc"><i>521</i>&nbsp;                    currentOption = null;</b>
+<i>522</i>&nbsp;                }
+<b class="fc"><i>523</i>&nbsp;                else if (isJavaProperty(t))</b>
+<i>524</i>&nbsp;                {
+<i>525</i>&nbsp;                    // -SV1 (-Dflag)
+<b class="fc"><i>526</i>&nbsp;                    handleOption(options.getOption(t.substring(0, 1)));</b>
+<b class="fc"><i>527</i>&nbsp;                    currentOption.addValueForProcessing(t.substring(1));</b>
+<b class="fc"><i>528</i>&nbsp;                    currentOption = null;</b>
+<i>529</i>&nbsp;                }
+<i>530</i>&nbsp;                else
+<i>531</i>&nbsp;                {
+<i>532</i>&nbsp;                    // -S1S2S3 or -S1S2V
+<b class="fc"><i>533</i>&nbsp;                    handleConcatenatedOptions(token);</b>
+<i>534</i>&nbsp;                }
+<b class="fc"><i>535</i>&nbsp;            }</b>
+<i>536</i>&nbsp;        }
+<i>537</i>&nbsp;        else
+<i>538</i>&nbsp;        {
+<i>539</i>&nbsp;            // equal sign found (-xxx=yyy)
+<b class="fc"><i>540</i>&nbsp;            String opt = t.substring(0, pos);</b>
+<b class="fc"><i>541</i>&nbsp;            String value = t.substring(pos + 1);</b>
+<i>542</i>&nbsp;
+<b class="fc"><i>543</i>&nbsp;            if (opt.length() == 1)</b>
+<i>544</i>&nbsp;            {
+<i>545</i>&nbsp;                // -S=V
+<b class="fc"><i>546</i>&nbsp;                Option option = options.getOption(opt);</b>
+<b class="fc"><i>547</i>&nbsp;                if (option != null &amp;&amp; option.acceptsArg())</b>
+<i>548</i>&nbsp;                {
+<b class="fc"><i>549</i>&nbsp;                    handleOption(option);</b>
+<b class="fc"><i>550</i>&nbsp;                    currentOption.addValueForProcessing(value);</b>
+<b class="fc"><i>551</i>&nbsp;                    currentOption = null;</b>
+<i>552</i>&nbsp;                }
+<i>553</i>&nbsp;                else
+<i>554</i>&nbsp;                {
+<b class="fc"><i>555</i>&nbsp;                    handleUnknownToken(token);</b>
+<i>556</i>&nbsp;                }
+<b class="fc"><i>557</i>&nbsp;            }</b>
+<b class="fc"><i>558</i>&nbsp;            else if (isJavaProperty(opt))</b>
+<i>559</i>&nbsp;            {
+<i>560</i>&nbsp;                // -SV1=V2 (-Dkey=value)
+<b class="fc"><i>561</i>&nbsp;                handleOption(options.getOption(opt.substring(0, 1)));</b>
+<b class="fc"><i>562</i>&nbsp;                currentOption.addValueForProcessing(opt.substring(1));</b>
+<b class="fc"><i>563</i>&nbsp;                currentOption.addValueForProcessing(value);</b>
+<b class="fc"><i>564</i>&nbsp;                currentOption = null;</b>
+<i>565</i>&nbsp;            }
+<i>566</i>&nbsp;            else
+<i>567</i>&nbsp;            {
+<i>568</i>&nbsp;                // -L=V or -l=V
+<b class="fc"><i>569</i>&nbsp;                handleLongOptionWithEqual(token);</b>
+<i>570</i>&nbsp;            }
+<i>571</i>&nbsp;        }
+<b class="fc"><i>572</i>&nbsp;    }</b>
+<i>573</i>&nbsp;
+<i>574</i>&nbsp;    /**
+<i>575</i>&nbsp;     * Search for a prefix that is the long name of an option (-Xmx512m)
+<i>576</i>&nbsp;     *
+<i>577</i>&nbsp;     * @param token
+<i>578</i>&nbsp;     */
+<i>579</i>&nbsp;    private String getLongPrefix(String token)
+<i>580</i>&nbsp;    {
+<b class="fc"><i>581</i>&nbsp;        String t = Util.stripLeadingHyphens(token);</b>
+<i>582</i>&nbsp;
+<i>583</i>&nbsp;        int i;
+<b class="fc"><i>584</i>&nbsp;        String opt = null;</b>
+<b class="fc"><i>585</i>&nbsp;        for (i = t.length() - 2; i &gt; 1; i--)</b>
+<i>586</i>&nbsp;        {
+<b class="fc"><i>587</i>&nbsp;            String prefix = t.substring(0, i);</b>
+<b class="fc"><i>588</i>&nbsp;            if (options.hasLongOption(prefix))</b>
+<i>589</i>&nbsp;            {
+<b class="fc"><i>590</i>&nbsp;                opt = prefix;</b>
+<b class="fc"><i>591</i>&nbsp;                break;</b>
+<i>592</i>&nbsp;            }
+<i>593</i>&nbsp;        }
+<i>594</i>&nbsp;        
+<b class="fc"><i>595</i>&nbsp;        return opt;</b>
+<i>596</i>&nbsp;    }
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;    /**
+<i>599</i>&nbsp;     * Check if the specified token is a Java-like property (-Dkey=value).
+<i>600</i>&nbsp;     */
+<i>601</i>&nbsp;    private boolean isJavaProperty(String token)
+<i>602</i>&nbsp;    {
+<b class="fc"><i>603</i>&nbsp;        String opt = token.substring(0, 1);</b>
+<b class="fc"><i>604</i>&nbsp;        Option option = options.getOption(opt);</b>
+<i>605</i>&nbsp;
+<b class="fc"><i>606</i>&nbsp;        return option != null &amp;&amp; (option.getArgs() &gt;= 2 || option.getArgs() == Option.UNLIMITED_VALUES);</b>
+<i>607</i>&nbsp;    }
+<i>608</i>&nbsp;
+<i>609</i>&nbsp;    private void handleOption(Option option) throws ParseException
+<i>610</i>&nbsp;    {
+<i>611</i>&nbsp;        // check the previous option before handling the next one
+<b class="fc"><i>612</i>&nbsp;        checkRequiredArgs();</b>
+<i>613</i>&nbsp;
+<b class="fc"><i>614</i>&nbsp;        option = (Option) option.clone();</b>
+<i>615</i>&nbsp;
+<b class="fc"><i>616</i>&nbsp;        updateRequiredOptions(option);</b>
+<i>617</i>&nbsp;
+<b class="fc"><i>618</i>&nbsp;        cmd.addOption(option);</b>
+<i>619</i>&nbsp;
+<b class="fc"><i>620</i>&nbsp;        if (option.hasArg())</b>
+<i>621</i>&nbsp;        {
+<b class="fc"><i>622</i>&nbsp;            currentOption = option;</b>
+<i>623</i>&nbsp;        }
+<i>624</i>&nbsp;        else
+<i>625</i>&nbsp;        {
+<b class="fc"><i>626</i>&nbsp;            currentOption = null;</b>
+<i>627</i>&nbsp;        }
+<b class="fc"><i>628</i>&nbsp;    }</b>
+<i>629</i>&nbsp;
+<i>630</i>&nbsp;    /**
+<i>631</i>&nbsp;     * Removes the option or its group from the list of expected elements.
+<i>632</i>&nbsp;     *
+<i>633</i>&nbsp;     * @param option
+<i>634</i>&nbsp;     */
+<i>635</i>&nbsp;    private void updateRequiredOptions(Option option) throws AlreadySelectedException
+<i>636</i>&nbsp;    {
+<b class="fc"><i>637</i>&nbsp;        if (option.isRequired())</b>
+<i>638</i>&nbsp;        {
+<b class="fc"><i>639</i>&nbsp;            expectedOpts.remove(option.getKey());</b>
+<i>640</i>&nbsp;        }
+<i>641</i>&nbsp;
+<i>642</i>&nbsp;        // if the option is in an OptionGroup make that option the selected option of the group
+<b class="fc"><i>643</i>&nbsp;        if (options.getOptionGroup(option) != null)</b>
+<i>644</i>&nbsp;        {
+<b class="fc"><i>645</i>&nbsp;            OptionGroup group = options.getOptionGroup(option);</b>
+<i>646</i>&nbsp;
+<b class="fc"><i>647</i>&nbsp;            if (group.isRequired())</b>
+<i>648</i>&nbsp;            {
+<b class="nc"><i>649</i>&nbsp;                expectedOpts.remove(group);</b>
+<i>650</i>&nbsp;            }
+<i>651</i>&nbsp;
+<b class="fc"><i>652</i>&nbsp;            group.setSelected(option);</b>
+<i>653</i>&nbsp;        }
+<b class="fc"><i>654</i>&nbsp;    }</b>
+<i>655</i>&nbsp;
+<i>656</i>&nbsp;    /**
+<i>657</i>&nbsp;     * Breaks &lt;code&gt;token&lt;/code&gt; into its constituent parts
+<i>658</i>&nbsp;     * using the following algorithm.
+<i>659</i>&nbsp;     *
+<i>660</i>&nbsp;     * &lt;ul&gt;
+<i>661</i>&nbsp;     *  &lt;li&gt;ignore the first character (&quot;&lt;b&gt;-&lt;/b&gt;&quot;)&lt;/li&gt;
+<i>662</i>&nbsp;     *  &lt;li&gt;for each remaining character check if an {@link Option}
+<i>663</i>&nbsp;     *  exists with that id.&lt;/li&gt;
+<i>664</i>&nbsp;     *  &lt;li&gt;if an {@link Option} does exist then add that character
+<i>665</i>&nbsp;     *  prepended with &quot;&lt;b&gt;-&lt;/b&gt;&quot; to the list of processed tokens.&lt;/li&gt;
+<i>666</i>&nbsp;     *  &lt;li&gt;if the {@link Option} can have an argument value and there
+<i>667</i>&nbsp;     *  are remaining characters in the token then add the remaining
+<i>668</i>&nbsp;     *  characters as a token to the list of processed tokens.&lt;/li&gt;
+<i>669</i>&nbsp;     *  &lt;li&gt;if an {@link Option} does &lt;b&gt;NOT&lt;/b&gt; exist &lt;b&gt;AND&lt;/b&gt;
+<i>670</i>&nbsp;     *  &lt;code&gt;stopAtNonOption&lt;/code&gt; &lt;b&gt;IS&lt;/b&gt; set then add the special token
+<i>671</i>&nbsp;     *  &quot;&lt;b&gt;--&lt;/b&gt;&quot; followed by the remaining characters and also
+<i>672</i>&nbsp;     *  the remaining tokens directly to the processed tokens list.&lt;/li&gt;
+<i>673</i>&nbsp;     *  &lt;li&gt;if an {@link Option} does &lt;b&gt;NOT&lt;/b&gt; exist &lt;b&gt;AND&lt;/b&gt;
+<i>674</i>&nbsp;     *  &lt;code&gt;stopAtNonOption&lt;/code&gt; &lt;b&gt;IS NOT&lt;/b&gt; set then add that
+<i>675</i>&nbsp;     *  character prepended with &quot;&lt;b&gt;-&lt;/b&gt;&quot;.&lt;/li&gt;
+<i>676</i>&nbsp;     * &lt;/ul&gt;
+<i>677</i>&nbsp;     *
+<i>678</i>&nbsp;     * @param token The current token to be &lt;b&gt;burst&lt;/b&gt;
+<i>679</i>&nbsp;     * at the first non-Option encountered.
+<i>680</i>&nbsp;     * @throws ParseException if there are any problems encountered
+<i>681</i>&nbsp;     *                        while parsing the command line token.
+<i>682</i>&nbsp;     */
+<i>683</i>&nbsp;    protected void handleConcatenatedOptions(String token) throws ParseException
+<i>684</i>&nbsp;    {
+<b class="fc"><i>685</i>&nbsp;        for (int i = 1; i &lt; token.length(); i++)</b>
+<i>686</i>&nbsp;        {
+<b class="fc"><i>687</i>&nbsp;            String ch = String.valueOf(token.charAt(i));</b>
+<i>688</i>&nbsp;
+<b class="fc"><i>689</i>&nbsp;            if (options.hasOption(ch))</b>
+<i>690</i>&nbsp;            {
+<b class="fc"><i>691</i>&nbsp;                handleOption(options.getOption(ch));</b>
+<i>692</i>&nbsp;
+<b class="fc"><i>693</i>&nbsp;                if (currentOption != null &amp;&amp; token.length() != i + 1)</b>
+<i>694</i>&nbsp;                {
+<i>695</i>&nbsp;                    // add the trail as an argument of the option
+<b class="fc"><i>696</i>&nbsp;                    currentOption.addValueForProcessing(token.substring(i + 1));</b>
+<b class="fc"><i>697</i>&nbsp;                    break;</b>
+<i>698</i>&nbsp;                }
+<i>699</i>&nbsp;            }
+<i>700</i>&nbsp;            else
+<i>701</i>&nbsp;            {
+<b class="fc"><i>702</i>&nbsp;                handleUnknownToken(stopAtNonOption &amp;&amp; i &gt; 1 ? token.substring(i) : token);</b>
+<b class="fc"><i>703</i>&nbsp;                break;</b>
+<i>704</i>&nbsp;            }
+<i>705</i>&nbsp;        }
+<b class="fc"><i>706</i>&nbsp;    }</b>
+<i>707</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-05-18 21:41</div>
+</div>
+</body>
+</html>

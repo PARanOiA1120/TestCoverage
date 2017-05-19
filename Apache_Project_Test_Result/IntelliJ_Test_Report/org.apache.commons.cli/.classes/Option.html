@@ -1,0 +1,1124 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Option</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.apache.commons.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Option (org.apache.commons.cli)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Option</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.9%
+  </span>
+  <span class="absValue">
+    (46/ 49)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.8%
+  </span>
+  <span class="absValue">
+    (118/ 130)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Option$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.8%
+  </span>
+  <span class="absValue">
+    (15/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.9%
+  </span>
+  <span class="absValue">
+    (31/ 33)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    93.8%
+  </span>
+  <span class="absValue">
+    (61/ 65)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.4%
+  </span>
+  <span class="absValue">
+    (149/ 163)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Licensed to the Apache Software Foundation (ASF) under one or more
+<i>3</i>&nbsp; * contributor license agreements.  See the NOTICE file distributed with
+<i>4</i>&nbsp; * this work for additional information regarding copyright ownership.
+<i>5</i>&nbsp; * The ASF licenses this file to You under the Apache License, Version 2.0
+<i>6</i>&nbsp; * (the &quot;License&quot;); you may not use this file except in compliance with
+<i>7</i>&nbsp; * the License.  You may obtain a copy of the License at
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; *     http://www.apache.org/licenses/LICENSE-2.0
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>12</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>13</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>14</i>&nbsp; * See the License for the specific language governing permissions and
+<i>15</i>&nbsp; * limitations under the License.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;package org.apache.commons.cli;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import java.io.Serializable;
+<i>21</i>&nbsp;import java.util.ArrayList;
+<i>22</i>&nbsp;import java.util.List;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * Describes a single command-line option.  It maintains
+<i>26</i>&nbsp; * information regarding the short-name of the option, the long-name,
+<i>27</i>&nbsp; * if any exists, a flag indicating if an argument is required for
+<i>28</i>&nbsp; * this option, and a self-documenting description of the option.
+<i>29</i>&nbsp; * &lt;p&gt;
+<i>30</i>&nbsp; * An Option is not created independently, but is created through
+<i>31</i>&nbsp; * an instance of {@link Options}. An Option is required to have
+<i>32</i>&nbsp; * at least a short or a long-name.
+<i>33</i>&nbsp; * &lt;p&gt;
+<i>34</i>&nbsp; * &lt;b&gt;Note:&lt;/b&gt; once an {@link Option} has been added to an instance
+<i>35</i>&nbsp; * of {@link Options}, it&#39;s required flag may not be changed anymore.
+<i>36</i>&nbsp; *
+<i>37</i>&nbsp; * @see org.apache.commons.cli.Options
+<i>38</i>&nbsp; * @see org.apache.commons.cli.CommandLine
+<i>39</i>&nbsp; *
+<i>40</i>&nbsp; * @version $Id: Option.java 1756753 2016-08-18 10:18:43Z britter $
+<i>41</i>&nbsp; */
+<b class="fc"><i>42</i>&nbsp;public class Option implements Cloneable, Serializable</b>
+<i>43</i>&nbsp;{
+<i>44</i>&nbsp;    /** constant that specifies the number of argument values has not been specified */
+<i>45</i>&nbsp;    public static final int UNINITIALIZED = -1;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /** constant that specifies the number of argument values is infinite */
+<i>48</i>&nbsp;    public static final int UNLIMITED_VALUES = -2;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /** The serial version UID. */
+<i>51</i>&nbsp;    private static final long serialVersionUID = 1L;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /** the name of the option */
+<i>54</i>&nbsp;    private final String opt;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /** the long representation of the option */
+<i>57</i>&nbsp;    private String longOpt;
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    /** the name of the argument for this option */
+<i>60</i>&nbsp;    private String argName;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /** description of the option */
+<i>63</i>&nbsp;    private String description;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /** specifies whether this option is required to be present */
+<i>66</i>&nbsp;    private boolean required;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    /** specifies whether the argument value of this Option is optional */
+<i>69</i>&nbsp;    private boolean optionalArg;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /** the number of argument values this option can have */
+<b class="fc"><i>72</i>&nbsp;    private int numberOfArgs = UNINITIALIZED;</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /** the type of this Option */
+<b class="fc"><i>75</i>&nbsp;    private Class&lt;?&gt; type = String.class;</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /** the list of argument values **/
+<b class="fc"><i>78</i>&nbsp;    private List&lt;String&gt; values = new ArrayList&lt;String&gt;();</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /** the character that is the value separator */
+<i>81</i>&nbsp;    private char valuesep;
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Private constructor used by the nested Builder class.
+<i>85</i>&nbsp;     * 
+<i>86</i>&nbsp;     * @param builder builder used to create this option
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    private Option(final Builder builder)
+<b class="fc"><i>89</i>&nbsp;    {</b>
+<b class="fc"><i>90</i>&nbsp;        this.argName = builder.argName;</b>
+<b class="fc"><i>91</i>&nbsp;        this.description = builder.description;</b>
+<b class="fc"><i>92</i>&nbsp;        this.longOpt = builder.longOpt;</b>
+<b class="fc"><i>93</i>&nbsp;        this.numberOfArgs = builder.numberOfArgs;</b>
+<b class="fc"><i>94</i>&nbsp;        this.opt = builder.opt;</b>
+<b class="fc"><i>95</i>&nbsp;        this.optionalArg = builder.optionalArg;</b>
+<b class="fc"><i>96</i>&nbsp;        this.required = builder.required;</b>
+<b class="fc"><i>97</i>&nbsp;        this.type = builder.type;</b>
+<b class="fc"><i>98</i>&nbsp;        this.valuesep = builder.valuesep;</b>
+<b class="fc"><i>99</i>&nbsp;    }</b>
+<i>100</i>&nbsp;    
+<i>101</i>&nbsp;    /**
+<i>102</i>&nbsp;     * Creates an Option using the specified parameters.
+<i>103</i>&nbsp;     * The option does not take an argument.
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @param opt short representation of the option
+<i>106</i>&nbsp;     * @param description describes the function of the option
+<i>107</i>&nbsp;     *
+<i>108</i>&nbsp;     * @throws IllegalArgumentException if there are any non valid
+<i>109</i>&nbsp;     * Option characters in &lt;code&gt;opt&lt;/code&gt;.
+<i>110</i>&nbsp;     */
+<i>111</i>&nbsp;    public Option(String opt, String description) throws IllegalArgumentException
+<i>112</i>&nbsp;    {
+<b class="fc"><i>113</i>&nbsp;        this(opt, null, false, description);</b>
+<b class="fc"><i>114</i>&nbsp;    }</b>
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     * Creates an Option using the specified parameters.
+<i>118</i>&nbsp;     *
+<i>119</i>&nbsp;     * @param opt short representation of the option
+<i>120</i>&nbsp;     * @param hasArg specifies whether the Option takes an argument or not
+<i>121</i>&nbsp;     * @param description describes the function of the option
+<i>122</i>&nbsp;     *
+<i>123</i>&nbsp;     * @throws IllegalArgumentException if there are any non valid
+<i>124</i>&nbsp;     * Option characters in &lt;code&gt;opt&lt;/code&gt;.
+<i>125</i>&nbsp;     */
+<i>126</i>&nbsp;    public Option(String opt, boolean hasArg, String description) throws IllegalArgumentException
+<i>127</i>&nbsp;    {
+<b class="fc"><i>128</i>&nbsp;        this(opt, null, hasArg, description);</b>
+<b class="fc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    /**
+<i>132</i>&nbsp;     * Creates an Option using the specified parameters.
+<i>133</i>&nbsp;     *
+<i>134</i>&nbsp;     * @param opt short representation of the option
+<i>135</i>&nbsp;     * @param longOpt the long representation of the option
+<i>136</i>&nbsp;     * @param hasArg specifies whether the Option takes an argument or not
+<i>137</i>&nbsp;     * @param description describes the function of the option
+<i>138</i>&nbsp;     *
+<i>139</i>&nbsp;     * @throws IllegalArgumentException if there are any non valid
+<i>140</i>&nbsp;     * Option characters in &lt;code&gt;opt&lt;/code&gt;.
+<i>141</i>&nbsp;     */
+<i>142</i>&nbsp;    public Option(String opt, String longOpt, boolean hasArg, String description)
+<i>143</i>&nbsp;           throws IllegalArgumentException
+<b class="fc"><i>144</i>&nbsp;    {</b>
+<i>145</i>&nbsp;        // ensure that the option is valid
+<b class="fc"><i>146</i>&nbsp;        OptionValidator.validateOption(opt);</b>
+<i>147</i>&nbsp;
+<b class="fc"><i>148</i>&nbsp;        this.opt = opt;</b>
+<b class="fc"><i>149</i>&nbsp;        this.longOpt = longOpt;</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;        // if hasArg is set then the number of arguments is 1
+<b class="fc"><i>152</i>&nbsp;        if (hasArg)</b>
+<i>153</i>&nbsp;        {
+<b class="fc"><i>154</i>&nbsp;            this.numberOfArgs = 1;</b>
+<i>155</i>&nbsp;        }
+<i>156</i>&nbsp;
+<b class="fc"><i>157</i>&nbsp;        this.description = description;</b>
+<b class="fc"><i>158</i>&nbsp;    }</b>
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;    /**
+<i>161</i>&nbsp;     * Returns the id of this Option.  This is only set when the
+<i>162</i>&nbsp;     * Option shortOpt is a single character.  This is used for switch
+<i>163</i>&nbsp;     * statements.
+<i>164</i>&nbsp;     *
+<i>165</i>&nbsp;     * @return the id of this Option
+<i>166</i>&nbsp;     */
+<i>167</i>&nbsp;    public int getId()
+<i>168</i>&nbsp;    {
+<b class="fc"><i>169</i>&nbsp;        return getKey().charAt(0);</b>
+<i>170</i>&nbsp;    }
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    /**
+<i>173</i>&nbsp;     * Returns the &#39;unique&#39; Option identifier.
+<i>174</i>&nbsp;     * 
+<i>175</i>&nbsp;     * @return the &#39;unique&#39; Option identifier
+<i>176</i>&nbsp;     */
+<i>177</i>&nbsp;    String getKey()
+<i>178</i>&nbsp;    {
+<i>179</i>&nbsp;        // if &#39;opt&#39; is null, then it is a &#39;long&#39; option
+<b class="fc"><i>180</i>&nbsp;        return (opt == null) ? longOpt : opt;</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    /** 
+<i>184</i>&nbsp;     * Retrieve the name of this Option.
+<i>185</i>&nbsp;     *
+<i>186</i>&nbsp;     * It is this String which can be used with
+<i>187</i>&nbsp;     * {@link CommandLine#hasOption(String opt)} and
+<i>188</i>&nbsp;     * {@link CommandLine#getOptionValue(String opt)} to check
+<i>189</i>&nbsp;     * for existence and argument.
+<i>190</i>&nbsp;     *
+<i>191</i>&nbsp;     * @return The name of this option
+<i>192</i>&nbsp;     */
+<i>193</i>&nbsp;    public String getOpt()
+<i>194</i>&nbsp;    {
+<b class="fc"><i>195</i>&nbsp;        return opt;</b>
+<i>196</i>&nbsp;    }
+<i>197</i>&nbsp;
+<i>198</i>&nbsp;    /**
+<i>199</i>&nbsp;     * Retrieve the type of this Option.
+<i>200</i>&nbsp;     * 
+<i>201</i>&nbsp;     * @return The type of this option
+<i>202</i>&nbsp;     */
+<i>203</i>&nbsp;    public Object getType()
+<i>204</i>&nbsp;    {
+<b class="fc"><i>205</i>&nbsp;        return type;</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /**
+<i>209</i>&nbsp;     * Sets the type of this Option.
+<i>210</i>&nbsp;     * &lt;p&gt;
+<i>211</i>&nbsp;     * &lt;b&gt;Note:&lt;/b&gt; this method is kept for binary compatibility and the
+<i>212</i>&nbsp;     * input type is supposed to be a {@link Class} object. 
+<i>213</i>&nbsp;     *
+<i>214</i>&nbsp;     * @param type the type of this Option
+<i>215</i>&nbsp;     * @deprecated since 1.3, use {@link #setType(Class)} instead
+<i>216</i>&nbsp;     */
+<i>217</i>&nbsp;    @Deprecated
+<i>218</i>&nbsp;    public void setType(Object type)
+<i>219</i>&nbsp;    {
+<b class="nc"><i>220</i>&nbsp;        setType((Class&lt;?&gt;) type);</b>
+<b class="nc"><i>221</i>&nbsp;    }</b>
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;    /**
+<i>224</i>&nbsp;     * Sets the type of this Option.
+<i>225</i>&nbsp;     *
+<i>226</i>&nbsp;     * @param type the type of this Option
+<i>227</i>&nbsp;     * @since 1.3
+<i>228</i>&nbsp;     */
+<i>229</i>&nbsp;    public void setType(Class&lt;?&gt; type)
+<i>230</i>&nbsp;    {
+<b class="fc"><i>231</i>&nbsp;        this.type = type;</b>
+<b class="fc"><i>232</i>&nbsp;    }</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    /** 
+<i>235</i>&nbsp;     * Retrieve the long name of this Option.
+<i>236</i>&nbsp;     *
+<i>237</i>&nbsp;     * @return Long name of this option, or null, if there is no long name
+<i>238</i>&nbsp;     */
+<i>239</i>&nbsp;    public String getLongOpt()
+<i>240</i>&nbsp;    {
+<b class="fc"><i>241</i>&nbsp;        return longOpt;</b>
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    /**
+<i>245</i>&nbsp;     * Sets the long name of this Option.
+<i>246</i>&nbsp;     *
+<i>247</i>&nbsp;     * @param longOpt the long name of this Option
+<i>248</i>&nbsp;     */
+<i>249</i>&nbsp;    public void setLongOpt(String longOpt)
+<i>250</i>&nbsp;    {
+<b class="fc"><i>251</i>&nbsp;        this.longOpt = longOpt;</b>
+<b class="fc"><i>252</i>&nbsp;    }</b>
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;    /**
+<i>255</i>&nbsp;     * Sets whether this Option can have an optional argument.
+<i>256</i>&nbsp;     *
+<i>257</i>&nbsp;     * @param optionalArg specifies whether the Option can have
+<i>258</i>&nbsp;     * an optional argument.
+<i>259</i>&nbsp;     */
+<i>260</i>&nbsp;    public void setOptionalArg(boolean optionalArg)
+<i>261</i>&nbsp;    {
+<b class="fc"><i>262</i>&nbsp;        this.optionalArg = optionalArg;</b>
+<b class="fc"><i>263</i>&nbsp;    }</b>
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;    /**
+<i>266</i>&nbsp;     * @return whether this Option can have an optional argument
+<i>267</i>&nbsp;     */
+<i>268</i>&nbsp;    public boolean hasOptionalArg()
+<i>269</i>&nbsp;    {
+<b class="fc"><i>270</i>&nbsp;        return optionalArg;</b>
+<i>271</i>&nbsp;    }
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    /** 
+<i>274</i>&nbsp;     * Query to see if this Option has a long name
+<i>275</i>&nbsp;     *
+<i>276</i>&nbsp;     * @return boolean flag indicating existence of a long name
+<i>277</i>&nbsp;     */
+<i>278</i>&nbsp;    public boolean hasLongOpt()
+<i>279</i>&nbsp;    {
+<b class="fc"><i>280</i>&nbsp;        return longOpt != null;</b>
+<i>281</i>&nbsp;    }
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    /** 
+<i>284</i>&nbsp;     * Query to see if this Option requires an argument
+<i>285</i>&nbsp;     *
+<i>286</i>&nbsp;     * @return boolean flag indicating if an argument is required
+<i>287</i>&nbsp;     */
+<i>288</i>&nbsp;    public boolean hasArg()
+<i>289</i>&nbsp;    {
+<b class="fc"><i>290</i>&nbsp;        return numberOfArgs &gt; 0 || numberOfArgs == UNLIMITED_VALUES;</b>
+<i>291</i>&nbsp;    }
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /** 
+<i>294</i>&nbsp;     * Retrieve the self-documenting description of this Option
+<i>295</i>&nbsp;     *
+<i>296</i>&nbsp;     * @return The string description of this option
+<i>297</i>&nbsp;     */
+<i>298</i>&nbsp;    public String getDescription()
+<i>299</i>&nbsp;    {
+<b class="fc"><i>300</i>&nbsp;        return description;</b>
+<i>301</i>&nbsp;    }
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;    /**
+<i>304</i>&nbsp;     * Sets the self-documenting description of this Option
+<i>305</i>&nbsp;     *
+<i>306</i>&nbsp;     * @param description The description of this option
+<i>307</i>&nbsp;     * @since 1.1
+<i>308</i>&nbsp;     */
+<i>309</i>&nbsp;    public void setDescription(String description)
+<i>310</i>&nbsp;    {
+<b class="fc"><i>311</i>&nbsp;        this.description = description;</b>
+<b class="fc"><i>312</i>&nbsp;    }</b>
+<i>313</i>&nbsp;
+<i>314</i>&nbsp;    /** 
+<i>315</i>&nbsp;     * Query to see if this Option is mandatory
+<i>316</i>&nbsp;     *
+<i>317</i>&nbsp;     * @return boolean flag indicating whether this Option is mandatory
+<i>318</i>&nbsp;     */
+<i>319</i>&nbsp;    public boolean isRequired()
+<i>320</i>&nbsp;    {
+<b class="fc"><i>321</i>&nbsp;        return required;</b>
+<i>322</i>&nbsp;    }
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    /**
+<i>325</i>&nbsp;     * Sets whether this Option is mandatory.
+<i>326</i>&nbsp;     *
+<i>327</i>&nbsp;     * @param required specifies whether this Option is mandatory
+<i>328</i>&nbsp;     */
+<i>329</i>&nbsp;    public void setRequired(boolean required)
+<i>330</i>&nbsp;    {
+<b class="fc"><i>331</i>&nbsp;        this.required = required;</b>
+<b class="fc"><i>332</i>&nbsp;    }</b>
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    /**
+<i>335</i>&nbsp;     * Sets the display name for the argument value.
+<i>336</i>&nbsp;     *
+<i>337</i>&nbsp;     * @param argName the display name for the argument value.
+<i>338</i>&nbsp;     */
+<i>339</i>&nbsp;    public void setArgName(String argName)
+<i>340</i>&nbsp;    {
+<b class="fc"><i>341</i>&nbsp;        this.argName = argName;</b>
+<b class="fc"><i>342</i>&nbsp;    }</b>
+<i>343</i>&nbsp;
+<i>344</i>&nbsp;    /**
+<i>345</i>&nbsp;     * Gets the display name for the argument value.
+<i>346</i>&nbsp;     *
+<i>347</i>&nbsp;     * @return the display name for the argument value.
+<i>348</i>&nbsp;     */
+<i>349</i>&nbsp;    public String getArgName()
+<i>350</i>&nbsp;    {
+<b class="fc"><i>351</i>&nbsp;        return argName;</b>
+<i>352</i>&nbsp;    }
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    /**
+<i>355</i>&nbsp;     * Returns whether the display name for the argument value has been set.
+<i>356</i>&nbsp;     *
+<i>357</i>&nbsp;     * @return if the display name for the argument value has been set.
+<i>358</i>&nbsp;     */
+<i>359</i>&nbsp;    public boolean hasArgName()
+<i>360</i>&nbsp;    {
+<b class="fc"><i>361</i>&nbsp;        return argName != null &amp;&amp; argName.length() &gt; 0;</b>
+<i>362</i>&nbsp;    }
+<i>363</i>&nbsp;
+<i>364</i>&nbsp;    /** 
+<i>365</i>&nbsp;     * Query to see if this Option can take many values.
+<i>366</i>&nbsp;     *
+<i>367</i>&nbsp;     * @return boolean flag indicating if multiple values are allowed
+<i>368</i>&nbsp;     */
+<i>369</i>&nbsp;    public boolean hasArgs()
+<i>370</i>&nbsp;    {
+<b class="fc"><i>371</i>&nbsp;        return numberOfArgs &gt; 1 || numberOfArgs == UNLIMITED_VALUES;</b>
+<i>372</i>&nbsp;    }
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    /** 
+<i>375</i>&nbsp;     * Sets the number of argument values this Option can take.
+<i>376</i>&nbsp;     *
+<i>377</i>&nbsp;     * @param num the number of argument values
+<i>378</i>&nbsp;     */
+<i>379</i>&nbsp;    public void setArgs(int num)
+<i>380</i>&nbsp;    {
+<b class="fc"><i>381</i>&nbsp;        this.numberOfArgs = num;</b>
+<b class="fc"><i>382</i>&nbsp;    }</b>
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    /**
+<i>385</i>&nbsp;     * Sets the value separator.  For example if the argument value
+<i>386</i>&nbsp;     * was a Java property, the value separator would be &#39;=&#39;.
+<i>387</i>&nbsp;     *
+<i>388</i>&nbsp;     * @param sep The value separator.
+<i>389</i>&nbsp;     */
+<i>390</i>&nbsp;    public void setValueSeparator(char sep)
+<i>391</i>&nbsp;    {
+<b class="fc"><i>392</i>&nbsp;        this.valuesep = sep;</b>
+<b class="fc"><i>393</i>&nbsp;    }</b>
+<i>394</i>&nbsp;
+<i>395</i>&nbsp;    /**
+<i>396</i>&nbsp;     * Returns the value separator character.
+<i>397</i>&nbsp;     *
+<i>398</i>&nbsp;     * @return the value separator character.
+<i>399</i>&nbsp;     */
+<i>400</i>&nbsp;    public char getValueSeparator()
+<i>401</i>&nbsp;    {
+<b class="fc"><i>402</i>&nbsp;        return valuesep;</b>
+<i>403</i>&nbsp;    }
+<i>404</i>&nbsp;
+<i>405</i>&nbsp;    /**
+<i>406</i>&nbsp;     * Return whether this Option has specified a value separator.
+<i>407</i>&nbsp;     * 
+<i>408</i>&nbsp;     * @return whether this Option has specified a value separator.
+<i>409</i>&nbsp;     * @since 1.1
+<i>410</i>&nbsp;     */
+<i>411</i>&nbsp;    public boolean hasValueSeparator()
+<i>412</i>&nbsp;    {
+<b class="fc"><i>413</i>&nbsp;        return valuesep &gt; 0;</b>
+<i>414</i>&nbsp;    }
+<i>415</i>&nbsp;
+<i>416</i>&nbsp;    /** 
+<i>417</i>&nbsp;     * Returns the number of argument values this Option can take.
+<i>418</i>&nbsp;     * 
+<i>419</i>&nbsp;     * &lt;p&gt;
+<i>420</i>&nbsp;     * A value equal to the constant {@link #UNINITIALIZED} (= -1) indicates
+<i>421</i>&nbsp;     * the number of arguments has not been specified.
+<i>422</i>&nbsp;     * A value equal to the constant {@link #UNLIMITED_VALUES} (= -2) indicates
+<i>423</i>&nbsp;     * that this options takes an unlimited amount of values.
+<i>424</i>&nbsp;     * &lt;/p&gt;
+<i>425</i>&nbsp;     *
+<i>426</i>&nbsp;     * @return num the number of argument values
+<i>427</i>&nbsp;     * @see #UNINITIALIZED
+<i>428</i>&nbsp;     * @see #UNLIMITED_VALUES
+<i>429</i>&nbsp;     */
+<i>430</i>&nbsp;    public int getArgs()
+<i>431</i>&nbsp;    {
+<b class="fc"><i>432</i>&nbsp;        return numberOfArgs;</b>
+<i>433</i>&nbsp;    }
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;    /**
+<i>436</i>&nbsp;     * Adds the specified value to this Option.
+<i>437</i>&nbsp;     * 
+<i>438</i>&nbsp;     * @param value is a/the value of this Option
+<i>439</i>&nbsp;     */
+<i>440</i>&nbsp;    void addValueForProcessing(String value)
+<i>441</i>&nbsp;    {
+<b class="fc"><i>442</i>&nbsp;        if (numberOfArgs == UNINITIALIZED)</b>
+<i>443</i>&nbsp;        {
+<b class="nc"><i>444</i>&nbsp;            throw new RuntimeException(&quot;NO_ARGS_ALLOWED&quot;);</b>
+<i>445</i>&nbsp;        }
+<b class="fc"><i>446</i>&nbsp;        processValue(value);</b>
+<b class="fc"><i>447</i>&nbsp;    }</b>
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;    /**
+<i>450</i>&nbsp;     * Processes the value.  If this Option has a value separator
+<i>451</i>&nbsp;     * the value will have to be parsed into individual tokens.  When
+<i>452</i>&nbsp;     * n-1 tokens have been processed and there are more value separators
+<i>453</i>&nbsp;     * in the value, parsing is ceased and the remaining characters are
+<i>454</i>&nbsp;     * added as a single token.
+<i>455</i>&nbsp;     *
+<i>456</i>&nbsp;     * @param value The String to be processed.
+<i>457</i>&nbsp;     *
+<i>458</i>&nbsp;     * @since 1.0.1
+<i>459</i>&nbsp;     */
+<i>460</i>&nbsp;    private void processValue(String value)
+<i>461</i>&nbsp;    {
+<i>462</i>&nbsp;        // this Option has a separator character
+<b class="fc"><i>463</i>&nbsp;        if (hasValueSeparator())</b>
+<i>464</i>&nbsp;        {
+<i>465</i>&nbsp;            // get the separator character
+<b class="fc"><i>466</i>&nbsp;            char sep = getValueSeparator();</b>
+<i>467</i>&nbsp;
+<i>468</i>&nbsp;            // store the index for the value separator
+<b class="fc"><i>469</i>&nbsp;            int index = value.indexOf(sep);</b>
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;            // while there are more value separators
+<b class="fc"><i>472</i>&nbsp;            while (index != -1)</b>
+<i>473</i>&nbsp;            {
+<i>474</i>&nbsp;                // next value to be added 
+<b class="fc"><i>475</i>&nbsp;                if (values.size() == numberOfArgs - 1)</b>
+<i>476</i>&nbsp;                {
+<b class="nc"><i>477</i>&nbsp;                    break;</b>
+<i>478</i>&nbsp;                }
+<i>479</i>&nbsp;
+<i>480</i>&nbsp;                // store
+<b class="fc"><i>481</i>&nbsp;                add(value.substring(0, index));</b>
+<i>482</i>&nbsp;
+<i>483</i>&nbsp;                // parse
+<b class="fc"><i>484</i>&nbsp;                value = value.substring(index + 1);</b>
+<i>485</i>&nbsp;
+<i>486</i>&nbsp;                // get new index
+<b class="fc"><i>487</i>&nbsp;                index = value.indexOf(sep);</b>
+<i>488</i>&nbsp;            }
+<i>489</i>&nbsp;        }
+<i>490</i>&nbsp;
+<i>491</i>&nbsp;        // store the actual value or the last value that has been parsed
+<b class="fc"><i>492</i>&nbsp;        add(value);</b>
+<b class="fc"><i>493</i>&nbsp;    }</b>
+<i>494</i>&nbsp;
+<i>495</i>&nbsp;    /**
+<i>496</i>&nbsp;     * Add the value to this Option.  If the number of arguments
+<i>497</i>&nbsp;     * is greater than zero and there is enough space in the list then
+<i>498</i>&nbsp;     * add the value.  Otherwise, throw a runtime exception.
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param value The value to be added to this Option
+<i>501</i>&nbsp;     *
+<i>502</i>&nbsp;     * @since 1.0.1
+<i>503</i>&nbsp;     */
+<i>504</i>&nbsp;    private void add(String value)
+<i>505</i>&nbsp;    {
+<b class="fc"><i>506</i>&nbsp;        if (!acceptsArg())</b>
+<i>507</i>&nbsp;        {
+<b class="fc"><i>508</i>&nbsp;            throw new RuntimeException(&quot;Cannot add value, list full.&quot;);</b>
+<i>509</i>&nbsp;        }
+<i>510</i>&nbsp;
+<i>511</i>&nbsp;        // store value
+<b class="fc"><i>512</i>&nbsp;        values.add(value);</b>
+<b class="fc"><i>513</i>&nbsp;    }</b>
+<i>514</i>&nbsp;
+<i>515</i>&nbsp;    /**
+<i>516</i>&nbsp;     * Returns the specified value of this Option or 
+<i>517</i>&nbsp;     * &lt;code&gt;null&lt;/code&gt; if there is no value.
+<i>518</i>&nbsp;     *
+<i>519</i>&nbsp;     * @return the value/first value of this Option or 
+<i>520</i>&nbsp;     * &lt;code&gt;null&lt;/code&gt; if there is no value.
+<i>521</i>&nbsp;     */
+<i>522</i>&nbsp;    public String getValue()
+<i>523</i>&nbsp;    {
+<b class="fc"><i>524</i>&nbsp;        return hasNoValues() ? null : values.get(0);</b>
+<i>525</i>&nbsp;    }
+<i>526</i>&nbsp;
+<i>527</i>&nbsp;    /**
+<i>528</i>&nbsp;     * Returns the specified value of this Option or 
+<i>529</i>&nbsp;     * &lt;code&gt;null&lt;/code&gt; if there is no value.
+<i>530</i>&nbsp;     *
+<i>531</i>&nbsp;     * @param index The index of the value to be returned.
+<i>532</i>&nbsp;     *
+<i>533</i>&nbsp;     * @return the specified value of this Option or 
+<i>534</i>&nbsp;     * &lt;code&gt;null&lt;/code&gt; if there is no value.
+<i>535</i>&nbsp;     *
+<i>536</i>&nbsp;     * @throws IndexOutOfBoundsException if index is less than 1
+<i>537</i>&nbsp;     * or greater than the number of the values for this Option.
+<i>538</i>&nbsp;     */
+<i>539</i>&nbsp;    public String getValue(int index) throws IndexOutOfBoundsException
+<i>540</i>&nbsp;    {
+<b class="fc"><i>541</i>&nbsp;        return hasNoValues() ? null : values.get(index);</b>
+<i>542</i>&nbsp;    }
+<i>543</i>&nbsp;
+<i>544</i>&nbsp;    /**
+<i>545</i>&nbsp;     * Returns the value/first value of this Option or the 
+<i>546</i>&nbsp;     * &lt;code&gt;defaultValue&lt;/code&gt; if there is no value.
+<i>547</i>&nbsp;     *
+<i>548</i>&nbsp;     * @param defaultValue The value to be returned if there
+<i>549</i>&nbsp;     * is no value.
+<i>550</i>&nbsp;     *
+<i>551</i>&nbsp;     * @return the value/first value of this Option or the 
+<i>552</i>&nbsp;     * &lt;code&gt;defaultValue&lt;/code&gt; if there are no values.
+<i>553</i>&nbsp;     */
+<i>554</i>&nbsp;    public String getValue(String defaultValue)
+<i>555</i>&nbsp;    {
+<b class="fc"><i>556</i>&nbsp;        String value = getValue();</b>
+<i>557</i>&nbsp;
+<b class="fc"><i>558</i>&nbsp;        return (value != null) ? value : defaultValue;</b>
+<i>559</i>&nbsp;    }
+<i>560</i>&nbsp;
+<i>561</i>&nbsp;    /**
+<i>562</i>&nbsp;     * Return the values of this Option as a String array 
+<i>563</i>&nbsp;     * or null if there are no values
+<i>564</i>&nbsp;     *
+<i>565</i>&nbsp;     * @return the values of this Option as a String array 
+<i>566</i>&nbsp;     * or null if there are no values
+<i>567</i>&nbsp;     */
+<i>568</i>&nbsp;    public String[] getValues()
+<i>569</i>&nbsp;    {
+<b class="fc"><i>570</i>&nbsp;        return hasNoValues() ? null : values.toArray(new String[values.size()]);</b>
+<i>571</i>&nbsp;    }
+<i>572</i>&nbsp;
+<i>573</i>&nbsp;    /**
+<i>574</i>&nbsp;     * @return the values of this Option as a List
+<i>575</i>&nbsp;     * or null if there are no values
+<i>576</i>&nbsp;     */
+<i>577</i>&nbsp;    public List&lt;String&gt; getValuesList()
+<i>578</i>&nbsp;    {
+<b class="fc"><i>579</i>&nbsp;        return values;</b>
+<i>580</i>&nbsp;    }
+<i>581</i>&nbsp;
+<i>582</i>&nbsp;    /** 
+<i>583</i>&nbsp;     * Dump state, suitable for debugging.
+<i>584</i>&nbsp;     *
+<i>585</i>&nbsp;     * @return Stringified form of this object
+<i>586</i>&nbsp;     */
+<i>587</i>&nbsp;    @Override
+<i>588</i>&nbsp;    public String toString()
+<i>589</i>&nbsp;    {
+<b class="fc"><i>590</i>&nbsp;        StringBuilder buf = new StringBuilder().append(&quot;[ option: &quot;);</b>
+<i>591</i>&nbsp;
+<b class="fc"><i>592</i>&nbsp;        buf.append(opt);</b>
+<i>593</i>&nbsp;
+<b class="fc"><i>594</i>&nbsp;        if (longOpt != null)</b>
+<i>595</i>&nbsp;        {
+<b class="fc"><i>596</i>&nbsp;            buf.append(&quot; &quot;).append(longOpt);</b>
+<i>597</i>&nbsp;        }
+<i>598</i>&nbsp;
+<b class="fc"><i>599</i>&nbsp;        buf.append(&quot; &quot;);</b>
+<i>600</i>&nbsp;
+<b class="fc"><i>601</i>&nbsp;        if (hasArgs())</b>
+<i>602</i>&nbsp;        {
+<b class="nc"><i>603</i>&nbsp;            buf.append(&quot;[ARG...]&quot;);</b>
+<i>604</i>&nbsp;        }
+<b class="fc"><i>605</i>&nbsp;        else if (hasArg())</b>
+<i>606</i>&nbsp;        {
+<b class="fc"><i>607</i>&nbsp;            buf.append(&quot; [ARG]&quot;);</b>
+<i>608</i>&nbsp;        }
+<i>609</i>&nbsp;
+<b class="fc"><i>610</i>&nbsp;        buf.append(&quot; :: &quot;).append(description);</b>
+<i>611</i>&nbsp;
+<b class="fc"><i>612</i>&nbsp;        if (type != null)</b>
+<i>613</i>&nbsp;        {
+<b class="fc"><i>614</i>&nbsp;            buf.append(&quot; :: &quot;).append(type);</b>
+<i>615</i>&nbsp;        }
+<i>616</i>&nbsp;
+<b class="fc"><i>617</i>&nbsp;        buf.append(&quot; ]&quot;);</b>
+<i>618</i>&nbsp;
+<b class="fc"><i>619</i>&nbsp;        return buf.toString();</b>
+<i>620</i>&nbsp;    }
+<i>621</i>&nbsp;
+<i>622</i>&nbsp;    /**
+<i>623</i>&nbsp;     * Returns whether this Option has any values.
+<i>624</i>&nbsp;     *
+<i>625</i>&nbsp;     * @return whether this Option has any values.
+<i>626</i>&nbsp;     */
+<i>627</i>&nbsp;    private boolean hasNoValues()
+<i>628</i>&nbsp;    {
+<b class="fc"><i>629</i>&nbsp;        return values.isEmpty();</b>
+<i>630</i>&nbsp;    }
+<i>631</i>&nbsp;
+<i>632</i>&nbsp;    @Override
+<i>633</i>&nbsp;    public boolean equals(Object o)
+<i>634</i>&nbsp;    {
+<b class="fc"><i>635</i>&nbsp;        if (this == o)</b>
+<i>636</i>&nbsp;        {
+<b class="fc"><i>637</i>&nbsp;            return true;</b>
+<i>638</i>&nbsp;        }
+<b class="fc"><i>639</i>&nbsp;        if (o == null || getClass() != o.getClass())</b>
+<i>640</i>&nbsp;        {
+<b class="nc"><i>641</i>&nbsp;            return false;</b>
+<i>642</i>&nbsp;        }
+<i>643</i>&nbsp;
+<b class="fc"><i>644</i>&nbsp;        Option option = (Option) o;</b>
+<i>645</i>&nbsp;
+<i>646</i>&nbsp;
+<b class="fc"><i>647</i>&nbsp;        if (opt != null ? !opt.equals(option.opt) : option.opt != null)</b>
+<i>648</i>&nbsp;        {
+<b class="fc"><i>649</i>&nbsp;            return false;</b>
+<i>650</i>&nbsp;        }
+<b class="fc"><i>651</i>&nbsp;        if (longOpt != null ? !longOpt.equals(option.longOpt) : option.longOpt != null)</b>
+<i>652</i>&nbsp;        {
+<b class="fc"><i>653</i>&nbsp;            return false;</b>
+<i>654</i>&nbsp;        }
+<i>655</i>&nbsp;
+<b class="fc"><i>656</i>&nbsp;        return true;</b>
+<i>657</i>&nbsp;    }
+<i>658</i>&nbsp;
+<i>659</i>&nbsp;    @Override
+<i>660</i>&nbsp;    public int hashCode()
+<i>661</i>&nbsp;    {
+<i>662</i>&nbsp;        int result;
+<b class="nc"><i>663</i>&nbsp;        result = opt != null ? opt.hashCode() : 0;</b>
+<b class="nc"><i>664</i>&nbsp;        result = 31 * result + (longOpt != null ? longOpt.hashCode() : 0);</b>
+<b class="nc"><i>665</i>&nbsp;        return result;</b>
+<i>666</i>&nbsp;    }
+<i>667</i>&nbsp;
+<i>668</i>&nbsp;    /**
+<i>669</i>&nbsp;     * A rather odd clone method - due to incorrect code in 1.0 it is public 
+<i>670</i>&nbsp;     * and in 1.1 rather than throwing a CloneNotSupportedException it throws 
+<i>671</i>&nbsp;     * a RuntimeException so as to maintain backwards compat at the API level. 
+<i>672</i>&nbsp;     *
+<i>673</i>&nbsp;     * After calling this method, it is very likely you will want to call 
+<i>674</i>&nbsp;     * clearValues(). 
+<i>675</i>&nbsp;     *
+<i>676</i>&nbsp;     * @return a clone of this Option instance
+<i>677</i>&nbsp;     * @throws RuntimeException if a {@link CloneNotSupportedException} has been thrown
+<i>678</i>&nbsp;     * by {@code super.clone()}
+<i>679</i>&nbsp;     */
+<i>680</i>&nbsp;    @Override
+<i>681</i>&nbsp;    public Object clone()
+<i>682</i>&nbsp;    {
+<i>683</i>&nbsp;        try
+<i>684</i>&nbsp;        {
+<b class="fc"><i>685</i>&nbsp;            Option option = (Option) super.clone();</b>
+<b class="fc"><i>686</i>&nbsp;            option.values = new ArrayList&lt;String&gt;(values);</b>
+<b class="fc"><i>687</i>&nbsp;            return option;</b>
+<i>688</i>&nbsp;        }
+<b class="nc"><i>689</i>&nbsp;        catch (CloneNotSupportedException cnse)</b>
+<i>690</i>&nbsp;        {
+<b class="nc"><i>691</i>&nbsp;            throw new RuntimeException(&quot;A CloneNotSupportedException was thrown: &quot; + cnse.getMessage());</b>
+<i>692</i>&nbsp;        }
+<i>693</i>&nbsp;    }
+<i>694</i>&nbsp;
+<i>695</i>&nbsp;    /**
+<i>696</i>&nbsp;     * Clear the Option values. After a parse is complete, these are left with
+<i>697</i>&nbsp;     * data in them and they need clearing if another parse is done.
+<i>698</i>&nbsp;     *
+<i>699</i>&nbsp;     * See: &lt;a href=&quot;https://issues.apache.org/jira/browse/CLI-71&quot;&gt;CLI-71&lt;/a&gt;
+<i>700</i>&nbsp;     */
+<i>701</i>&nbsp;    void clearValues()
+<i>702</i>&nbsp;    {
+<b class="fc"><i>703</i>&nbsp;        values.clear();</b>
+<b class="fc"><i>704</i>&nbsp;    }</b>
+<i>705</i>&nbsp;
+<i>706</i>&nbsp;    /**
+<i>707</i>&nbsp;     * This method is not intended to be used. It was a piece of internal 
+<i>708</i>&nbsp;     * API that was made public in 1.0. It currently throws an UnsupportedOperationException.
+<i>709</i>&nbsp;     *
+<i>710</i>&nbsp;     * @param value the value to add
+<i>711</i>&nbsp;     * @return always throws an {@link UnsupportedOperationException}
+<i>712</i>&nbsp;     * @throws UnsupportedOperationException always
+<i>713</i>&nbsp;     * @deprecated
+<i>714</i>&nbsp;     */
+<i>715</i>&nbsp;    @Deprecated
+<i>716</i>&nbsp;    public boolean addValue(String value)
+<i>717</i>&nbsp;    {
+<b class="nc"><i>718</i>&nbsp;        throw new UnsupportedOperationException(&quot;The addValue method is not intended for client use. &quot;</b>
+<i>719</i>&nbsp;                + &quot;Subclasses should use the addValueForProcessing method instead. &quot;);
+<i>720</i>&nbsp;    }
+<i>721</i>&nbsp;
+<i>722</i>&nbsp;    /**
+<i>723</i>&nbsp;     * Tells if the option can accept more arguments.
+<i>724</i>&nbsp;     * 
+<i>725</i>&nbsp;     * @return false if the maximum number of arguments is reached
+<i>726</i>&nbsp;     * @since 1.3
+<i>727</i>&nbsp;     */
+<i>728</i>&nbsp;    boolean acceptsArg()
+<i>729</i>&nbsp;    {
+<b class="fc"><i>730</i>&nbsp;        return (hasArg() || hasArgs() || hasOptionalArg()) &amp;&amp; (numberOfArgs &lt;= 0 || values.size() &lt; numberOfArgs);</b>
+<i>731</i>&nbsp;    }
+<i>732</i>&nbsp;
+<i>733</i>&nbsp;    /**
+<i>734</i>&nbsp;     * Tells if the option requires more arguments to be valid.
+<i>735</i>&nbsp;     * 
+<i>736</i>&nbsp;     * @return false if the option doesn&#39;t require more arguments
+<i>737</i>&nbsp;     * @since 1.3
+<i>738</i>&nbsp;     */
+<i>739</i>&nbsp;    boolean requiresArg()
+<i>740</i>&nbsp;    {
+<b class="fc"><i>741</i>&nbsp;        if (optionalArg)</b>
+<i>742</i>&nbsp;        {
+<b class="fc"><i>743</i>&nbsp;            return false;</b>
+<i>744</i>&nbsp;        }
+<b class="fc"><i>745</i>&nbsp;        if (numberOfArgs == UNLIMITED_VALUES)</b>
+<i>746</i>&nbsp;        {
+<b class="fc"><i>747</i>&nbsp;            return values.isEmpty();</b>
+<i>748</i>&nbsp;        }
+<b class="fc"><i>749</i>&nbsp;        return acceptsArg();</b>
+<i>750</i>&nbsp;    }
+<i>751</i>&nbsp;    
+<i>752</i>&nbsp;    /**
+<i>753</i>&nbsp;     * Returns a {@link Builder} to create an {@link Option} using descriptive
+<i>754</i>&nbsp;     * methods.  
+<i>755</i>&nbsp;     * 
+<i>756</i>&nbsp;     * @return a new {@link Builder} instance
+<i>757</i>&nbsp;     * @since 1.3
+<i>758</i>&nbsp;     */
+<i>759</i>&nbsp;    public static Builder builder()
+<i>760</i>&nbsp;    {
+<b class="fc"><i>761</i>&nbsp;        return builder(null);</b>
+<i>762</i>&nbsp;    }
+<i>763</i>&nbsp;    
+<i>764</i>&nbsp;    /**
+<i>765</i>&nbsp;     * Returns a {@link Builder} to create an {@link Option} using descriptive
+<i>766</i>&nbsp;     * methods.  
+<i>767</i>&nbsp;     *
+<i>768</i>&nbsp;     * @param opt short representation of the option
+<i>769</i>&nbsp;     * @return a new {@link Builder} instance
+<i>770</i>&nbsp;     * @throws IllegalArgumentException if there are any non valid Option characters in {@code opt}
+<i>771</i>&nbsp;     * @since 1.3
+<i>772</i>&nbsp;     */
+<i>773</i>&nbsp;    public static Builder builder(final String opt)
+<i>774</i>&nbsp;    {
+<b class="fc"><i>775</i>&nbsp;        return new Builder(opt);</b>
+<i>776</i>&nbsp;    }
+<i>777</i>&nbsp;    
+<i>778</i>&nbsp;    /**
+<i>779</i>&nbsp;     * A nested builder class to create &lt;code&gt;Option&lt;/code&gt; instances
+<i>780</i>&nbsp;     * using descriptive methods.
+<i>781</i>&nbsp;     * &lt;p&gt;
+<i>782</i>&nbsp;     * Example usage:
+<i>783</i>&nbsp;     * &lt;pre&gt;
+<i>784</i>&nbsp;     * Option option = Option.builder(&quot;a&quot;)
+<i>785</i>&nbsp;     *     .required(true)
+<i>786</i>&nbsp;     *     .longOpt(&quot;arg-name&quot;)
+<i>787</i>&nbsp;     *     .build();
+<i>788</i>&nbsp;     * &lt;/pre&gt;
+<i>789</i>&nbsp;     * 
+<i>790</i>&nbsp;     * @since 1.3
+<i>791</i>&nbsp;     */
+<b class="fc"><i>792</i>&nbsp;    public static final class Builder </b>
+<i>793</i>&nbsp;    {
+<i>794</i>&nbsp;        /** the name of the option */
+<i>795</i>&nbsp;        private final String opt;
+<i>796</i>&nbsp;
+<i>797</i>&nbsp;        /** description of the option */
+<i>798</i>&nbsp;        private String description;
+<i>799</i>&nbsp;
+<i>800</i>&nbsp;        /** the long representation of the option */
+<i>801</i>&nbsp;        private String longOpt;
+<i>802</i>&nbsp;
+<i>803</i>&nbsp;        /** the name of the argument for this option */
+<i>804</i>&nbsp;        private String argName;
+<i>805</i>&nbsp;
+<i>806</i>&nbsp;        /** specifies whether this option is required to be present */
+<i>807</i>&nbsp;        private boolean required;
+<i>808</i>&nbsp;
+<i>809</i>&nbsp;        /** specifies whether the argument value of this Option is optional */
+<i>810</i>&nbsp;        private boolean optionalArg;
+<i>811</i>&nbsp;
+<i>812</i>&nbsp;        /** the number of argument values this option can have */
+<b class="fc"><i>813</i>&nbsp;        private int numberOfArgs = UNINITIALIZED;</b>
+<i>814</i>&nbsp;
+<i>815</i>&nbsp;        /** the type of this Option */
+<b class="fc"><i>816</i>&nbsp;        private Class&lt;?&gt; type = String.class;</b>
+<i>817</i>&nbsp;
+<i>818</i>&nbsp;        /** the character that is the value separator */
+<i>819</i>&nbsp;        private char valuesep;
+<i>820</i>&nbsp;
+<i>821</i>&nbsp;        /**
+<i>822</i>&nbsp;         * Constructs a new &lt;code&gt;Builder&lt;/code&gt; with the minimum
+<i>823</i>&nbsp;         * required parameters for an &lt;code&gt;Option&lt;/code&gt; instance.
+<i>824</i>&nbsp;         * 
+<i>825</i>&nbsp;         * @param opt short representation of the option
+<i>826</i>&nbsp;         * @throws IllegalArgumentException if there are any non valid Option characters in {@code opt}
+<i>827</i>&nbsp;         */
+<i>828</i>&nbsp;        private Builder(final String opt) throws IllegalArgumentException
+<b class="fc"><i>829</i>&nbsp;        {</b>
+<b class="fc"><i>830</i>&nbsp;            OptionValidator.validateOption(opt);</b>
+<b class="fc"><i>831</i>&nbsp;            this.opt = opt;</b>
+<b class="fc"><i>832</i>&nbsp;        }</b>
+<i>833</i>&nbsp;        
+<i>834</i>&nbsp;        /**
+<i>835</i>&nbsp;         * Sets the display name for the argument value.
+<i>836</i>&nbsp;         *
+<i>837</i>&nbsp;         * @param argName the display name for the argument value.
+<i>838</i>&nbsp;         * @return this builder, to allow method chaining
+<i>839</i>&nbsp;         */
+<i>840</i>&nbsp;        public Builder argName(final String argName)
+<i>841</i>&nbsp;        {
+<b class="fc"><i>842</i>&nbsp;            this.argName = argName;</b>
+<b class="fc"><i>843</i>&nbsp;            return this;</b>
+<i>844</i>&nbsp;        }
+<i>845</i>&nbsp;
+<i>846</i>&nbsp;        /**
+<i>847</i>&nbsp;         * Sets the description for this option.
+<i>848</i>&nbsp;         *
+<i>849</i>&nbsp;         * @param description the description of the option.
+<i>850</i>&nbsp;         * @return this builder, to allow method chaining
+<i>851</i>&nbsp;         */
+<i>852</i>&nbsp;        public Builder desc(final String description)
+<i>853</i>&nbsp;        {
+<b class="fc"><i>854</i>&nbsp;            this.description = description;</b>
+<b class="fc"><i>855</i>&nbsp;            return this;</b>
+<i>856</i>&nbsp;        }
+<i>857</i>&nbsp;
+<i>858</i>&nbsp;        /**
+<i>859</i>&nbsp;         * Sets the long name of the Option.
+<i>860</i>&nbsp;         *
+<i>861</i>&nbsp;         * @param longOpt the long name of the Option
+<i>862</i>&nbsp;         * @return this builder, to allow method chaining
+<i>863</i>&nbsp;         */        
+<i>864</i>&nbsp;        public Builder longOpt(final String longOpt)
+<i>865</i>&nbsp;        {
+<b class="fc"><i>866</i>&nbsp;            this.longOpt = longOpt;</b>
+<b class="fc"><i>867</i>&nbsp;            return this;</b>
+<i>868</i>&nbsp;        }
+<i>869</i>&nbsp;        
+<i>870</i>&nbsp;        /** 
+<i>871</i>&nbsp;         * Sets the number of argument values the Option can take.
+<i>872</i>&nbsp;         *
+<i>873</i>&nbsp;         * @param numberOfArgs the number of argument values
+<i>874</i>&nbsp;         * @return this builder, to allow method chaining
+<i>875</i>&nbsp;         */        
+<i>876</i>&nbsp;        public Builder numberOfArgs(final int numberOfArgs)
+<i>877</i>&nbsp;        {
+<b class="fc"><i>878</i>&nbsp;            this.numberOfArgs = numberOfArgs;</b>
+<b class="fc"><i>879</i>&nbsp;            return this;</b>
+<i>880</i>&nbsp;        }
+<i>881</i>&nbsp;        
+<i>882</i>&nbsp;        /**
+<i>883</i>&nbsp;         * Sets whether the Option can have an optional argument.
+<i>884</i>&nbsp;         *
+<i>885</i>&nbsp;         * @param isOptional specifies whether the Option can have
+<i>886</i>&nbsp;         * an optional argument.
+<i>887</i>&nbsp;         * @return this builder, to allow method chaining
+<i>888</i>&nbsp;         */
+<i>889</i>&nbsp;        public Builder optionalArg(final boolean isOptional)
+<i>890</i>&nbsp;        {
+<b class="fc"><i>891</i>&nbsp;            this.optionalArg = isOptional;</b>
+<b class="fc"><i>892</i>&nbsp;            return this;</b>
+<i>893</i>&nbsp;        }
+<i>894</i>&nbsp;        
+<i>895</i>&nbsp;        /**
+<i>896</i>&nbsp;         * Marks this Option as required.
+<i>897</i>&nbsp;         *
+<i>898</i>&nbsp;         * @return this builder, to allow method chaining
+<i>899</i>&nbsp;         */
+<i>900</i>&nbsp;        public Builder required()
+<i>901</i>&nbsp;        {
+<b class="fc"><i>902</i>&nbsp;            return required(true);</b>
+<i>903</i>&nbsp;        }
+<i>904</i>&nbsp;
+<i>905</i>&nbsp;        /**
+<i>906</i>&nbsp;         * Sets whether the Option is mandatory.
+<i>907</i>&nbsp;         *
+<i>908</i>&nbsp;         * @param required specifies whether the Option is mandatory
+<i>909</i>&nbsp;         * @return this builder, to allow method chaining
+<i>910</i>&nbsp;         */
+<i>911</i>&nbsp;        public Builder required(final boolean required)
+<i>912</i>&nbsp;        {
+<b class="fc"><i>913</i>&nbsp;            this.required = required;</b>
+<b class="fc"><i>914</i>&nbsp;            return this;</b>
+<i>915</i>&nbsp;        }
+<i>916</i>&nbsp;        
+<i>917</i>&nbsp;        /**
+<i>918</i>&nbsp;         * Sets the type of the Option.
+<i>919</i>&nbsp;         *
+<i>920</i>&nbsp;         * @param type the type of the Option
+<i>921</i>&nbsp;         * @return this builder, to allow method chaining
+<i>922</i>&nbsp;         */
+<i>923</i>&nbsp;        public Builder type(final Class&lt;?&gt; type)
+<i>924</i>&nbsp;        {
+<b class="fc"><i>925</i>&nbsp;            this.type = type;</b>
+<b class="fc"><i>926</i>&nbsp;            return this;</b>
+<i>927</i>&nbsp;        }
+<i>928</i>&nbsp;
+<i>929</i>&nbsp;        /**
+<i>930</i>&nbsp;         * The Option will use &#39;=&#39; as a means to separate argument value.
+<i>931</i>&nbsp;         *
+<i>932</i>&nbsp;         * @return this builder, to allow method chaining
+<i>933</i>&nbsp;         */
+<i>934</i>&nbsp;        public Builder valueSeparator()
+<i>935</i>&nbsp;        {
+<b class="fc"><i>936</i>&nbsp;            return valueSeparator(&#39;=&#39;);</b>
+<i>937</i>&nbsp;        }
+<i>938</i>&nbsp;
+<i>939</i>&nbsp;        /**
+<i>940</i>&nbsp;         * The Option will use &lt;code&gt;sep&lt;/code&gt; as a means to
+<i>941</i>&nbsp;         * separate argument values.
+<i>942</i>&nbsp;         * &lt;p&gt;
+<i>943</i>&nbsp;         * &lt;b&gt;Example:&lt;/b&gt;
+<i>944</i>&nbsp;         * &lt;pre&gt;
+<i>945</i>&nbsp;         * Option opt = Option.builder(&quot;D&quot;).hasArgs()
+<i>946</i>&nbsp;         *                                 .valueSeparator(&#39;=&#39;)
+<i>947</i>&nbsp;         *                                 .build();
+<i>948</i>&nbsp;         * Options options = new Options();
+<i>949</i>&nbsp;         * options.addOption(opt);
+<i>950</i>&nbsp;         * String[] args = {&quot;-Dkey=value&quot;};
+<i>951</i>&nbsp;         * CommandLineParser parser = new DefaultParser();
+<i>952</i>&nbsp;         * CommandLine line = parser.parse(options, args);
+<i>953</i>&nbsp;         * String propertyName = line.getOptionValues(&quot;D&quot;)[0];  // will be &quot;key&quot;
+<i>954</i>&nbsp;         * String propertyValue = line.getOptionValues(&quot;D&quot;)[1]; // will be &quot;value&quot;
+<i>955</i>&nbsp;         * &lt;/pre&gt;
+<i>956</i>&nbsp;         *
+<i>957</i>&nbsp;         * @param sep The value separator.
+<i>958</i>&nbsp;         * @return this builder, to allow method chaining
+<i>959</i>&nbsp;         */
+<i>960</i>&nbsp;        public Builder valueSeparator(final char sep)
+<i>961</i>&nbsp;        {
+<b class="fc"><i>962</i>&nbsp;            valuesep = sep;</b>
+<b class="fc"><i>963</i>&nbsp;            return this;</b>
+<i>964</i>&nbsp;        }
+<i>965</i>&nbsp;        
+<i>966</i>&nbsp;        /**
+<i>967</i>&nbsp;         * Indicates that the Option will require an argument.
+<i>968</i>&nbsp;         * 
+<i>969</i>&nbsp;         * @return this builder, to allow method chaining
+<i>970</i>&nbsp;         */
+<i>971</i>&nbsp;        public Builder hasArg()
+<i>972</i>&nbsp;        {
+<b class="fc"><i>973</i>&nbsp;            return hasArg(true);</b>
+<i>974</i>&nbsp;        }
+<i>975</i>&nbsp;
+<i>976</i>&nbsp;        /**
+<i>977</i>&nbsp;         * Indicates if the Option has an argument or not.
+<i>978</i>&nbsp;         * 
+<i>979</i>&nbsp;         * @param hasArg specifies whether the Option takes an argument or not
+<i>980</i>&nbsp;         * @return this builder, to allow method chaining
+<i>981</i>&nbsp;         */
+<i>982</i>&nbsp;        public Builder hasArg(final boolean hasArg)
+<i>983</i>&nbsp;        {
+<i>984</i>&nbsp;            // set to UNINITIALIZED when no arg is specified to be compatible with OptionBuilder
+<b class="fc"><i>985</i>&nbsp;            numberOfArgs = hasArg ? 1 : Option.UNINITIALIZED;</b>
+<b class="fc"><i>986</i>&nbsp;            return this;</b>
+<i>987</i>&nbsp;        }
+<i>988</i>&nbsp;
+<i>989</i>&nbsp;        /**
+<i>990</i>&nbsp;         * Indicates that the Option can have unlimited argument values.
+<i>991</i>&nbsp;         * 
+<i>992</i>&nbsp;         * @return this builder, to allow method chaining
+<i>993</i>&nbsp;         */
+<i>994</i>&nbsp;        public Builder hasArgs()
+<i>995</i>&nbsp;        {
+<b class="nc"><i>996</i>&nbsp;            numberOfArgs = Option.UNLIMITED_VALUES;</b>
+<b class="nc"><i>997</i>&nbsp;            return this;</b>
+<i>998</i>&nbsp;        }
+<i>999</i>&nbsp;
+<i>1000</i>&nbsp;        /**
+<i>1001</i>&nbsp;         * Constructs an Option with the values declared by this {@link Builder}.
+<i>1002</i>&nbsp;         * 
+<i>1003</i>&nbsp;         * @return the new {@link Option}
+<i>1004</i>&nbsp;         * @throws IllegalArgumentException if neither {@code opt} or {@code longOpt} has been set
+<i>1005</i>&nbsp;         */
+<i>1006</i>&nbsp;        public Option build()
+<i>1007</i>&nbsp;        {
+<b class="fc"><i>1008</i>&nbsp;            if (opt == null &amp;&amp; longOpt == null)</b>
+<i>1009</i>&nbsp;            {
+<b class="fc"><i>1010</i>&nbsp;                throw new IllegalArgumentException(&quot;Either opt or longOpt must be specified&quot;);</b>
+<i>1011</i>&nbsp;            }
+<b class="fc"><i>1012</i>&nbsp;            return new Option(this);</b>
+<i>1013</i>&nbsp;        }
+<i>1014</i>&nbsp;    }
+<i>1015</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-05-18 21:41</div>
+</div>
+</body>
+</html>

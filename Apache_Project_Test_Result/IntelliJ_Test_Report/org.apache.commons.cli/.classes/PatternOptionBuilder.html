@@ -1,0 +1,290 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PatternOptionBuilder</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.apache.commons.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PatternOptionBuilder (org.apache.commons.cli)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PatternOptionBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.1%
+  </span>
+  <span class="absValue">
+    (49/ 51)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Licensed to the Apache Software Foundation (ASF) under one or more
+<i>3</i>&nbsp; * contributor license agreements.  See the NOTICE file distributed with
+<i>4</i>&nbsp; * this work for additional information regarding copyright ownership.
+<i>5</i>&nbsp; * The ASF licenses this file to You under the Apache License, Version 2.0
+<i>6</i>&nbsp; * (the &quot;License&quot;); you may not use this file except in compliance with
+<i>7</i>&nbsp; * the License.  You may obtain a copy of the License at
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; *     http://www.apache.org/licenses/LICENSE-2.0
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>12</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>13</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>14</i>&nbsp; * See the License for the specific language governing permissions and
+<i>15</i>&nbsp; * limitations under the License.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;package org.apache.commons.cli;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import java.io.File;
+<i>21</i>&nbsp;import java.io.FileInputStream;
+<i>22</i>&nbsp;import java.net.URL;
+<i>23</i>&nbsp;import java.util.Date;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;/**
+<i>26</i>&nbsp; * &lt;p&gt;Allows Options to be created from a single String.
+<i>27</i>&nbsp; * The pattern contains various single character flags and via
+<i>28</i>&nbsp; * an optional punctuation character, their expected type.
+<i>29</i>&nbsp; * &lt;/p&gt;
+<i>30</i>&nbsp; * 
+<i>31</i>&nbsp; * &lt;table border=&quot;1&quot;&gt;
+<i>32</i>&nbsp; *   &lt;caption&gt;Overview of PatternOptionBuilder patterns&lt;/caption&gt;
+<i>33</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;a&lt;/td&gt;&lt;td&gt;-a flag&lt;/td&gt;&lt;/tr&gt;
+<i>34</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;b@&lt;/td&gt;&lt;td&gt;-b [classname]&lt;/td&gt;&lt;/tr&gt;
+<i>35</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;c&amp;gt;&lt;/td&gt;&lt;td&gt;-c [filename]&lt;/td&gt;&lt;/tr&gt;
+<i>36</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;d+&lt;/td&gt;&lt;td&gt;-d [classname] (creates object via empty constructor)&lt;/td&gt;&lt;/tr&gt;
+<i>37</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;e%&lt;/td&gt;&lt;td&gt;-e [number] (creates Double/Long instance depending on existing of a &#39;.&#39;)&lt;/td&gt;&lt;/tr&gt;
+<i>38</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;f/&lt;/td&gt;&lt;td&gt;-f [url]&lt;/td&gt;&lt;/tr&gt;
+<i>39</i>&nbsp; *   &lt;tr&gt;&lt;td&gt;g:&lt;/td&gt;&lt;td&gt;-g [string]&lt;/td&gt;&lt;/tr&gt;
+<i>40</i>&nbsp; * &lt;/table&gt;
+<i>41</i>&nbsp; * 
+<i>42</i>&nbsp; * &lt;p&gt;
+<i>43</i>&nbsp; * For example, the following allows command line flags of &#39;-v -p string-value -f /dir/file&#39;.
+<i>44</i>&nbsp; * The exclamation mark precede a mandatory option.
+<i>45</i>&nbsp; * &lt;/p&gt;
+<i>46</i>&nbsp; *
+<i>47</i>&nbsp; * &lt;pre&gt;
+<i>48</i>&nbsp; *     Options options = PatternOptionBuilder.parsePattern(&quot;vp:!f/&quot;);
+<i>49</i>&nbsp; * &lt;/pre&gt;
+<i>50</i>&nbsp; *
+<i>51</i>&nbsp; * &lt;p&gt;
+<i>52</i>&nbsp; * TODO: These need to break out to OptionType and also to be pluggable.
+<i>53</i>&nbsp; * &lt;/p&gt;
+<i>54</i>&nbsp; *
+<i>55</i>&nbsp; * @version $Id: PatternOptionBuilder.java 1677406 2015-05-03 14:27:31Z britter $
+<i>56</i>&nbsp; */
+<b class="nc"><i>57</i>&nbsp;public class PatternOptionBuilder</b>
+<i>58</i>&nbsp;{
+<i>59</i>&nbsp;    /** String class */
+<b class="fc"><i>60</i>&nbsp;    public static final Class&lt;String&gt; STRING_VALUE = String.class;</b>
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /** Object class */
+<b class="fc"><i>63</i>&nbsp;    public static final Class&lt;Object&gt; OBJECT_VALUE = Object.class;</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /** Number class */
+<b class="fc"><i>66</i>&nbsp;    public static final Class&lt;Number&gt; NUMBER_VALUE = Number.class;</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    /** Date class */
+<b class="fc"><i>69</i>&nbsp;    public static final Class&lt;Date&gt; DATE_VALUE = Date.class;</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /** Class class */
+<b class="fc"><i>72</i>&nbsp;    public static final Class&lt;?&gt; CLASS_VALUE = Class.class;</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /// can we do this one??
+<i>75</i>&nbsp;    // is meant to check that the file exists, else it errors.
+<i>76</i>&nbsp;    // ie) it&#39;s for reading not writing.
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    /** FileInputStream class */
+<b class="fc"><i>79</i>&nbsp;    public static final Class&lt;FileInputStream&gt; EXISTING_FILE_VALUE = FileInputStream.class;</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /** File class */
+<b class="fc"><i>82</i>&nbsp;    public static final Class&lt;File&gt; FILE_VALUE = File.class;</b>
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    /** File array class */
+<b class="fc"><i>85</i>&nbsp;    public static final Class&lt;File[]&gt; FILES_VALUE = File[].class;</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /** URL class */
+<b class="fc"><i>88</i>&nbsp;    public static final Class&lt;URL&gt; URL_VALUE = URL.class;</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    /**
+<i>91</i>&nbsp;     * Retrieve the class that &lt;code&gt;ch&lt;/code&gt; represents.
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * @param ch the specified character
+<i>94</i>&nbsp;     * @return The class that &lt;code&gt;ch&lt;/code&gt; represents
+<i>95</i>&nbsp;     */
+<i>96</i>&nbsp;    public static Object getValueClass(char ch)
+<i>97</i>&nbsp;    {
+<b class="fc"><i>98</i>&nbsp;        switch (ch)</b>
+<i>99</i>&nbsp;        {
+<i>100</i>&nbsp;            case &#39;@&#39;:
+<b class="fc"><i>101</i>&nbsp;                return PatternOptionBuilder.OBJECT_VALUE;</b>
+<i>102</i>&nbsp;            case &#39;:&#39;:
+<b class="fc"><i>103</i>&nbsp;                return PatternOptionBuilder.STRING_VALUE;</b>
+<i>104</i>&nbsp;            case &#39;%&#39;:
+<b class="fc"><i>105</i>&nbsp;                return PatternOptionBuilder.NUMBER_VALUE;</b>
+<i>106</i>&nbsp;            case &#39;+&#39;:
+<b class="fc"><i>107</i>&nbsp;                return PatternOptionBuilder.CLASS_VALUE;</b>
+<i>108</i>&nbsp;            case &#39;#&#39;:
+<b class="fc"><i>109</i>&nbsp;                return PatternOptionBuilder.DATE_VALUE;</b>
+<i>110</i>&nbsp;            case &#39;&lt;&#39;:
+<b class="fc"><i>111</i>&nbsp;                return PatternOptionBuilder.EXISTING_FILE_VALUE;</b>
+<i>112</i>&nbsp;            case &#39;&gt;&#39;:
+<b class="fc"><i>113</i>&nbsp;                return PatternOptionBuilder.FILE_VALUE;</b>
+<i>114</i>&nbsp;            case &#39;*&#39;:
+<b class="fc"><i>115</i>&nbsp;                return PatternOptionBuilder.FILES_VALUE;</b>
+<i>116</i>&nbsp;            case &#39;/&#39;:
+<b class="fc"><i>117</i>&nbsp;                return PatternOptionBuilder.URL_VALUE;</b>
+<i>118</i>&nbsp;        }
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        return null;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    /**
+<i>124</i>&nbsp;     * Returns whether &lt;code&gt;ch&lt;/code&gt; is a value code, i.e.
+<i>125</i>&nbsp;     * whether it represents a class in a pattern.
+<i>126</i>&nbsp;     *
+<i>127</i>&nbsp;     * @param ch the specified character
+<i>128</i>&nbsp;     * @return true if &lt;code&gt;ch&lt;/code&gt; is a value code, otherwise false.
+<i>129</i>&nbsp;     */
+<i>130</i>&nbsp;    public static boolean isValueCode(char ch)
+<i>131</i>&nbsp;    {
+<b class="fc"><i>132</i>&nbsp;        return ch == &#39;@&#39;</b>
+<i>133</i>&nbsp;                || ch == &#39;:&#39;
+<i>134</i>&nbsp;                || ch == &#39;%&#39;
+<i>135</i>&nbsp;                || ch == &#39;+&#39;
+<i>136</i>&nbsp;                || ch == &#39;#&#39;
+<i>137</i>&nbsp;                || ch == &#39;&lt;&#39;
+<i>138</i>&nbsp;                || ch == &#39;&gt;&#39;
+<i>139</i>&nbsp;                || ch == &#39;*&#39;
+<i>140</i>&nbsp;                || ch == &#39;/&#39;
+<i>141</i>&nbsp;                || ch == &#39;!&#39;;
+<i>142</i>&nbsp;    }
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;    /**
+<i>145</i>&nbsp;     * Returns the {@link Options} instance represented by &lt;code&gt;pattern&lt;/code&gt;.
+<i>146</i>&nbsp;     *
+<i>147</i>&nbsp;     * @param pattern the pattern string
+<i>148</i>&nbsp;     * @return The {@link Options} instance
+<i>149</i>&nbsp;     */
+<i>150</i>&nbsp;    public static Options parsePattern(String pattern)
+<i>151</i>&nbsp;    {
+<b class="fc"><i>152</i>&nbsp;        char opt = &#39; &#39;;</b>
+<b class="fc"><i>153</i>&nbsp;        boolean required = false;</b>
+<b class="fc"><i>154</i>&nbsp;        Class&lt;?&gt; type = null;</b>
+<i>155</i>&nbsp;
+<b class="fc"><i>156</i>&nbsp;        Options options = new Options();</b>
+<i>157</i>&nbsp;
+<b class="fc"><i>158</i>&nbsp;        for (int i = 0; i &lt; pattern.length(); i++)</b>
+<i>159</i>&nbsp;        {
+<b class="fc"><i>160</i>&nbsp;            char ch = pattern.charAt(i);</b>
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;            // a value code comes after an option and specifies
+<i>163</i>&nbsp;            // details about it
+<b class="fc"><i>164</i>&nbsp;            if (!isValueCode(ch))</b>
+<i>165</i>&nbsp;            {
+<b class="fc"><i>166</i>&nbsp;                if (opt != &#39; &#39;)</b>
+<i>167</i>&nbsp;                {
+<b class="fc"><i>168</i>&nbsp;                    final Option option = Option.builder(String.valueOf(opt))</b>
+<b class="fc"><i>169</i>&nbsp;                        .hasArg(type != null)</b>
+<b class="fc"><i>170</i>&nbsp;                        .required(required)</b>
+<b class="fc"><i>171</i>&nbsp;                        .type(type)</b>
+<b class="fc"><i>172</i>&nbsp;                        .build();</b>
+<i>173</i>&nbsp;                    
+<i>174</i>&nbsp;                    // we have a previous one to deal with
+<b class="fc"><i>175</i>&nbsp;                    options.addOption(option);</b>
+<b class="fc"><i>176</i>&nbsp;                    required = false;</b>
+<b class="fc"><i>177</i>&nbsp;                    type = null;</b>
+<b class="fc"><i>178</i>&nbsp;                    opt = &#39; &#39;;</b>
+<i>179</i>&nbsp;                }
+<i>180</i>&nbsp;
+<b class="fc"><i>181</i>&nbsp;                opt = ch;</b>
+<i>182</i>&nbsp;            }
+<b class="fc"><i>183</i>&nbsp;            else if (ch == &#39;!&#39;)</b>
+<i>184</i>&nbsp;            {
+<b class="fc"><i>185</i>&nbsp;                required = true;</b>
+<i>186</i>&nbsp;            }
+<i>187</i>&nbsp;            else
+<i>188</i>&nbsp;            {
+<b class="fc"><i>189</i>&nbsp;                type = (Class&lt;?&gt;) getValueClass(ch);</b>
+<i>190</i>&nbsp;            }
+<i>191</i>&nbsp;        }
+<i>192</i>&nbsp;
+<b class="fc"><i>193</i>&nbsp;        if (opt != &#39; &#39;)</b>
+<i>194</i>&nbsp;        {
+<b class="fc"><i>195</i>&nbsp;            final Option option = Option.builder(String.valueOf(opt))</b>
+<b class="fc"><i>196</i>&nbsp;                .hasArg(type != null)</b>
+<b class="fc"><i>197</i>&nbsp;                .required(required)</b>
+<b class="fc"><i>198</i>&nbsp;                .type(type)</b>
+<b class="fc"><i>199</i>&nbsp;                .build();</b>
+<i>200</i>&nbsp;            
+<i>201</i>&nbsp;            // we have a final one to deal with
+<b class="fc"><i>202</i>&nbsp;            options.addOption(option);</b>
+<i>203</i>&nbsp;        }
+<i>204</i>&nbsp;
+<b class="fc"><i>205</i>&nbsp;        return options;</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-05-18 21:41</div>
+</div>
+</body>
+</html>

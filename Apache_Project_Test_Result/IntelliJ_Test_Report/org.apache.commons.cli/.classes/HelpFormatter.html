@@ -1,0 +1,1203 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HelpFormatter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.apache.commons.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HelpFormatter (org.apache.commons.cli)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HelpFormatter</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.5%
+  </span>
+  <span class="absValue">
+    (38/ 42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.8%
+  </span>
+  <span class="absValue">
+    (201/ 212)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">HelpFormatter$OptionComparator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (40/ 44)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.9%
+  </span>
+  <span class="absValue">
+    (203/ 214)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Licensed to the Apache Software Foundation (ASF) under one or more
+<i>3</i>&nbsp; * contributor license agreements.  See the NOTICE file distributed with
+<i>4</i>&nbsp; * this work for additional information regarding copyright ownership.
+<i>5</i>&nbsp; * The ASF licenses this file to You under the Apache License, Version 2.0
+<i>6</i>&nbsp; * (the &quot;License&quot;); you may not use this file except in compliance with
+<i>7</i>&nbsp; * the License.  You may obtain a copy of the License at
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; *     http://www.apache.org/licenses/LICENSE-2.0
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>12</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>13</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>14</i>&nbsp; * See the License for the specific language governing permissions and
+<i>15</i>&nbsp; * limitations under the License.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;package org.apache.commons.cli;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import java.io.BufferedReader;
+<i>21</i>&nbsp;import java.io.IOException;
+<i>22</i>&nbsp;import java.io.PrintWriter;
+<i>23</i>&nbsp;import java.io.Serializable;
+<i>24</i>&nbsp;import java.io.StringReader;
+<i>25</i>&nbsp;import java.util.ArrayList;
+<i>26</i>&nbsp;import java.util.Arrays;
+<i>27</i>&nbsp;import java.util.Collection;
+<i>28</i>&nbsp;import java.util.Collections;
+<i>29</i>&nbsp;import java.util.Comparator;
+<i>30</i>&nbsp;import java.util.Iterator;
+<i>31</i>&nbsp;import java.util.List;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;/**
+<i>34</i>&nbsp; * A formatter of help messages for command line options.
+<i>35</i>&nbsp; *
+<i>36</i>&nbsp; * &lt;p&gt;Example:&lt;/p&gt;
+<i>37</i>&nbsp; * 
+<i>38</i>&nbsp; * &lt;pre&gt;
+<i>39</i>&nbsp; * Options options = new Options();
+<i>40</i>&nbsp; * options.addOption(OptionBuilder.withLongOpt(&quot;file&quot;)
+<i>41</i>&nbsp; *                                .withDescription(&quot;The file to be processed&quot;)
+<i>42</i>&nbsp; *                                .hasArg()
+<i>43</i>&nbsp; *                                .withArgName(&quot;FILE&quot;)
+<i>44</i>&nbsp; *                                .isRequired()
+<i>45</i>&nbsp; *                                .create(&#39;f&#39;));
+<i>46</i>&nbsp; * options.addOption(OptionBuilder.withLongOpt(&quot;version&quot;)
+<i>47</i>&nbsp; *                                .withDescription(&quot;Print the version of the application&quot;)
+<i>48</i>&nbsp; *                                .create(&#39;v&#39;));
+<i>49</i>&nbsp; * options.addOption(OptionBuilder.withLongOpt(&quot;help&quot;).create(&#39;h&#39;));
+<i>50</i>&nbsp; * 
+<i>51</i>&nbsp; * String header = &quot;Do something useful with an input file\n\n&quot;;
+<i>52</i>&nbsp; * String footer = &quot;\nPlease report issues at http://example.com/issues&quot;;
+<i>53</i>&nbsp; * 
+<i>54</i>&nbsp; * HelpFormatter formatter = new HelpFormatter();
+<i>55</i>&nbsp; * formatter.printHelp(&quot;myapp&quot;, header, options, footer, true);
+<i>56</i>&nbsp; * &lt;/pre&gt;
+<i>57</i>&nbsp; * 
+<i>58</i>&nbsp; * This produces the following output:
+<i>59</i>&nbsp; * 
+<i>60</i>&nbsp; * &lt;pre&gt;
+<i>61</i>&nbsp; * usage: myapp -f &amp;lt;FILE&amp;gt; [-h] [-v]
+<i>62</i>&nbsp; * Do something useful with an input file
+<i>63</i>&nbsp; * 
+<i>64</i>&nbsp; *  -f,--file &amp;lt;FILE&amp;gt;   The file to be processed
+<i>65</i>&nbsp; *  -h,--help
+<i>66</i>&nbsp; *  -v,--version       Print the version of the application
+<i>67</i>&nbsp; * 
+<i>68</i>&nbsp; * Please report issues at http://example.com/issues
+<i>69</i>&nbsp; * &lt;/pre&gt;
+<i>70</i>&nbsp; * 
+<i>71</i>&nbsp; * @version $Id: HelpFormatter.java 1677407 2015-05-03 14:31:12Z britter $
+<i>72</i>&nbsp; */
+<b class="fc"><i>73</i>&nbsp;public class HelpFormatter</b>
+<i>74</i>&nbsp;{
+<i>75</i>&nbsp;    // --------------------------------------------------------------- Constants
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /** default number of characters per line */
+<i>78</i>&nbsp;    public static final int DEFAULT_WIDTH = 74;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /** default padding to the left of each line */
+<i>81</i>&nbsp;    public static final int DEFAULT_LEFT_PAD = 1;
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /** number of space characters to be prefixed to each description line */
+<i>84</i>&nbsp;    public static final int DEFAULT_DESC_PAD = 3;
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    /** the string to display at the beginning of the usage statement */
+<i>87</i>&nbsp;    public static final String DEFAULT_SYNTAX_PREFIX = &quot;usage: &quot;;
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /** default prefix for shortOpts */
+<i>90</i>&nbsp;    public static final String DEFAULT_OPT_PREFIX = &quot;-&quot;;
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    /** default prefix for long Option */
+<i>93</i>&nbsp;    public static final String DEFAULT_LONG_OPT_PREFIX = &quot;--&quot;;
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /** 
+<i>96</i>&nbsp;     * default separator displayed between a long Option and its value
+<i>97</i>&nbsp;     * 
+<i>98</i>&nbsp;     * @since 1.3
+<i>99</i>&nbsp;     **/
+<i>100</i>&nbsp;    public static final String DEFAULT_LONG_OPT_SEPARATOR = &quot; &quot;;
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /** default name for an argument */
+<i>103</i>&nbsp;    public static final String DEFAULT_ARG_NAME = &quot;arg&quot;;
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    // -------------------------------------------------------------- Attributes
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    /**
+<i>108</i>&nbsp;     * number of characters per line
+<i>109</i>&nbsp;     *
+<i>110</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>111</i>&nbsp;     * - use get/setWidth methods instead.
+<i>112</i>&nbsp;     */
+<b class="fc"><i>113</i>&nbsp;    @Deprecated</b>
+<i>114</i>&nbsp;    public int defaultWidth = DEFAULT_WIDTH;
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     * amount of padding to the left of each line
+<i>118</i>&nbsp;     *
+<i>119</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>120</i>&nbsp;     * - use get/setLeftPadding methods instead.
+<i>121</i>&nbsp;     */
+<b class="fc"><i>122</i>&nbsp;    @Deprecated</b>
+<i>123</i>&nbsp;    public int defaultLeftPad = DEFAULT_LEFT_PAD;
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    /**
+<i>126</i>&nbsp;     * the number of characters of padding to be prefixed
+<i>127</i>&nbsp;     * to each description line
+<i>128</i>&nbsp;     *
+<i>129</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>130</i>&nbsp;     * - use get/setDescPadding methods instead.
+<i>131</i>&nbsp;     */
+<b class="fc"><i>132</i>&nbsp;    @Deprecated</b>
+<i>133</i>&nbsp;    public int defaultDescPad = DEFAULT_DESC_PAD;
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * the string to display at the beginning of the usage statement
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>139</i>&nbsp;     * - use get/setSyntaxPrefix methods instead.
+<i>140</i>&nbsp;     */
+<b class="fc"><i>141</i>&nbsp;    @Deprecated</b>
+<i>142</i>&nbsp;    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;    /**
+<i>145</i>&nbsp;     * the new line string
+<i>146</i>&nbsp;     *
+<i>147</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>148</i>&nbsp;     * - use get/setNewLine methods instead.
+<i>149</i>&nbsp;     */
+<b class="fc"><i>150</i>&nbsp;    @Deprecated</b>
+<b class="fc"><i>151</i>&nbsp;    public String defaultNewLine = System.getProperty(&quot;line.separator&quot;);</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    /**
+<i>154</i>&nbsp;     * the shortOpt prefix
+<i>155</i>&nbsp;     *
+<i>156</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>157</i>&nbsp;     * - use get/setOptPrefix methods instead.
+<i>158</i>&nbsp;     */
+<b class="fc"><i>159</i>&nbsp;    @Deprecated</b>
+<i>160</i>&nbsp;    public String defaultOptPrefix = DEFAULT_OPT_PREFIX;
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    /**
+<i>163</i>&nbsp;     * the long Opt prefix
+<i>164</i>&nbsp;     *
+<i>165</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>166</i>&nbsp;     * - use get/setLongOptPrefix methods instead.
+<i>167</i>&nbsp;     */
+<b class="fc"><i>168</i>&nbsp;    @Deprecated</b>
+<i>169</i>&nbsp;    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * the name of the argument
+<i>173</i>&nbsp;     *
+<i>174</i>&nbsp;     * @deprecated Scope will be made private for next major version
+<i>175</i>&nbsp;     * - use get/setArgName methods instead.
+<i>176</i>&nbsp;     */
+<b class="fc"><i>177</i>&nbsp;    @Deprecated</b>
+<i>178</i>&nbsp;    public String defaultArgName = DEFAULT_ARG_NAME;
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    /**
+<i>181</i>&nbsp;     * Comparator used to sort the options when they output in help text
+<i>182</i>&nbsp;     * 
+<i>183</i>&nbsp;     * Defaults to case-insensitive alphabetical sorting by option key
+<i>184</i>&nbsp;     */
+<b class="fc"><i>185</i>&nbsp;    protected Comparator&lt;Option&gt; optionComparator = new OptionComparator();</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /** The separator displayed between the long option and its value. */
+<b class="fc"><i>188</i>&nbsp;    private String longOptSeparator = DEFAULT_LONG_OPT_SEPARATOR;</b>
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    /**
+<i>191</i>&nbsp;     * Sets the &#39;width&#39;.
+<i>192</i>&nbsp;     *
+<i>193</i>&nbsp;     * @param width the new value of &#39;width&#39;
+<i>194</i>&nbsp;     */
+<i>195</i>&nbsp;    public void setWidth(int width)
+<i>196</i>&nbsp;    {
+<b class="fc"><i>197</i>&nbsp;        this.defaultWidth = width;</b>
+<b class="fc"><i>198</i>&nbsp;    }</b>
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    /**
+<i>201</i>&nbsp;     * Returns the &#39;width&#39;.
+<i>202</i>&nbsp;     *
+<i>203</i>&nbsp;     * @return the &#39;width&#39;
+<i>204</i>&nbsp;     */
+<i>205</i>&nbsp;    public int getWidth()
+<i>206</i>&nbsp;    {
+<b class="fc"><i>207</i>&nbsp;        return defaultWidth;</b>
+<i>208</i>&nbsp;    }
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;    /**
+<i>211</i>&nbsp;     * Sets the &#39;leftPadding&#39;.
+<i>212</i>&nbsp;     *
+<i>213</i>&nbsp;     * @param padding the new value of &#39;leftPadding&#39;
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    public void setLeftPadding(int padding)
+<i>216</i>&nbsp;    {
+<b class="fc"><i>217</i>&nbsp;        this.defaultLeftPad = padding;</b>
+<b class="fc"><i>218</i>&nbsp;    }</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    /**
+<i>221</i>&nbsp;     * Returns the &#39;leftPadding&#39;.
+<i>222</i>&nbsp;     *
+<i>223</i>&nbsp;     * @return the &#39;leftPadding&#39;
+<i>224</i>&nbsp;     */
+<i>225</i>&nbsp;    public int getLeftPadding()
+<i>226</i>&nbsp;    {
+<b class="fc"><i>227</i>&nbsp;        return defaultLeftPad;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    /**
+<i>231</i>&nbsp;     * Sets the &#39;descPadding&#39;.
+<i>232</i>&nbsp;     *
+<i>233</i>&nbsp;     * @param padding the new value of &#39;descPadding&#39;
+<i>234</i>&nbsp;     */
+<i>235</i>&nbsp;    public void setDescPadding(int padding)
+<i>236</i>&nbsp;    {
+<b class="fc"><i>237</i>&nbsp;        this.defaultDescPad = padding;</b>
+<b class="fc"><i>238</i>&nbsp;    }</b>
+<i>239</i>&nbsp;
+<i>240</i>&nbsp;    /**
+<i>241</i>&nbsp;     * Returns the &#39;descPadding&#39;.
+<i>242</i>&nbsp;     *
+<i>243</i>&nbsp;     * @return the &#39;descPadding&#39;
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    public int getDescPadding()
+<i>246</i>&nbsp;    {
+<b class="fc"><i>247</i>&nbsp;        return defaultDescPad;</b>
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    /**
+<i>251</i>&nbsp;     * Sets the &#39;syntaxPrefix&#39;.
+<i>252</i>&nbsp;     *
+<i>253</i>&nbsp;     * @param prefix the new value of &#39;syntaxPrefix&#39;
+<i>254</i>&nbsp;     */
+<i>255</i>&nbsp;    public void setSyntaxPrefix(String prefix)
+<i>256</i>&nbsp;    {
+<b class="fc"><i>257</i>&nbsp;        this.defaultSyntaxPrefix = prefix;</b>
+<b class="fc"><i>258</i>&nbsp;    }</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    /**
+<i>261</i>&nbsp;     * Returns the &#39;syntaxPrefix&#39;.
+<i>262</i>&nbsp;     *
+<i>263</i>&nbsp;     * @return the &#39;syntaxPrefix&#39;
+<i>264</i>&nbsp;     */
+<i>265</i>&nbsp;    public String getSyntaxPrefix()
+<i>266</i>&nbsp;    {
+<b class="fc"><i>267</i>&nbsp;        return defaultSyntaxPrefix;</b>
+<i>268</i>&nbsp;    }
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;    /**
+<i>271</i>&nbsp;     * Sets the &#39;newLine&#39;.
+<i>272</i>&nbsp;     *
+<i>273</i>&nbsp;     * @param newline the new value of &#39;newLine&#39;
+<i>274</i>&nbsp;     */
+<i>275</i>&nbsp;    public void setNewLine(String newline)
+<i>276</i>&nbsp;    {
+<b class="fc"><i>277</i>&nbsp;        this.defaultNewLine = newline;</b>
+<b class="fc"><i>278</i>&nbsp;    }</b>
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;    /**
+<i>281</i>&nbsp;     * Returns the &#39;newLine&#39;.
+<i>282</i>&nbsp;     *
+<i>283</i>&nbsp;     * @return the &#39;newLine&#39;
+<i>284</i>&nbsp;     */
+<i>285</i>&nbsp;    public String getNewLine()
+<i>286</i>&nbsp;    {
+<b class="fc"><i>287</i>&nbsp;        return defaultNewLine;</b>
+<i>288</i>&nbsp;    }
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;    /**
+<i>291</i>&nbsp;     * Sets the &#39;optPrefix&#39;.
+<i>292</i>&nbsp;     *
+<i>293</i>&nbsp;     * @param prefix the new value of &#39;optPrefix&#39;
+<i>294</i>&nbsp;     */
+<i>295</i>&nbsp;    public void setOptPrefix(String prefix)
+<i>296</i>&nbsp;    {
+<b class="fc"><i>297</i>&nbsp;        this.defaultOptPrefix = prefix;</b>
+<b class="fc"><i>298</i>&nbsp;    }</b>
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;    /**
+<i>301</i>&nbsp;     * Returns the &#39;optPrefix&#39;.
+<i>302</i>&nbsp;     *
+<i>303</i>&nbsp;     * @return the &#39;optPrefix&#39;
+<i>304</i>&nbsp;     */
+<i>305</i>&nbsp;    public String getOptPrefix()
+<i>306</i>&nbsp;    {
+<b class="fc"><i>307</i>&nbsp;        return defaultOptPrefix;</b>
+<i>308</i>&nbsp;    }
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;    /**
+<i>311</i>&nbsp;     * Sets the &#39;longOptPrefix&#39;.
+<i>312</i>&nbsp;     *
+<i>313</i>&nbsp;     * @param prefix the new value of &#39;longOptPrefix&#39;
+<i>314</i>&nbsp;     */
+<i>315</i>&nbsp;    public void setLongOptPrefix(String prefix)
+<i>316</i>&nbsp;    {
+<b class="fc"><i>317</i>&nbsp;        this.defaultLongOptPrefix = prefix;</b>
+<b class="fc"><i>318</i>&nbsp;    }</b>
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;    /**
+<i>321</i>&nbsp;     * Returns the &#39;longOptPrefix&#39;.
+<i>322</i>&nbsp;     *
+<i>323</i>&nbsp;     * @return the &#39;longOptPrefix&#39;
+<i>324</i>&nbsp;     */
+<i>325</i>&nbsp;    public String getLongOptPrefix()
+<i>326</i>&nbsp;    {
+<b class="fc"><i>327</i>&nbsp;        return defaultLongOptPrefix;</b>
+<i>328</i>&nbsp;    }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;    /**
+<i>331</i>&nbsp;     * Set the separator displayed between a long option and its value.
+<i>332</i>&nbsp;     * Ensure that the separator specified is supported by the parser used,
+<i>333</i>&nbsp;     * typically &#39; &#39; or &#39;=&#39;.
+<i>334</i>&nbsp;     * 
+<i>335</i>&nbsp;     * @param longOptSeparator the separator, typically &#39; &#39; or &#39;=&#39;.
+<i>336</i>&nbsp;     * @since 1.3
+<i>337</i>&nbsp;     */
+<i>338</i>&nbsp;    public void setLongOptSeparator(String longOptSeparator)
+<i>339</i>&nbsp;    {
+<b class="fc"><i>340</i>&nbsp;        this.longOptSeparator = longOptSeparator;</b>
+<b class="fc"><i>341</i>&nbsp;    }</b>
+<i>342</i>&nbsp;
+<i>343</i>&nbsp;    /**
+<i>344</i>&nbsp;     * Returns the separator displayed between a long option and its value.
+<i>345</i>&nbsp;     * 
+<i>346</i>&nbsp;     * @return the separator
+<i>347</i>&nbsp;     * @since 1.3
+<i>348</i>&nbsp;     */
+<i>349</i>&nbsp;    public String getLongOptSeparator()
+<i>350</i>&nbsp;    {
+<b class="fc"><i>351</i>&nbsp;        return longOptSeparator;</b>
+<i>352</i>&nbsp;    }
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    /**
+<i>355</i>&nbsp;     * Sets the &#39;argName&#39;.
+<i>356</i>&nbsp;     *
+<i>357</i>&nbsp;     * @param name the new value of &#39;argName&#39;
+<i>358</i>&nbsp;     */
+<i>359</i>&nbsp;    public void setArgName(String name)
+<i>360</i>&nbsp;    {
+<b class="fc"><i>361</i>&nbsp;        this.defaultArgName = name;</b>
+<b class="fc"><i>362</i>&nbsp;    }</b>
+<i>363</i>&nbsp;
+<i>364</i>&nbsp;    /**
+<i>365</i>&nbsp;     * Returns the &#39;argName&#39;.
+<i>366</i>&nbsp;     *
+<i>367</i>&nbsp;     * @return the &#39;argName&#39;
+<i>368</i>&nbsp;     */
+<i>369</i>&nbsp;    public String getArgName()
+<i>370</i>&nbsp;    {
+<b class="fc"><i>371</i>&nbsp;        return defaultArgName;</b>
+<i>372</i>&nbsp;    }
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    /**
+<i>375</i>&nbsp;     * Comparator used to sort the options when they output in help text.
+<i>376</i>&nbsp;     * Defaults to case-insensitive alphabetical sorting by option key.
+<i>377</i>&nbsp;     *
+<i>378</i>&nbsp;     * @return the {@link Comparator} currently in use to sort the options
+<i>379</i>&nbsp;     * @since 1.2
+<i>380</i>&nbsp;     */
+<i>381</i>&nbsp;    public Comparator&lt;Option&gt; getOptionComparator()
+<i>382</i>&nbsp;    {
+<b class="fc"><i>383</i>&nbsp;        return optionComparator;</b>
+<i>384</i>&nbsp;    }
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;    /**
+<i>387</i>&nbsp;     * Set the comparator used to sort the options when they output in help text.
+<i>388</i>&nbsp;     * Passing in a null comparator will keep the options in the order they were declared.
+<i>389</i>&nbsp;     *
+<i>390</i>&nbsp;     * @param comparator the {@link Comparator} to use for sorting the options
+<i>391</i>&nbsp;     * @since 1.2
+<i>392</i>&nbsp;     */
+<i>393</i>&nbsp;    public void setOptionComparator(Comparator&lt;Option&gt; comparator)
+<i>394</i>&nbsp;    {
+<b class="fc"><i>395</i>&nbsp;        this.optionComparator = comparator;</b>
+<b class="fc"><i>396</i>&nbsp;    }</b>
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;    /**
+<i>399</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>400</i>&nbsp;     * command line syntax.  This method prints help information to
+<i>401</i>&nbsp;     * System.out.
+<i>402</i>&nbsp;     *
+<i>403</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>404</i>&nbsp;     * @param options the Options instance
+<i>405</i>&nbsp;     */
+<i>406</i>&nbsp;    public void printHelp(String cmdLineSyntax, Options options)
+<i>407</i>&nbsp;    {
+<b class="fc"><i>408</i>&nbsp;        printHelp(getWidth(), cmdLineSyntax, null, options, null, false);</b>
+<b class="fc"><i>409</i>&nbsp;    }</b>
+<i>410</i>&nbsp;
+<i>411</i>&nbsp;    /**
+<i>412</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>413</i>&nbsp;     * command line syntax.  This method prints help information to 
+<i>414</i>&nbsp;     * System.out.
+<i>415</i>&nbsp;     *
+<i>416</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>417</i>&nbsp;     * @param options the Options instance
+<i>418</i>&nbsp;     * @param autoUsage whether to print an automatically generated
+<i>419</i>&nbsp;     * usage statement
+<i>420</i>&nbsp;     */
+<i>421</i>&nbsp;    public void printHelp(String cmdLineSyntax, Options options, boolean autoUsage)
+<i>422</i>&nbsp;    {
+<b class="nc"><i>423</i>&nbsp;        printHelp(getWidth(), cmdLineSyntax, null, options, null, autoUsage);</b>
+<b class="nc"><i>424</i>&nbsp;    }</b>
+<i>425</i>&nbsp;
+<i>426</i>&nbsp;    /**
+<i>427</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>428</i>&nbsp;     * command line syntax.  This method prints help information to
+<i>429</i>&nbsp;     * System.out.
+<i>430</i>&nbsp;     *
+<i>431</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>432</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>433</i>&nbsp;     * @param options the Options instance
+<i>434</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>435</i>&nbsp;     */
+<i>436</i>&nbsp;    public void printHelp(String cmdLineSyntax, String header, Options options, String footer)
+<i>437</i>&nbsp;    {
+<b class="nc"><i>438</i>&nbsp;        printHelp(cmdLineSyntax, header, options, footer, false);</b>
+<b class="nc"><i>439</i>&nbsp;    }</b>
+<i>440</i>&nbsp;
+<i>441</i>&nbsp;    /**
+<i>442</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>443</i>&nbsp;     * command line syntax.  This method prints help information to 
+<i>444</i>&nbsp;     * System.out.
+<i>445</i>&nbsp;     *
+<i>446</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>447</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>448</i>&nbsp;     * @param options the Options instance
+<i>449</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>450</i>&nbsp;     * @param autoUsage whether to print an automatically generated
+<i>451</i>&nbsp;     * usage statement
+<i>452</i>&nbsp;     */
+<i>453</i>&nbsp;    public void printHelp(String cmdLineSyntax, String header, Options options, String footer, boolean autoUsage)
+<i>454</i>&nbsp;    {
+<b class="nc"><i>455</i>&nbsp;        printHelp(getWidth(), cmdLineSyntax, header, options, footer, autoUsage);</b>
+<b class="nc"><i>456</i>&nbsp;    }</b>
+<i>457</i>&nbsp;
+<i>458</i>&nbsp;    /**
+<i>459</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>460</i>&nbsp;     * command line syntax.  This method prints help information to
+<i>461</i>&nbsp;     * System.out.
+<i>462</i>&nbsp;     *
+<i>463</i>&nbsp;     * @param width the number of characters to be displayed on each line
+<i>464</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>465</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>466</i>&nbsp;     * @param options the Options instance
+<i>467</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>468</i>&nbsp;     */
+<i>469</i>&nbsp;    public void printHelp(int width, String cmdLineSyntax, String header, Options options, String footer)
+<i>470</i>&nbsp;    {
+<b class="nc"><i>471</i>&nbsp;        printHelp(width, cmdLineSyntax, header, options, footer, false);</b>
+<b class="nc"><i>472</i>&nbsp;    }</b>
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;    /**
+<i>475</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>476</i>&nbsp;     * command line syntax.  This method prints help information to
+<i>477</i>&nbsp;     * System.out.
+<i>478</i>&nbsp;     *
+<i>479</i>&nbsp;     * @param width the number of characters to be displayed on each line
+<i>480</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>481</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>482</i>&nbsp;     * @param options the Options instance
+<i>483</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>484</i>&nbsp;     * @param autoUsage whether to print an automatically generated 
+<i>485</i>&nbsp;     * usage statement
+<i>486</i>&nbsp;     */
+<i>487</i>&nbsp;    public void printHelp(int width, String cmdLineSyntax, String header,
+<i>488</i>&nbsp;                          Options options, String footer, boolean autoUsage)
+<i>489</i>&nbsp;    {
+<b class="fc"><i>490</i>&nbsp;        PrintWriter pw = new PrintWriter(System.out);</b>
+<i>491</i>&nbsp;
+<b class="fc"><i>492</i>&nbsp;        printHelp(pw, width, cmdLineSyntax, header, options, getLeftPadding(), getDescPadding(), footer, autoUsage);</b>
+<b class="fc"><i>493</i>&nbsp;        pw.flush();</b>
+<b class="fc"><i>494</i>&nbsp;    }</b>
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;    /**
+<i>497</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>498</i>&nbsp;     * command line syntax.
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param pw the writer to which the help will be written
+<i>501</i>&nbsp;     * @param width the number of characters to be displayed on each line
+<i>502</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>503</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>504</i>&nbsp;     * @param options the Options instance
+<i>505</i>&nbsp;     * @param leftPad the number of characters of padding to be prefixed
+<i>506</i>&nbsp;     * to each line
+<i>507</i>&nbsp;     * @param descPad the number of characters of padding to be prefixed
+<i>508</i>&nbsp;     * to each description line
+<i>509</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>510</i>&nbsp;     *
+<i>511</i>&nbsp;     * @throws IllegalStateException if there is no room to print a line
+<i>512</i>&nbsp;     */
+<i>513</i>&nbsp;    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax, 
+<i>514</i>&nbsp;                          String header, Options options, int leftPad, 
+<i>515</i>&nbsp;                          int descPad, String footer)
+<i>516</i>&nbsp;    {
+<b class="fc"><i>517</i>&nbsp;        printHelp(pw, width, cmdLineSyntax, header, options, leftPad, descPad, footer, false);</b>
+<b class="fc"><i>518</i>&nbsp;    }</b>
+<i>519</i>&nbsp;
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;    /**
+<i>522</i>&nbsp;     * Print the help for &lt;code&gt;options&lt;/code&gt; with the specified
+<i>523</i>&nbsp;     * command line syntax.
+<i>524</i>&nbsp;     *
+<i>525</i>&nbsp;     * @param pw the writer to which the help will be written
+<i>526</i>&nbsp;     * @param width the number of characters to be displayed on each line
+<i>527</i>&nbsp;     * @param cmdLineSyntax the syntax for this application
+<i>528</i>&nbsp;     * @param header the banner to display at the beginning of the help
+<i>529</i>&nbsp;     * @param options the Options instance
+<i>530</i>&nbsp;     * @param leftPad the number of characters of padding to be prefixed
+<i>531</i>&nbsp;     * to each line
+<i>532</i>&nbsp;     * @param descPad the number of characters of padding to be prefixed
+<i>533</i>&nbsp;     * to each description line
+<i>534</i>&nbsp;     * @param footer the banner to display at the end of the help
+<i>535</i>&nbsp;     * @param autoUsage whether to print an automatically generated
+<i>536</i>&nbsp;     * usage statement
+<i>537</i>&nbsp;     *
+<i>538</i>&nbsp;     * @throws IllegalStateException if there is no room to print a line
+<i>539</i>&nbsp;     */
+<i>540</i>&nbsp;    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,
+<i>541</i>&nbsp;                          String header, Options options, int leftPad,
+<i>542</i>&nbsp;                          int descPad, String footer, boolean autoUsage)
+<i>543</i>&nbsp;    {
+<b class="fc"><i>544</i>&nbsp;        if (cmdLineSyntax == null || cmdLineSyntax.length() == 0)</b>
+<i>545</i>&nbsp;        {
+<b class="fc"><i>546</i>&nbsp;            throw new IllegalArgumentException(&quot;cmdLineSyntax not provided&quot;);</b>
+<i>547</i>&nbsp;        }
+<i>548</i>&nbsp;
+<b class="fc"><i>549</i>&nbsp;        if (autoUsage)</b>
+<i>550</i>&nbsp;        {
+<b class="fc"><i>551</i>&nbsp;            printUsage(pw, width, cmdLineSyntax, options);</b>
+<i>552</i>&nbsp;        }
+<i>553</i>&nbsp;        else
+<i>554</i>&nbsp;        {
+<b class="fc"><i>555</i>&nbsp;            printUsage(pw, width, cmdLineSyntax);</b>
+<i>556</i>&nbsp;        }
+<i>557</i>&nbsp;
+<b class="fc"><i>558</i>&nbsp;        if (header != null &amp;&amp; header.trim().length() &gt; 0)</b>
+<i>559</i>&nbsp;        {
+<b class="fc"><i>560</i>&nbsp;            printWrapped(pw, width, header);</b>
+<i>561</i>&nbsp;        }
+<i>562</i>&nbsp;
+<b class="fc"><i>563</i>&nbsp;        printOptions(pw, width, options, leftPad, descPad);</b>
+<i>564</i>&nbsp;
+<b class="fc"><i>565</i>&nbsp;        if (footer != null &amp;&amp; footer.trim().length() &gt; 0)</b>
+<i>566</i>&nbsp;        {
+<b class="fc"><i>567</i>&nbsp;            printWrapped(pw, width, footer);</b>
+<i>568</i>&nbsp;        }
+<b class="fc"><i>569</i>&nbsp;    }</b>
+<i>570</i>&nbsp;
+<i>571</i>&nbsp;    /**
+<i>572</i>&nbsp;     * Prints the usage statement for the specified application.
+<i>573</i>&nbsp;     *
+<i>574</i>&nbsp;     * @param pw The PrintWriter to print the usage statement 
+<i>575</i>&nbsp;     * @param width The number of characters to display per line
+<i>576</i>&nbsp;     * @param app The application name
+<i>577</i>&nbsp;     * @param options The command line Options
+<i>578</i>&nbsp;     */
+<i>579</i>&nbsp;    public void printUsage(PrintWriter pw, int width, String app, Options options)
+<i>580</i>&nbsp;    {
+<i>581</i>&nbsp;        // initialise the string buffer
+<b class="fc"><i>582</i>&nbsp;        StringBuffer buff = new StringBuffer(getSyntaxPrefix()).append(app).append(&quot; &quot;);</b>
+<i>583</i>&nbsp;
+<i>584</i>&nbsp;        // create a list for processed option groups
+<b class="fc"><i>585</i>&nbsp;        Collection&lt;OptionGroup&gt; processedGroups = new ArrayList&lt;OptionGroup&gt;();</b>
+<i>586</i>&nbsp;
+<b class="fc"><i>587</i>&nbsp;        List&lt;Option&gt; optList = new ArrayList&lt;Option&gt;(options.getOptions());</b>
+<b class="fc"><i>588</i>&nbsp;        if (getOptionComparator() != null)</b>
+<i>589</i>&nbsp;        {
+<b class="fc"><i>590</i>&nbsp;            Collections.sort(optList, getOptionComparator());</b>
+<i>591</i>&nbsp;        }
+<i>592</i>&nbsp;        // iterate over the options
+<b class="fc"><i>593</i>&nbsp;        for (Iterator&lt;Option&gt; it = optList.iterator(); it.hasNext();)</b>
+<i>594</i>&nbsp;        {
+<i>595</i>&nbsp;            // get the next Option
+<b class="fc"><i>596</i>&nbsp;            Option option = it.next();</b>
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;            // check if the option is part of an OptionGroup
+<b class="fc"><i>599</i>&nbsp;            OptionGroup group = options.getOptionGroup(option);</b>
+<i>600</i>&nbsp;
+<i>601</i>&nbsp;            // if the option is part of a group 
+<b class="fc"><i>602</i>&nbsp;            if (group != null)</b>
+<i>603</i>&nbsp;            {
+<i>604</i>&nbsp;                // and if the group has not already been processed
+<b class="fc"><i>605</i>&nbsp;                if (!processedGroups.contains(group))</b>
+<i>606</i>&nbsp;                {
+<i>607</i>&nbsp;                    // add the group to the processed list
+<b class="fc"><i>608</i>&nbsp;                    processedGroups.add(group);</b>
+<i>609</i>&nbsp;
+<i>610</i>&nbsp;
+<i>611</i>&nbsp;                    // add the usage clause
+<b class="fc"><i>612</i>&nbsp;                    appendOptionGroup(buff, group);</b>
+<i>613</i>&nbsp;                }
+<i>614</i>&nbsp;
+<i>615</i>&nbsp;                // otherwise the option was displayed in the group
+<i>616</i>&nbsp;                // previously so ignore it.
+<i>617</i>&nbsp;            }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;            // if the Option is not part of an OptionGroup
+<i>620</i>&nbsp;            else
+<i>621</i>&nbsp;            {
+<b class="fc"><i>622</i>&nbsp;                appendOption(buff, option, option.isRequired());</b>
+<i>623</i>&nbsp;            }
+<i>624</i>&nbsp;
+<b class="fc"><i>625</i>&nbsp;            if (it.hasNext())</b>
+<i>626</i>&nbsp;            {
+<b class="fc"><i>627</i>&nbsp;                buff.append(&quot; &quot;);</b>
+<i>628</i>&nbsp;            }
+<b class="fc"><i>629</i>&nbsp;        }</b>
+<i>630</i>&nbsp;
+<i>631</i>&nbsp;
+<i>632</i>&nbsp;        // call printWrapped
+<b class="fc"><i>633</i>&nbsp;        printWrapped(pw, width, buff.toString().indexOf(&#39; &#39;) + 1, buff.toString());</b>
+<b class="fc"><i>634</i>&nbsp;    }</b>
+<i>635</i>&nbsp;
+<i>636</i>&nbsp;    /**
+<i>637</i>&nbsp;     * Appends the usage clause for an OptionGroup to a StringBuffer.  
+<i>638</i>&nbsp;     * The clause is wrapped in square brackets if the group is required.
+<i>639</i>&nbsp;     * The display of the options is handled by appendOption
+<i>640</i>&nbsp;     * @param buff the StringBuffer to append to
+<i>641</i>&nbsp;     * @param group the group to append
+<i>642</i>&nbsp;     * @see #appendOption(StringBuffer,Option,boolean)
+<i>643</i>&nbsp;     */
+<i>644</i>&nbsp;    private void appendOptionGroup(StringBuffer buff, OptionGroup group)
+<i>645</i>&nbsp;    {
+<b class="fc"><i>646</i>&nbsp;        if (!group.isRequired())</b>
+<i>647</i>&nbsp;        {
+<b class="fc"><i>648</i>&nbsp;            buff.append(&quot;[&quot;);</b>
+<i>649</i>&nbsp;        }
+<i>650</i>&nbsp;
+<b class="fc"><i>651</i>&nbsp;        List&lt;Option&gt; optList = new ArrayList&lt;Option&gt;(group.getOptions());</b>
+<b class="fc"><i>652</i>&nbsp;        if (getOptionComparator() != null)</b>
+<i>653</i>&nbsp;        {
+<b class="fc"><i>654</i>&nbsp;            Collections.sort(optList, getOptionComparator());</b>
+<i>655</i>&nbsp;        }
+<i>656</i>&nbsp;        // for each option in the OptionGroup
+<b class="fc"><i>657</i>&nbsp;        for (Iterator&lt;Option&gt; it = optList.iterator(); it.hasNext();)</b>
+<i>658</i>&nbsp;        {
+<i>659</i>&nbsp;            // whether the option is required or not is handled at group level
+<b class="fc"><i>660</i>&nbsp;            appendOption(buff, it.next(), true);</b>
+<i>661</i>&nbsp;
+<b class="fc"><i>662</i>&nbsp;            if (it.hasNext())</b>
+<i>663</i>&nbsp;            {
+<b class="fc"><i>664</i>&nbsp;                buff.append(&quot; | &quot;);</b>
+<i>665</i>&nbsp;            }
+<i>666</i>&nbsp;        }
+<i>667</i>&nbsp;
+<b class="fc"><i>668</i>&nbsp;        if (!group.isRequired())</b>
+<i>669</i>&nbsp;        {
+<b class="fc"><i>670</i>&nbsp;            buff.append(&quot;]&quot;);</b>
+<i>671</i>&nbsp;        }
+<b class="fc"><i>672</i>&nbsp;    }</b>
+<i>673</i>&nbsp;
+<i>674</i>&nbsp;    /**
+<i>675</i>&nbsp;     * Appends the usage clause for an Option to a StringBuffer.  
+<i>676</i>&nbsp;     *
+<i>677</i>&nbsp;     * @param buff the StringBuffer to append to
+<i>678</i>&nbsp;     * @param option the Option to append
+<i>679</i>&nbsp;     * @param required whether the Option is required or not
+<i>680</i>&nbsp;     */
+<i>681</i>&nbsp;    private void appendOption(StringBuffer buff, Option option, boolean required)
+<i>682</i>&nbsp;    {
+<b class="fc"><i>683</i>&nbsp;        if (!required)</b>
+<i>684</i>&nbsp;        {
+<b class="fc"><i>685</i>&nbsp;            buff.append(&quot;[&quot;);</b>
+<i>686</i>&nbsp;        }
+<i>687</i>&nbsp;
+<b class="fc"><i>688</i>&nbsp;        if (option.getOpt() != null)</b>
+<i>689</i>&nbsp;        {
+<b class="fc"><i>690</i>&nbsp;            buff.append(&quot;-&quot;).append(option.getOpt());</b>
+<i>691</i>&nbsp;        }
+<i>692</i>&nbsp;        else
+<i>693</i>&nbsp;        {
+<b class="fc"><i>694</i>&nbsp;            buff.append(&quot;--&quot;).append(option.getLongOpt());</b>
+<i>695</i>&nbsp;        }
+<i>696</i>&nbsp;        
+<i>697</i>&nbsp;        // if the Option has a value and a non blank argname
+<b class="fc"><i>698</i>&nbsp;        if (option.hasArg() &amp;&amp; (option.getArgName() == null || option.getArgName().length() != 0))</b>
+<i>699</i>&nbsp;        {
+<b class="fc"><i>700</i>&nbsp;            buff.append(option.getOpt() == null ? longOptSeparator : &quot; &quot;);</b>
+<b class="fc"><i>701</i>&nbsp;            buff.append(&quot;&lt;&quot;).append(option.getArgName() != null ? option.getArgName() : getArgName()).append(&quot;&gt;&quot;);</b>
+<i>702</i>&nbsp;        }
+<i>703</i>&nbsp;        
+<i>704</i>&nbsp;        // if the Option is not a required option
+<b class="fc"><i>705</i>&nbsp;        if (!required)</b>
+<i>706</i>&nbsp;        {
+<b class="fc"><i>707</i>&nbsp;            buff.append(&quot;]&quot;);</b>
+<i>708</i>&nbsp;        }
+<b class="fc"><i>709</i>&nbsp;    }</b>
+<i>710</i>&nbsp;
+<i>711</i>&nbsp;    /**
+<i>712</i>&nbsp;     * Print the cmdLineSyntax to the specified writer, using the
+<i>713</i>&nbsp;     * specified width.
+<i>714</i>&nbsp;     *
+<i>715</i>&nbsp;     * @param pw The printWriter to write the help to
+<i>716</i>&nbsp;     * @param width The number of characters per line for the usage statement.
+<i>717</i>&nbsp;     * @param cmdLineSyntax The usage statement.
+<i>718</i>&nbsp;     */
+<i>719</i>&nbsp;    public void printUsage(PrintWriter pw, int width, String cmdLineSyntax)
+<i>720</i>&nbsp;    {
+<b class="fc"><i>721</i>&nbsp;        int argPos = cmdLineSyntax.indexOf(&#39; &#39;) + 1;</b>
+<i>722</i>&nbsp;
+<b class="fc"><i>723</i>&nbsp;        printWrapped(pw, width, getSyntaxPrefix().length() + argPos, getSyntaxPrefix() + cmdLineSyntax);</b>
+<b class="fc"><i>724</i>&nbsp;    }</b>
+<i>725</i>&nbsp;
+<i>726</i>&nbsp;    /**
+<i>727</i>&nbsp;     * Print the help for the specified Options to the specified writer, 
+<i>728</i>&nbsp;     * using the specified width, left padding and description padding.
+<i>729</i>&nbsp;     *
+<i>730</i>&nbsp;     * @param pw The printWriter to write the help to
+<i>731</i>&nbsp;     * @param width The number of characters to display per line
+<i>732</i>&nbsp;     * @param options The command line Options
+<i>733</i>&nbsp;     * @param leftPad the number of characters of padding to be prefixed
+<i>734</i>&nbsp;     * to each line
+<i>735</i>&nbsp;     * @param descPad the number of characters of padding to be prefixed
+<i>736</i>&nbsp;     * to each description line
+<i>737</i>&nbsp;     */
+<i>738</i>&nbsp;    public void printOptions(PrintWriter pw, int width, Options options, 
+<i>739</i>&nbsp;                             int leftPad, int descPad)
+<i>740</i>&nbsp;    {
+<b class="fc"><i>741</i>&nbsp;        StringBuffer sb = new StringBuffer();</b>
+<i>742</i>&nbsp;
+<b class="fc"><i>743</i>&nbsp;        renderOptions(sb, width, options, leftPad, descPad);</b>
+<b class="fc"><i>744</i>&nbsp;        pw.println(sb.toString());</b>
+<b class="fc"><i>745</i>&nbsp;    }</b>
+<i>746</i>&nbsp;
+<i>747</i>&nbsp;    /**
+<i>748</i>&nbsp;     * Print the specified text to the specified PrintWriter.
+<i>749</i>&nbsp;     *
+<i>750</i>&nbsp;     * @param pw The printWriter to write the help to
+<i>751</i>&nbsp;     * @param width The number of characters to display per line
+<i>752</i>&nbsp;     * @param text The text to be written to the PrintWriter
+<i>753</i>&nbsp;     */
+<i>754</i>&nbsp;    public void printWrapped(PrintWriter pw, int width, String text)
+<i>755</i>&nbsp;    {
+<b class="fc"><i>756</i>&nbsp;        printWrapped(pw, width, 0, text);</b>
+<b class="fc"><i>757</i>&nbsp;    }</b>
+<i>758</i>&nbsp;
+<i>759</i>&nbsp;    /**
+<i>760</i>&nbsp;     * Print the specified text to the specified PrintWriter.
+<i>761</i>&nbsp;     *
+<i>762</i>&nbsp;     * @param pw The printWriter to write the help to
+<i>763</i>&nbsp;     * @param width The number of characters to display per line
+<i>764</i>&nbsp;     * @param nextLineTabStop The position on the next line for the first tab.
+<i>765</i>&nbsp;     * @param text The text to be written to the PrintWriter
+<i>766</i>&nbsp;     */
+<i>767</i>&nbsp;    public void printWrapped(PrintWriter pw, int width, int nextLineTabStop, String text)
+<i>768</i>&nbsp;    {
+<b class="fc"><i>769</i>&nbsp;        StringBuffer sb = new StringBuffer(text.length());</b>
+<i>770</i>&nbsp;
+<b class="fc"><i>771</i>&nbsp;        renderWrappedTextBlock(sb, width, nextLineTabStop, text);</b>
+<b class="fc"><i>772</i>&nbsp;        pw.println(sb.toString());</b>
+<b class="fc"><i>773</i>&nbsp;    }</b>
+<i>774</i>&nbsp;
+<i>775</i>&nbsp;    // --------------------------------------------------------------- Protected
+<i>776</i>&nbsp;
+<i>777</i>&nbsp;    /**
+<i>778</i>&nbsp;     * Render the specified Options and return the rendered Options
+<i>779</i>&nbsp;     * in a StringBuffer.
+<i>780</i>&nbsp;     *
+<i>781</i>&nbsp;     * @param sb The StringBuffer to place the rendered Options into.
+<i>782</i>&nbsp;     * @param width The number of characters to display per line
+<i>783</i>&nbsp;     * @param options The command line Options
+<i>784</i>&nbsp;     * @param leftPad the number of characters of padding to be prefixed
+<i>785</i>&nbsp;     * to each line
+<i>786</i>&nbsp;     * @param descPad the number of characters of padding to be prefixed
+<i>787</i>&nbsp;     * to each description line
+<i>788</i>&nbsp;     *
+<i>789</i>&nbsp;     * @return the StringBuffer with the rendered Options contents.
+<i>790</i>&nbsp;     */
+<i>791</i>&nbsp;    protected StringBuffer renderOptions(StringBuffer sb, int width, Options options, int leftPad, int descPad)
+<i>792</i>&nbsp;    {
+<b class="fc"><i>793</i>&nbsp;        final String lpad = createPadding(leftPad);</b>
+<b class="fc"><i>794</i>&nbsp;        final String dpad = createPadding(descPad);</b>
+<i>795</i>&nbsp;
+<i>796</i>&nbsp;        // first create list containing only &lt;lpad&gt;-a,--aaa where 
+<i>797</i>&nbsp;        // -a is opt and --aaa is long opt; in parallel look for 
+<i>798</i>&nbsp;        // the longest opt string this list will be then used to 
+<i>799</i>&nbsp;        // sort options ascending
+<b class="fc"><i>800</i>&nbsp;        int max = 0;</b>
+<b class="fc"><i>801</i>&nbsp;        List&lt;StringBuffer&gt; prefixList = new ArrayList&lt;StringBuffer&gt;();</b>
+<i>802</i>&nbsp;
+<b class="fc"><i>803</i>&nbsp;        List&lt;Option&gt; optList = options.helpOptions();</b>
+<i>804</i>&nbsp;
+<b class="fc"><i>805</i>&nbsp;        if (getOptionComparator() != null)</b>
+<i>806</i>&nbsp;        {
+<b class="fc"><i>807</i>&nbsp;            Collections.sort(optList, getOptionComparator());</b>
+<i>808</i>&nbsp;        }
+<i>809</i>&nbsp;
+<b class="fc"><i>810</i>&nbsp;        for (Option option : optList)</b>
+<i>811</i>&nbsp;        {
+<b class="fc"><i>812</i>&nbsp;            StringBuffer optBuf = new StringBuffer();</b>
+<i>813</i>&nbsp;
+<b class="fc"><i>814</i>&nbsp;            if (option.getOpt() == null)</b>
+<i>815</i>&nbsp;            {
+<b class="fc"><i>816</i>&nbsp;                optBuf.append(lpad).append(&quot;   &quot;).append(getLongOptPrefix()).append(option.getLongOpt());</b>
+<i>817</i>&nbsp;            }
+<i>818</i>&nbsp;            else
+<i>819</i>&nbsp;            {
+<b class="fc"><i>820</i>&nbsp;                optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());</b>
+<i>821</i>&nbsp;
+<b class="fc"><i>822</i>&nbsp;                if (option.hasLongOpt())</b>
+<i>823</i>&nbsp;                {
+<b class="fc"><i>824</i>&nbsp;                    optBuf.append(&#39;,&#39;).append(getLongOptPrefix()).append(option.getLongOpt());</b>
+<i>825</i>&nbsp;                }
+<i>826</i>&nbsp;            }
+<i>827</i>&nbsp;
+<b class="fc"><i>828</i>&nbsp;            if (option.hasArg())</b>
+<i>829</i>&nbsp;            {
+<b class="fc"><i>830</i>&nbsp;                String argName = option.getArgName();</b>
+<b class="fc"><i>831</i>&nbsp;                if (argName != null &amp;&amp; argName.length() == 0)</b>
+<i>832</i>&nbsp;                {
+<i>833</i>&nbsp;                    // if the option has a blank argname
+<b class="nc"><i>834</i>&nbsp;                    optBuf.append(&#39; &#39;);</b>
+<i>835</i>&nbsp;                }
+<i>836</i>&nbsp;                else
+<i>837</i>&nbsp;                {
+<b class="fc"><i>838</i>&nbsp;                    optBuf.append(option.hasLongOpt() ? longOptSeparator : &quot; &quot;);</b>
+<b class="fc"><i>839</i>&nbsp;                    optBuf.append(&quot;&lt;&quot;).append(argName != null ? option.getArgName() : getArgName()).append(&quot;&gt;&quot;);</b>
+<i>840</i>&nbsp;                }
+<i>841</i>&nbsp;            }
+<i>842</i>&nbsp;
+<b class="fc"><i>843</i>&nbsp;            prefixList.add(optBuf);</b>
+<b class="fc"><i>844</i>&nbsp;            max = optBuf.length() &gt; max ? optBuf.length() : max;</b>
+<b class="fc"><i>845</i>&nbsp;        }</b>
+<i>846</i>&nbsp;
+<b class="fc"><i>847</i>&nbsp;        int x = 0;</b>
+<i>848</i>&nbsp;
+<b class="fc"><i>849</i>&nbsp;        for (Iterator&lt;Option&gt; it = optList.iterator(); it.hasNext();)</b>
+<i>850</i>&nbsp;        {
+<b class="fc"><i>851</i>&nbsp;            Option option = it.next();</b>
+<b class="fc"><i>852</i>&nbsp;            StringBuilder optBuf = new StringBuilder(prefixList.get(x++).toString());</b>
+<i>853</i>&nbsp;
+<b class="fc"><i>854</i>&nbsp;            if (optBuf.length() &lt; max)</b>
+<i>855</i>&nbsp;            {
+<b class="fc"><i>856</i>&nbsp;                optBuf.append(createPadding(max - optBuf.length()));</b>
+<i>857</i>&nbsp;            }
+<i>858</i>&nbsp;
+<b class="fc"><i>859</i>&nbsp;            optBuf.append(dpad);</b>
+<i>860</i>&nbsp;
+<b class="fc"><i>861</i>&nbsp;            int nextLineTabStop = max + descPad;</b>
+<i>862</i>&nbsp;
+<b class="fc"><i>863</i>&nbsp;            if (option.getDescription() != null)</b>
+<i>864</i>&nbsp;            {
+<b class="fc"><i>865</i>&nbsp;                optBuf.append(option.getDescription());</b>
+<i>866</i>&nbsp;            }
+<i>867</i>&nbsp;
+<b class="fc"><i>868</i>&nbsp;            renderWrappedText(sb, width, nextLineTabStop, optBuf.toString());</b>
+<i>869</i>&nbsp;
+<b class="fc"><i>870</i>&nbsp;            if (it.hasNext())</b>
+<i>871</i>&nbsp;            {
+<b class="fc"><i>872</i>&nbsp;                sb.append(getNewLine());</b>
+<i>873</i>&nbsp;            }
+<b class="fc"><i>874</i>&nbsp;        }</b>
+<i>875</i>&nbsp;
+<b class="fc"><i>876</i>&nbsp;        return sb;</b>
+<i>877</i>&nbsp;    }
+<i>878</i>&nbsp;
+<i>879</i>&nbsp;    /**
+<i>880</i>&nbsp;     * Render the specified text and return the rendered Options
+<i>881</i>&nbsp;     * in a StringBuffer.
+<i>882</i>&nbsp;     *
+<i>883</i>&nbsp;     * @param sb The StringBuffer to place the rendered text into.
+<i>884</i>&nbsp;     * @param width The number of characters to display per line
+<i>885</i>&nbsp;     * @param nextLineTabStop The position on the next line for the first tab.
+<i>886</i>&nbsp;     * @param text The text to be rendered.
+<i>887</i>&nbsp;     *
+<i>888</i>&nbsp;     * @return the StringBuffer with the rendered Options contents.
+<i>889</i>&nbsp;     */
+<i>890</i>&nbsp;    protected StringBuffer renderWrappedText(StringBuffer sb, int width, 
+<i>891</i>&nbsp;                                             int nextLineTabStop, String text)
+<i>892</i>&nbsp;    {
+<b class="fc"><i>893</i>&nbsp;        int pos = findWrapPos(text, width, 0);</b>
+<i>894</i>&nbsp;
+<b class="fc"><i>895</i>&nbsp;        if (pos == -1)</b>
+<i>896</i>&nbsp;        {
+<b class="fc"><i>897</i>&nbsp;            sb.append(rtrim(text));</b>
+<i>898</i>&nbsp;
+<b class="fc"><i>899</i>&nbsp;            return sb;</b>
+<i>900</i>&nbsp;        }
+<b class="fc"><i>901</i>&nbsp;        sb.append(rtrim(text.substring(0, pos))).append(getNewLine());</b>
+<i>902</i>&nbsp;
+<b class="fc"><i>903</i>&nbsp;        if (nextLineTabStop &gt;= width)</b>
+<i>904</i>&nbsp;        {
+<i>905</i>&nbsp;            // stops infinite loop happening
+<b class="fc"><i>906</i>&nbsp;            nextLineTabStop = 1;</b>
+<i>907</i>&nbsp;        }
+<i>908</i>&nbsp;
+<i>909</i>&nbsp;        // all following lines must be padded with nextLineTabStop space characters
+<b class="fc"><i>910</i>&nbsp;        final String padding = createPadding(nextLineTabStop);</b>
+<i>911</i>&nbsp;
+<i>912</i>&nbsp;        while (true)
+<i>913</i>&nbsp;        {
+<b class="fc"><i>914</i>&nbsp;            text = padding + text.substring(pos).trim();</b>
+<b class="fc"><i>915</i>&nbsp;            pos = findWrapPos(text, width, 0);</b>
+<i>916</i>&nbsp;
+<b class="fc"><i>917</i>&nbsp;            if (pos == -1)</b>
+<i>918</i>&nbsp;            {
+<b class="fc"><i>919</i>&nbsp;                sb.append(text);</b>
+<i>920</i>&nbsp;
+<b class="fc"><i>921</i>&nbsp;                return sb;</b>
+<i>922</i>&nbsp;            }
+<i>923</i>&nbsp;
+<b class="fc"><i>924</i>&nbsp;            if (text.length() &gt; width &amp;&amp; pos == nextLineTabStop - 1)</b>
+<i>925</i>&nbsp;            {
+<b class="fc"><i>926</i>&nbsp;                pos = width;</b>
+<i>927</i>&nbsp;            }
+<i>928</i>&nbsp;
+<b class="fc"><i>929</i>&nbsp;            sb.append(rtrim(text.substring(0, pos))).append(getNewLine());</b>
+<i>930</i>&nbsp;        }
+<i>931</i>&nbsp;    }
+<i>932</i>&nbsp;
+<i>933</i>&nbsp;    /**
+<i>934</i>&nbsp;     * Render the specified text width a maximum width. This method differs
+<i>935</i>&nbsp;     * from renderWrappedText by not removing leading spaces after a new line.
+<i>936</i>&nbsp;     *
+<i>937</i>&nbsp;     * @param sb The StringBuffer to place the rendered text into.
+<i>938</i>&nbsp;     * @param width The number of characters to display per line
+<i>939</i>&nbsp;     * @param nextLineTabStop The position on the next line for the first tab.
+<i>940</i>&nbsp;     * @param text The text to be rendered.
+<i>941</i>&nbsp;     */
+<i>942</i>&nbsp;    private Appendable renderWrappedTextBlock(StringBuffer sb, int width, int nextLineTabStop, String text)
+<i>943</i>&nbsp;    {
+<i>944</i>&nbsp;        try
+<i>945</i>&nbsp;        {
+<b class="fc"><i>946</i>&nbsp;            BufferedReader in = new BufferedReader(new StringReader(text));</b>
+<i>947</i>&nbsp;            String line;
+<b class="fc"><i>948</i>&nbsp;            boolean firstLine = true;</b>
+<b class="fc"><i>949</i>&nbsp;            while ((line = in.readLine()) != null)</b>
+<i>950</i>&nbsp;            {
+<b class="fc"><i>951</i>&nbsp;                if (!firstLine)</b>
+<i>952</i>&nbsp;                {
+<b class="fc"><i>953</i>&nbsp;                    sb.append(getNewLine());</b>
+<i>954</i>&nbsp;                }
+<i>955</i>&nbsp;                else
+<i>956</i>&nbsp;                {
+<b class="fc"><i>957</i>&nbsp;                    firstLine = false;</b>
+<i>958</i>&nbsp;                }
+<b class="fc"><i>959</i>&nbsp;                renderWrappedText(sb, width, nextLineTabStop, line);</b>
+<i>960</i>&nbsp;            }
+<i>961</i>&nbsp;        }
+<b class="nc"><i>962</i>&nbsp;        catch (IOException e) //NOPMD</b>
+<i>963</i>&nbsp;        {
+<i>964</i>&nbsp;            // cannot happen
+<b class="fc"><i>965</i>&nbsp;        }</b>
+<i>966</i>&nbsp;
+<b class="fc"><i>967</i>&nbsp;        return sb;</b>
+<i>968</i>&nbsp;    }
+<i>969</i>&nbsp;
+<i>970</i>&nbsp;    /**
+<i>971</i>&nbsp;     * Finds the next text wrap position after &lt;code&gt;startPos&lt;/code&gt; for the
+<i>972</i>&nbsp;     * text in &lt;code&gt;text&lt;/code&gt; with the column width &lt;code&gt;width&lt;/code&gt;.
+<i>973</i>&nbsp;     * The wrap point is the last position before startPos+width having a 
+<i>974</i>&nbsp;     * whitespace character (space, \n, \r). If there is no whitespace character
+<i>975</i>&nbsp;     * before startPos+width, it will return startPos+width.
+<i>976</i>&nbsp;     *
+<i>977</i>&nbsp;     * @param text The text being searched for the wrap position
+<i>978</i>&nbsp;     * @param width width of the wrapped text
+<i>979</i>&nbsp;     * @param startPos position from which to start the lookup whitespace
+<i>980</i>&nbsp;     * character
+<i>981</i>&nbsp;     * @return position on which the text must be wrapped or -1 if the wrap
+<i>982</i>&nbsp;     * position is at the end of the text
+<i>983</i>&nbsp;     */
+<i>984</i>&nbsp;    protected int findWrapPos(String text, int width, int startPos)
+<i>985</i>&nbsp;    {
+<i>986</i>&nbsp;        // the line ends before the max wrap pos or a new line char found
+<b class="fc"><i>987</i>&nbsp;        int pos = text.indexOf(&#39;\n&#39;, startPos);</b>
+<b class="fc"><i>988</i>&nbsp;        if (pos != -1 &amp;&amp; pos &lt;= width)</b>
+<i>989</i>&nbsp;        {
+<b class="fc"><i>990</i>&nbsp;            return pos + 1;</b>
+<i>991</i>&nbsp;        }
+<i>992</i>&nbsp;
+<b class="fc"><i>993</i>&nbsp;        pos = text.indexOf(&#39;\t&#39;, startPos);</b>
+<b class="fc"><i>994</i>&nbsp;        if (pos != -1 &amp;&amp; pos &lt;= width)</b>
+<i>995</i>&nbsp;        {
+<b class="fc"><i>996</i>&nbsp;            return pos + 1;</b>
+<i>997</i>&nbsp;        }
+<i>998</i>&nbsp;
+<b class="fc"><i>999</i>&nbsp;        if (startPos + width &gt;= text.length())</b>
+<i>1000</i>&nbsp;        {
+<b class="fc"><i>1001</i>&nbsp;            return -1;</b>
+<i>1002</i>&nbsp;        }
+<i>1003</i>&nbsp;
+<i>1004</i>&nbsp;        // look for the last whitespace character before startPos+width
+<b class="fc"><i>1005</i>&nbsp;        for (pos = startPos + width; pos &gt;= startPos; --pos)</b>
+<i>1006</i>&nbsp;        {
+<b class="fc"><i>1007</i>&nbsp;            final char c = text.charAt(pos);</b>
+<b class="fc"><i>1008</i>&nbsp;            if (c == &#39; &#39; || c == &#39;\n&#39; || c == &#39;\r&#39;)</b>
+<i>1009</i>&nbsp;            {
+<b class="nc"><i>1010</i>&nbsp;                break;</b>
+<i>1011</i>&nbsp;            }
+<i>1012</i>&nbsp;        }
+<i>1013</i>&nbsp;
+<i>1014</i>&nbsp;        // if we found it - just return
+<b class="fc"><i>1015</i>&nbsp;        if (pos &gt; startPos)</b>
+<i>1016</i>&nbsp;        {
+<b class="fc"><i>1017</i>&nbsp;            return pos;</b>
+<i>1018</i>&nbsp;        }
+<i>1019</i>&nbsp;
+<i>1020</i>&nbsp;        // if we didn&#39;t find one, simply chop at startPos+width
+<b class="fc"><i>1021</i>&nbsp;        pos = startPos + width;</b>
+<i>1022</i>&nbsp;
+<b class="fc"><i>1023</i>&nbsp;        return pos == text.length() ? -1 : pos;</b>
+<i>1024</i>&nbsp;    }
+<i>1025</i>&nbsp;
+<i>1026</i>&nbsp;    /**
+<i>1027</i>&nbsp;     * Return a String of padding of length &lt;code&gt;len&lt;/code&gt;.
+<i>1028</i>&nbsp;     *
+<i>1029</i>&nbsp;     * @param len The length of the String of padding to create.
+<i>1030</i>&nbsp;     *
+<i>1031</i>&nbsp;     * @return The String of padding
+<i>1032</i>&nbsp;     */
+<i>1033</i>&nbsp;    protected String createPadding(int len)
+<i>1034</i>&nbsp;    {
+<b class="fc"><i>1035</i>&nbsp;        char[] padding = new char[len];</b>
+<b class="fc"><i>1036</i>&nbsp;        Arrays.fill(padding, &#39; &#39;);</b>
+<i>1037</i>&nbsp;
+<b class="fc"><i>1038</i>&nbsp;        return new String(padding);</b>
+<i>1039</i>&nbsp;    }
+<i>1040</i>&nbsp;
+<i>1041</i>&nbsp;    /**
+<i>1042</i>&nbsp;     * Remove the trailing whitespace from the specified String.
+<i>1043</i>&nbsp;     *
+<i>1044</i>&nbsp;     * @param s The String to remove the trailing padding from.
+<i>1045</i>&nbsp;     *
+<i>1046</i>&nbsp;     * @return The String of without the trailing padding
+<i>1047</i>&nbsp;     */
+<i>1048</i>&nbsp;    protected String rtrim(String s)
+<i>1049</i>&nbsp;    {
+<b class="fc"><i>1050</i>&nbsp;        if (s == null || s.length() == 0)</b>
+<i>1051</i>&nbsp;        {
+<b class="fc"><i>1052</i>&nbsp;            return s;</b>
+<i>1053</i>&nbsp;        }
+<i>1054</i>&nbsp;
+<b class="fc"><i>1055</i>&nbsp;        int pos = s.length();</b>
+<i>1056</i>&nbsp;
+<b class="fc"><i>1057</i>&nbsp;        while (pos &gt; 0 &amp;&amp; Character.isWhitespace(s.charAt(pos - 1)))</b>
+<i>1058</i>&nbsp;        {
+<b class="fc"><i>1059</i>&nbsp;            --pos;</b>
+<i>1060</i>&nbsp;        }
+<i>1061</i>&nbsp;
+<b class="fc"><i>1062</i>&nbsp;        return s.substring(0, pos);</b>
+<i>1063</i>&nbsp;    }
+<i>1064</i>&nbsp;
+<i>1065</i>&nbsp;    // ------------------------------------------------------ Package protected
+<i>1066</i>&nbsp;    // ---------------------------------------------------------------- Private
+<i>1067</i>&nbsp;    // ---------------------------------------------------------- Inner classes
+<i>1068</i>&nbsp;    /**
+<i>1069</i>&nbsp;     * This class implements the &lt;code&gt;Comparator&lt;/code&gt; interface
+<i>1070</i>&nbsp;     * for comparing Options.
+<i>1071</i>&nbsp;     */
+<b class="fc"><i>1072</i>&nbsp;    private static class OptionComparator implements Comparator&lt;Option&gt;, Serializable</b>
+<i>1073</i>&nbsp;    {
+<i>1074</i>&nbsp;        /** The serial version UID. */
+<i>1075</i>&nbsp;        private static final long serialVersionUID = 5305467873966684014L;
+<i>1076</i>&nbsp;
+<i>1077</i>&nbsp;        /**
+<i>1078</i>&nbsp;         * Compares its two arguments for order. Returns a negative
+<i>1079</i>&nbsp;         * integer, zero, or a positive integer as the first argument
+<i>1080</i>&nbsp;         * is less than, equal to, or greater than the second.
+<i>1081</i>&nbsp;         *
+<i>1082</i>&nbsp;         * @param opt1 The first Option to be compared.
+<i>1083</i>&nbsp;         * @param opt2 The second Option to be compared.
+<i>1084</i>&nbsp;         * @return a negative integer, zero, or a positive integer as
+<i>1085</i>&nbsp;         *         the first argument is less than, equal to, or greater than the
+<i>1086</i>&nbsp;         *         second.
+<i>1087</i>&nbsp;         */
+<i>1088</i>&nbsp;        public int compare(Option opt1, Option opt2)
+<i>1089</i>&nbsp;        {
+<b class="fc"><i>1090</i>&nbsp;            return opt1.getKey().compareToIgnoreCase(opt2.getKey());</b>
+<i>1091</i>&nbsp;        }
+<i>1092</i>&nbsp;    }
+<i>1093</i>&nbsp;
+<i>1094</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-05-18 21:41</div>
+</div>
+</body>
+</html>
