@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class ReflectionTest {
     @org.junit.Test
     public void CounterTest() throws Exception {
-        Class cls = Class.forName("Reflection");
+        Class cls = Class.forName("CustomProjectMaven.Reflection");
         Object obj = cls.newInstance();
         Method method = cls.getMethod("setCounter", int.class);
         Object result = method.invoke(obj, 100);
@@ -19,5 +19,4 @@ public class ReflectionTest {
         result = method.invoke(obj);
         assertEquals(100, result);
     }
-
 }
