@@ -1,0 +1,2 @@
+processClover (  {"children":["CustomProjectMaven/"],"name":"Clover database Thu May 18 2017 20:55:51 PDT","stats":{"AvgMethodComplexity":1.3214285,"Complexity":37,"ErroneousTests":0,"FailingTests":0,"FilteredElements":0,"PassingTests":0,"PcErroneousTests":-1,"PcFailingTests":-1,"PcPassingTests":-1,"TestExecutionTime":0,"Tests":0,"TotalChildren":1,"TotalPercentageCovered":75.92593,"TotalStatements":62,"UncoveredElements":26},"title":"CustomProjectMaven 1.0-SNAPSHOT"}
+ ); 
