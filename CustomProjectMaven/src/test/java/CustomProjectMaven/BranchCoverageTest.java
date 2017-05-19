@@ -11,7 +11,7 @@ public class BranchCoverageTest {
     @Test
     public void ternaryOperator() throws Exception {
         assertTrue(new BranchCoverage().ternaryOperator(true,true));
-        assertTrue(!new BranchCoverage().ternaryOperator(false,false));
+//        assertTrue(!new BranchCoverage().ternaryOperator(false,false));
     }
 
     @Test
