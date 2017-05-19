@@ -1,0 +1,24 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+CustomProjectMaven,CustomProjectMaven,UseExceptionClass,10,11,3,1,3,3,2,1,0,1
+CustomProjectMaven,CustomProjectMaven,DirectionEnum,9,64,0,0,0,11,2,3,2,3
+CustomProjectMaven,CustomProjectMaven,GenericTypeClass,0,14,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,Reflection,0,32,0,0,0,6,0,3,0,3
+CustomProjectMaven,CustomProjectMaven,ChildSubstractionClass,0,7,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,Annotation,3,0,0,0,1,0,1,0,1,0
+CustomProjectMaven,CustomProjectMaven,StaticInnerClass.InnerStaticNested,0,7,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,ParameterizedJunitTestClass,3,20,0,2,1,5,1,2,1,1
+CustomProjectMaven,CustomProjectMaven,StaticInnerClass,3,10,0,0,1,2,1,1,1,1
+CustomProjectMaven,CustomProjectMaven,PathCoverage,0,26,0,4,0,9,0,4,0,2
+CustomProjectMaven,CustomProjectMaven,AbstractAdditionClass,0,7,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,AnonymousFunction,0,32,0,0,0,4,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,MultiplierEnum,9,41,0,0,0,7,2,3,2,3
+CustomProjectMaven,CustomProjectMaven,AnonymousFunction.new Comparator() {...},0,12,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,ConcreteAdditionClass,0,11,0,0,0,3,0,3,0,3
+CustomProjectMaven,CustomProjectMaven,WeekEnum,9,79,0,0,0,8,2,2,2,2
+CustomProjectMaven,CustomProjectMaven,DefaultConstructor,0,3,0,0,0,1,0,1,0,1
+CustomProjectMaven,CustomProjectMaven,ExceptionClassA,8,7,0,0,3,3,1,1,1,1
+CustomProjectMaven,CustomProjectMaven,BaseSubtractionClass,0,7,0,0,0,2,0,2,0,2
+CustomProjectMaven,CustomProjectMaven,ExceptionClassB,15,0,0,0,6,0,2,0,2,0
+CustomProjectMaven,CustomProjectMaven,Collection,0,17,0,0,0,2,0,3,0,3
+CustomProjectMaven,CustomProjectMaven,Simple,1,21,1,3,1,5,1,4,0,3
+CustomProjectMaven,CustomProjectMaven,BranchCoverage,3,26,2,2,1,7,2,3,0,3
