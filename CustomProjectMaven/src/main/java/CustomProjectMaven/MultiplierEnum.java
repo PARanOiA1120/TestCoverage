@@ -9,6 +9,7 @@ public enum MultiplierEnum {
 
     private final double multiplier;
 
+    // check constructor?
     MultiplierEnum(double multiplier) {
         this.multiplier = multiplier;
     }
