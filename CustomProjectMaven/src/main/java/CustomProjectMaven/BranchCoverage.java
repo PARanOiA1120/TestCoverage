@@ -21,18 +21,4 @@ public class BranchCoverage
             return false;
     }
 
-    public Boolean twoPaths (boolean A, boolean B){
-        Boolean result = false;
-        if(A){
-            result = true;
-        } else {
-            result = false;
-        }
-
-        if(B) {
-            result = true;
-        } else {
-            result = false;
-        }
-        return result;
-    }}
+}
