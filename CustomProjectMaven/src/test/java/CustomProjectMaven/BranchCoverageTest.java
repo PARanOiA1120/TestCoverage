@@ -22,12 +22,5 @@ public class BranchCoverageTest {
         assertEquals("hello world", result);
     }
 
-    @Test
-    // [Tricky]: gives 100% test coverage, but doesn't checked all branch
-    public void pathCheckerTest() {
-        Boolean result1 = new BranchCoverage().twoPaths(true, true);
-        Boolean result2 = new BranchCoverage().twoPaths(false, false);
-        assertEquals(true, result1);
-        assertEquals(false, result2);
-    }
+
 }
