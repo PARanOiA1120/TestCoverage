@@ -1,0 +1,534 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CommandLine</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.apache.commons.cli</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CommandLine (org.apache.commons.cli)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CommandLine</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (59/ 59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CommandLine$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/ 7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (66/ 66)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Licensed to the Apache Software Foundation (ASF) under one or more
+<i>3</i>&nbsp; * contributor license agreements.  See the NOTICE file distributed with
+<i>4</i>&nbsp; * this work for additional information regarding copyright ownership.
+<i>5</i>&nbsp; * The ASF licenses this file to You under the Apache License, Version 2.0
+<i>6</i>&nbsp; * (the &quot;License&quot;); you may not use this file except in compliance with
+<i>7</i>&nbsp; * the License.  You may obtain a copy of the License at
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; *     http://www.apache.org/licenses/LICENSE-2.0
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>12</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>13</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>14</i>&nbsp; * See the License for the specific language governing permissions and
+<i>15</i>&nbsp; * limitations under the License.
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;package org.apache.commons.cli;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;import java.io.Serializable;
+<i>21</i>&nbsp;import java.util.ArrayList;
+<i>22</i>&nbsp;import java.util.Collection;
+<i>23</i>&nbsp;import java.util.Iterator;
+<i>24</i>&nbsp;import java.util.LinkedList;
+<i>25</i>&nbsp;import java.util.List;
+<i>26</i>&nbsp;import java.util.Properties;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;/**
+<i>29</i>&nbsp; * Represents list of arguments parsed against a {@link Options} descriptor.
+<i>30</i>&nbsp; * &lt;p&gt;
+<i>31</i>&nbsp; * It allows querying of a boolean {@link #hasOption(String opt)},
+<i>32</i>&nbsp; * in addition to retrieving the {@link #getOptionValue(String opt)}
+<i>33</i>&nbsp; * for options requiring arguments.
+<i>34</i>&nbsp; * &lt;p&gt;
+<i>35</i>&nbsp; * Additionally, any left-over or unrecognized arguments,
+<i>36</i>&nbsp; * are available for further processing.
+<i>37</i>&nbsp; *
+<i>38</i>&nbsp; * @version $Id: CommandLine.java 1786144 2017-03-09 11:34:57Z britter $
+<i>39</i>&nbsp; */
+<i>40</i>&nbsp;public class CommandLine implements Serializable
+<i>41</i>&nbsp;{
+<i>42</i>&nbsp;    /** The serial version UID. */
+<i>43</i>&nbsp;    private static final long serialVersionUID = 1L;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /** the unrecognized options/arguments */
+<b class="fc"><i>46</i>&nbsp;    private final List&lt;String&gt; args = new LinkedList&lt;String&gt;();</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /** the processed options */
+<b class="fc"><i>49</i>&nbsp;    private final List&lt;Option&gt; options = new ArrayList&lt;Option&gt;();</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    /**
+<i>52</i>&nbsp;     * Creates a command line.
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    protected CommandLine()
+<b class="fc"><i>55</i>&nbsp;    {</b>
+<i>56</i>&nbsp;        // nothing to do
+<b class="fc"><i>57</i>&nbsp;    }</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    /** 
+<i>60</i>&nbsp;     * Query to see if an option has been set.
+<i>61</i>&nbsp;     *
+<i>62</i>&nbsp;     * @param opt Short name of the option
+<i>63</i>&nbsp;     * @return true if set, false if not
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public boolean hasOption(String opt)
+<i>66</i>&nbsp;    {
+<b class="fc"><i>67</i>&nbsp;        return options.contains(resolveOption(opt));</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /** 
+<i>71</i>&nbsp;     * Query to see if an option has been set.
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @param opt character name of the option
+<i>74</i>&nbsp;     * @return true if set, false if not
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public boolean hasOption(char opt)
+<i>77</i>&nbsp;    {
+<b class="fc"><i>78</i>&nbsp;        return hasOption(String.valueOf(opt));</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Return the &lt;code&gt;Object&lt;/code&gt; type of this &lt;code&gt;Option&lt;/code&gt;.
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * @param opt the name of the option
+<i>85</i>&nbsp;     * @return the type of this &lt;code&gt;Option&lt;/code&gt;
+<i>86</i>&nbsp;     * @deprecated due to System.err message. Instead use getParsedOptionValue(String)
+<i>87</i>&nbsp;     */
+<i>88</i>&nbsp;    @Deprecated
+<i>89</i>&nbsp;    public Object getOptionObject(String opt)
+<i>90</i>&nbsp;    {
+<i>91</i>&nbsp;        try
+<i>92</i>&nbsp;        {
+<b class="fc"><i>93</i>&nbsp;            return getParsedOptionValue(opt);</b>
+<i>94</i>&nbsp;        }
+<b class="fc"><i>95</i>&nbsp;        catch (ParseException pe)</b>
+<i>96</i>&nbsp;        {
+<b class="fc"><i>97</i>&nbsp;            System.err.println(&quot;Exception found converting &quot; + opt + &quot; to desired type: &quot; + pe.getMessage());</b>
+<b class="fc"><i>98</i>&nbsp;            return null;</b>
+<i>99</i>&nbsp;        }
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    /**
+<i>103</i>&nbsp;     * Return a version of this &lt;code&gt;Option&lt;/code&gt; converted to a particular type. 
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @param opt the name of the option
+<i>106</i>&nbsp;     * @return the value parsed into a particular object
+<i>107</i>&nbsp;     * @throws ParseException if there are problems turning the option value into the desired type
+<i>108</i>&nbsp;     * @see PatternOptionBuilder
+<i>109</i>&nbsp;     * @since 1.2
+<i>110</i>&nbsp;     */
+<i>111</i>&nbsp;    public Object getParsedOptionValue(String opt) throws ParseException
+<i>112</i>&nbsp;    {
+<b class="fc"><i>113</i>&nbsp;        String res = getOptionValue(opt);</b>
+<b class="fc"><i>114</i>&nbsp;        Option option = resolveOption(opt);</b>
+<i>115</i>&nbsp;        
+<b class="fc"><i>116</i>&nbsp;        if (option == null || res == null)</b>
+<i>117</i>&nbsp;        {
+<b class="fc"><i>118</i>&nbsp;            return null;</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;        
+<b class="fc"><i>121</i>&nbsp;        return TypeHandler.createValue(res, option.getType());</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    /**
+<i>125</i>&nbsp;     * Return the &lt;code&gt;Object&lt;/code&gt; type of this &lt;code&gt;Option&lt;/code&gt;.
+<i>126</i>&nbsp;     *
+<i>127</i>&nbsp;     * @param opt the name of the option
+<i>128</i>&nbsp;     * @return the type of opt
+<i>129</i>&nbsp;     */
+<i>130</i>&nbsp;    public Object getOptionObject(char opt)
+<i>131</i>&nbsp;    {
+<b class="fc"><i>132</i>&nbsp;        return getOptionObject(String.valueOf(opt));</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /** 
+<i>136</i>&nbsp;     * Retrieve the first argument, if any, of this option.
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * @param opt the name of the option
+<i>139</i>&nbsp;     * @return Value of the argument if option is set, and has an argument,
+<i>140</i>&nbsp;     * otherwise null.
+<i>141</i>&nbsp;     */
+<i>142</i>&nbsp;    public String getOptionValue(String opt)
+<i>143</i>&nbsp;    {
+<b class="fc"><i>144</i>&nbsp;        String[] values = getOptionValues(opt);</b>
+<i>145</i>&nbsp;
+<b class="fc"><i>146</i>&nbsp;        return (values == null) ? null : values[0];</b>
+<i>147</i>&nbsp;    }
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;    /** 
+<i>150</i>&nbsp;     * Retrieve the first argument, if any, of this option.
+<i>151</i>&nbsp;     *
+<i>152</i>&nbsp;     * @param opt the character name of the option
+<i>153</i>&nbsp;     * @return Value of the argument if option is set, and has an argument,
+<i>154</i>&nbsp;     * otherwise null.
+<i>155</i>&nbsp;     */
+<i>156</i>&nbsp;    public String getOptionValue(char opt)
+<i>157</i>&nbsp;    {
+<b class="fc"><i>158</i>&nbsp;        return getOptionValue(String.valueOf(opt));</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /** 
+<i>162</i>&nbsp;     * Retrieves the array of values, if any, of an option.
+<i>163</i>&nbsp;     *
+<i>164</i>&nbsp;     * @param opt string name of the option
+<i>165</i>&nbsp;     * @return Values of the argument if option is set, and has an argument,
+<i>166</i>&nbsp;     * otherwise null.
+<i>167</i>&nbsp;     */
+<i>168</i>&nbsp;    public String[] getOptionValues(String opt)
+<i>169</i>&nbsp;    {
+<b class="fc"><i>170</i>&nbsp;        List&lt;String&gt; values = new ArrayList&lt;String&gt;();</b>
+<i>171</i>&nbsp;
+<b class="fc"><i>172</i>&nbsp;        for (Option option : options)</b>
+<i>173</i>&nbsp;        {
+<b class="fc"><i>174</i>&nbsp;            if (opt.equals(option.getOpt()) || opt.equals(option.getLongOpt()))</b>
+<i>175</i>&nbsp;            {
+<b class="fc"><i>176</i>&nbsp;                values.addAll(option.getValuesList());</b>
+<i>177</i>&nbsp;            }
+<b class="fc"><i>178</i>&nbsp;        }</b>
+<i>179</i>&nbsp;
+<b class="fc"><i>180</i>&nbsp;        return values.isEmpty() ? null : values.toArray(new String[values.size()]);</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    /**
+<i>184</i>&nbsp;     * Retrieves the option object given the long or short option as a String
+<i>185</i>&nbsp;     * 
+<i>186</i>&nbsp;     * @param opt short or long name of the option
+<i>187</i>&nbsp;     * @return Canonicalized option
+<i>188</i>&nbsp;     */
+<i>189</i>&nbsp;    private Option resolveOption(String opt)
+<i>190</i>&nbsp;    {
+<b class="fc"><i>191</i>&nbsp;        opt = Util.stripLeadingHyphens(opt);</b>
+<b class="fc"><i>192</i>&nbsp;        for (Option option : options)</b>
+<i>193</i>&nbsp;        {
+<b class="fc"><i>194</i>&nbsp;            if (opt.equals(option.getOpt()))</b>
+<i>195</i>&nbsp;            {
+<b class="fc"><i>196</i>&nbsp;                return option;</b>
+<i>197</i>&nbsp;            }
+<i>198</i>&nbsp;
+<b class="fc"><i>199</i>&nbsp;            if (opt.equals(option.getLongOpt()))</b>
+<i>200</i>&nbsp;            {
+<b class="fc"><i>201</i>&nbsp;                return option;</b>
+<i>202</i>&nbsp;            }
+<i>203</i>&nbsp;
+<b class="fc"><i>204</i>&nbsp;        }</b>
+<b class="fc"><i>205</i>&nbsp;        return null;</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    /** 
+<i>209</i>&nbsp;     * Retrieves the array of values, if any, of an option.
+<i>210</i>&nbsp;     *
+<i>211</i>&nbsp;     * @param opt character name of the option
+<i>212</i>&nbsp;     * @return Values of the argument if option is set, and has an argument,
+<i>213</i>&nbsp;     * otherwise null.
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    public String[] getOptionValues(char opt)
+<i>216</i>&nbsp;    {
+<b class="fc"><i>217</i>&nbsp;        return getOptionValues(String.valueOf(opt));</b>
+<i>218</i>&nbsp;    }
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    /** 
+<i>221</i>&nbsp;     * Retrieve the first argument, if any, of an option.
+<i>222</i>&nbsp;     *
+<i>223</i>&nbsp;     * @param opt name of the option
+<i>224</i>&nbsp;     * @param defaultValue is the default value to be returned if the option
+<i>225</i>&nbsp;     * is not specified
+<i>226</i>&nbsp;     * @return Value of the argument if option is set, and has an argument,
+<i>227</i>&nbsp;     * otherwise &lt;code&gt;defaultValue&lt;/code&gt;.
+<i>228</i>&nbsp;     */
+<i>229</i>&nbsp;    public String getOptionValue(String opt, String defaultValue)
+<i>230</i>&nbsp;    {
+<b class="fc"><i>231</i>&nbsp;        String answer = getOptionValue(opt);</b>
+<i>232</i>&nbsp;
+<b class="fc"><i>233</i>&nbsp;        return (answer != null) ? answer : defaultValue;</b>
+<i>234</i>&nbsp;    }
+<i>235</i>&nbsp;
+<i>236</i>&nbsp;    /** 
+<i>237</i>&nbsp;     * Retrieve the argument, if any, of an option.
+<i>238</i>&nbsp;     *
+<i>239</i>&nbsp;     * @param opt character name of the option
+<i>240</i>&nbsp;     * @param defaultValue is the default value to be returned if the option
+<i>241</i>&nbsp;     * is not specified
+<i>242</i>&nbsp;     * @return Value of the argument if option is set, and has an argument,
+<i>243</i>&nbsp;     * otherwise &lt;code&gt;defaultValue&lt;/code&gt;.
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    public String getOptionValue(char opt, String defaultValue)
+<i>246</i>&nbsp;    {
+<b class="fc"><i>247</i>&nbsp;        return getOptionValue(String.valueOf(opt), defaultValue);</b>
+<i>248</i>&nbsp;    }
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    /**
+<i>251</i>&nbsp;     * Retrieve the map of values associated to the option. This is convenient
+<i>252</i>&nbsp;     * for options specifying Java properties like &lt;tt&gt;-Dparam1=value1
+<i>253</i>&nbsp;     * -Dparam2=value2&lt;/tt&gt;. The first argument of the option is the key, and
+<i>254</i>&nbsp;     * the 2nd argument is the value. If the option has only one argument
+<i>255</i>&nbsp;     * (&lt;tt&gt;-Dfoo&lt;/tt&gt;) it is considered as a boolean flag and the value is
+<i>256</i>&nbsp;     * &lt;tt&gt;&quot;true&quot;&lt;/tt&gt;.
+<i>257</i>&nbsp;     *
+<i>258</i>&nbsp;     * @param opt name of the option
+<i>259</i>&nbsp;     * @return The Properties mapped by the option, never &lt;tt&gt;null&lt;/tt&gt;
+<i>260</i>&nbsp;     *         even if the option doesn&#39;t exists
+<i>261</i>&nbsp;     * @since 1.2
+<i>262</i>&nbsp;     */
+<i>263</i>&nbsp;    public Properties getOptionProperties(String opt)
+<i>264</i>&nbsp;    {
+<b class="fc"><i>265</i>&nbsp;        Properties props = new Properties();</b>
+<i>266</i>&nbsp;
+<b class="fc"><i>267</i>&nbsp;        for (Option option : options)</b>
+<i>268</i>&nbsp;        {
+<b class="fc"><i>269</i>&nbsp;            if (opt.equals(option.getOpt()) || opt.equals(option.getLongOpt()))</b>
+<i>270</i>&nbsp;            {
+<b class="fc"><i>271</i>&nbsp;                List&lt;String&gt; values = option.getValuesList();</b>
+<b class="fc"><i>272</i>&nbsp;                if (values.size() &gt;= 2)</b>
+<i>273</i>&nbsp;                {
+<i>274</i>&nbsp;                    // use the first 2 arguments as the key/value pair
+<b class="fc"><i>275</i>&nbsp;                    props.put(values.get(0), values.get(1));</b>
+<i>276</i>&nbsp;                }
+<b class="fc"><i>277</i>&nbsp;                else if (values.size() == 1)</b>
+<i>278</i>&nbsp;                {
+<i>279</i>&nbsp;                    // no explicit value, handle it as a boolean
+<b class="fc"><i>280</i>&nbsp;                    props.put(values.get(0), &quot;true&quot;);</b>
+<i>281</i>&nbsp;                }
+<i>282</i>&nbsp;            }
+<b class="fc"><i>283</i>&nbsp;        }</b>
+<i>284</i>&nbsp;
+<b class="fc"><i>285</i>&nbsp;        return props;</b>
+<i>286</i>&nbsp;    }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;    /** 
+<i>289</i>&nbsp;     * Retrieve any left-over non-recognized options and arguments
+<i>290</i>&nbsp;     *
+<i>291</i>&nbsp;     * @return remaining items passed in but not parsed as an array
+<i>292</i>&nbsp;     */
+<i>293</i>&nbsp;    public String[] getArgs()
+<i>294</i>&nbsp;    {
+<b class="fc"><i>295</i>&nbsp;        String[] answer = new String[args.size()];</b>
+<i>296</i>&nbsp;
+<b class="fc"><i>297</i>&nbsp;        args.toArray(answer);</b>
+<i>298</i>&nbsp;
+<b class="fc"><i>299</i>&nbsp;        return answer;</b>
+<i>300</i>&nbsp;    }
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;    /** 
+<i>303</i>&nbsp;     * Retrieve any left-over non-recognized options and arguments
+<i>304</i>&nbsp;     *
+<i>305</i>&nbsp;     * @return remaining items passed in but not parsed as a &lt;code&gt;List&lt;/code&gt;.
+<i>306</i>&nbsp;     */
+<i>307</i>&nbsp;    public List&lt;String&gt; getArgList()
+<i>308</i>&nbsp;    {
+<b class="fc"><i>309</i>&nbsp;        return args;</b>
+<i>310</i>&nbsp;    }
+<i>311</i>&nbsp;
+<i>312</i>&nbsp;    /** 
+<i>313</i>&nbsp;     * jkeyes
+<i>314</i>&nbsp;     * - commented out until it is implemented properly
+<i>315</i>&nbsp;     * &lt;p&gt;Dump state, suitable for debugging.&lt;/p&gt;
+<i>316</i>&nbsp;     *
+<i>317</i>&nbsp;     * @return Stringified form of this object
+<i>318</i>&nbsp;     */
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;    /*
+<i>321</i>&nbsp;    public String toString() {
+<i>322</i>&nbsp;        StringBuilder buf = new StringBuilder();
+<i>323</i>&nbsp;            
+<i>324</i>&nbsp;        buf.append(&quot;[ CommandLine: [ options: &quot;);
+<i>325</i>&nbsp;        buf.append(options.toString());
+<i>326</i>&nbsp;        buf.append(&quot; ] [ args: &quot;);
+<i>327</i>&nbsp;        buf.append(args.toString());
+<i>328</i>&nbsp;        buf.append(&quot; ] ]&quot;);
+<i>329</i>&nbsp;            
+<i>330</i>&nbsp;        return buf.toString();
+<i>331</i>&nbsp;    }
+<i>332</i>&nbsp;    */
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    /**
+<i>335</i>&nbsp;     * Add left-over unrecognized option/argument.
+<i>336</i>&nbsp;     *
+<i>337</i>&nbsp;     * @param arg the unrecognized option/argument.
+<i>338</i>&nbsp;     */
+<i>339</i>&nbsp;    protected void addArg(String arg)
+<i>340</i>&nbsp;    {
+<b class="fc"><i>341</i>&nbsp;        args.add(arg);</b>
+<b class="fc"><i>342</i>&nbsp;    }</b>
+<i>343</i>&nbsp;
+<i>344</i>&nbsp;    /**
+<i>345</i>&nbsp;     * Add an option to the command line.  The values of the option are stored.
+<i>346</i>&nbsp;     *
+<i>347</i>&nbsp;     * @param opt the processed option
+<i>348</i>&nbsp;     */
+<i>349</i>&nbsp;    protected void addOption(Option opt)
+<i>350</i>&nbsp;    {
+<b class="fc"><i>351</i>&nbsp;        options.add(opt);</b>
+<b class="fc"><i>352</i>&nbsp;    }</b>
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    /**
+<i>355</i>&nbsp;     * Returns an iterator over the Option members of CommandLine.
+<i>356</i>&nbsp;     *
+<i>357</i>&nbsp;     * @return an &lt;code&gt;Iterator&lt;/code&gt; over the processed {@link Option}
+<i>358</i>&nbsp;     * members of this {@link CommandLine}
+<i>359</i>&nbsp;     */
+<i>360</i>&nbsp;    public Iterator&lt;Option&gt; iterator()
+<i>361</i>&nbsp;    {
+<b class="fc"><i>362</i>&nbsp;        return options.iterator();</b>
+<i>363</i>&nbsp;    }
+<i>364</i>&nbsp;
+<i>365</i>&nbsp;    /**
+<i>366</i>&nbsp;     * Returns an array of the processed {@link Option}s.
+<i>367</i>&nbsp;     *
+<i>368</i>&nbsp;     * @return an array of the processed {@link Option}s.
+<i>369</i>&nbsp;     */
+<i>370</i>&nbsp;    public Option[] getOptions()
+<i>371</i>&nbsp;    {
+<b class="fc"><i>372</i>&nbsp;        Collection&lt;Option&gt; processed = options;</b>
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;        // reinitialise array
+<b class="fc"><i>375</i>&nbsp;        Option[] optionsArray = new Option[processed.size()];</b>
+<i>376</i>&nbsp;
+<i>377</i>&nbsp;        // return the array
+<b class="fc"><i>378</i>&nbsp;        return processed.toArray(optionsArray);</b>
+<i>379</i>&nbsp;    }
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;    /**
+<i>382</i>&nbsp;     * A nested builder class to create &lt;code&gt;CommandLine&lt;/code&gt; instance
+<i>383</i>&nbsp;     * using descriptive methods.
+<i>384</i>&nbsp;     * 
+<i>385</i>&nbsp;     * @since 1.4
+<i>386</i>&nbsp;     */
+<b class="fc"><i>387</i>&nbsp;    public static final class Builder</b>
+<i>388</i>&nbsp;    {
+<i>389</i>&nbsp;        /**
+<i>390</i>&nbsp;         * CommandLine that is being build by this Builder.
+<i>391</i>&nbsp;         */
+<b class="fc"><i>392</i>&nbsp;        private final CommandLine commandLine = new CommandLine();</b>
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;        /**
+<i>395</i>&nbsp;         * Add an option to the command line. The values of the option are stored.
+<i>396</i>&nbsp;         *
+<i>397</i>&nbsp;         * @param opt the processed option
+<i>398</i>&nbsp;         *
+<i>399</i>&nbsp;         * @return this Builder instance for method chaining.
+<i>400</i>&nbsp;         */
+<i>401</i>&nbsp;        public Builder addOption(Option opt)
+<i>402</i>&nbsp;        {
+<b class="fc"><i>403</i>&nbsp;            commandLine.addOption(opt);</b>
+<b class="fc"><i>404</i>&nbsp;            return this;</b>
+<i>405</i>&nbsp;        }
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;        /**
+<i>408</i>&nbsp;         * Add left-over unrecognized option/argument.
+<i>409</i>&nbsp;         *
+<i>410</i>&nbsp;         * @param arg the unrecognized option/argument.
+<i>411</i>&nbsp;         *
+<i>412</i>&nbsp;         * @return this Builder instance for method chaining.
+<i>413</i>&nbsp;         */
+<i>414</i>&nbsp;        public Builder addArg(String arg)
+<i>415</i>&nbsp;        {
+<b class="fc"><i>416</i>&nbsp;            commandLine.addArg(arg);</b>
+<b class="fc"><i>417</i>&nbsp;            return this;</b>
+<i>418</i>&nbsp;        }
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;        public CommandLine build()
+<i>421</i>&nbsp;        {
+<b class="fc"><i>422</i>&nbsp;            return commandLine;</b>
+<i>423</i>&nbsp;        }
+<i>424</i>&nbsp;    }
+<i>425</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2017-05-18 21:41</div>
+</div>
+</body>
+</html>
