@@ -7,10 +7,10 @@ import static org.junit.Assert.*;
 /**
  * Created by Haotian 18/05/2017.
  */
-public class AnotationTest {
+public class AnnotationTest {
     @Test
-    public void AnotationTest() {
-        @ClassPreamble (
+    public void AnnotationTest() {
+        @Annotation.ClassPreamble (
                 author = "John Doe",
                 date = "3/17/2002",
                 currentRevision = 6,
@@ -18,9 +18,8 @@ public class AnotationTest {
                 lastModifiedBy = "Jane Doe",
                 reviewers = {"Alice", "Bob", "Cindy"}
         )
-        public void HelloWord() {
-            String a = "ccc";
-            assertEquals("ccc", result);
-        }
+
+        String a = "ccc";
+        assertEquals("ccc", a);
     }
 }

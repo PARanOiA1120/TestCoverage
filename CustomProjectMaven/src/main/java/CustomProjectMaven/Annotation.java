@@ -3,7 +3,7 @@ import java.lang.annotation.*;
 /**
  * Created by Haotian on 18/05/2017.
  */
-public class Anotation{
+public class Annotation {
     @interface ClassPreamble {
         String author();
         String date();
@@ -11,10 +11,5 @@ public class Anotation{
         String lastModified() default "N/A";
         String lastModifiedBy() default "N/A";
         String[] reviewers();
-    }
-
-
-    public void Generation3List() {
-
     }
 }

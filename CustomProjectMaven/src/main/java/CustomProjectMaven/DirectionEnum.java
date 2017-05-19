@@ -1,9 +1,6 @@
 package CustomProjectMaven;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> ef92257c48b4f74a82e9b4e1c064faaa87ae500e
 /**
  * Created by arielxin on 5/18/17.
  */
