@@ -1,10 +1,10 @@
 var clover = new Object();
 
 // JSON: {classes : [{name, id, sl, el,  methods : [{sl, el}, ...]}, ...]}
-clover.pageData = {"classes":[{"el":22,"id":52,"methods":[{"el":15,"sc":5,"sl":13},{"el":19,"sc":5,"sl":17}],"name":"MultiplierEnum","sl":6}]}
+clover.pageData = {"classes":[{"el":22,"id":69,"methods":[{"el":15,"sc":5,"sl":13},{"el":19,"sc":5,"sl":17}],"name":"MultiplierEnum","sl":6}]}
 
 // JSON: {test_ID : {"methods": [ID1, ID2, ID3...], "name" : "testXXX() void"}, ...};
-clover.testTargets = {"test_21":{"methods":[{"sl":13},{"sl":17}],"name":"multiplierTest","pass":true,"statements":[{"sl":14},{"sl":18}]}}
+clover.testTargets = {"test_17":{"methods":[{"sl":13},{"sl":17}],"name":"multiplierTest","pass":true,"statements":[{"sl":14},{"sl":18}]}}
 
 // JSON: { lines : [{tests : [testid1, testid2, testid3, ...]}, ...]};
-clover.srcFileLines = [[], [], [], [], [], [], [], [], [], [], [], [], [], [21], [21], [], [], [21], [21], [], [], [], []]
+clover.srcFileLines = [[], [], [], [], [], [], [], [], [], [], [], [], [], [17], [17], [], [], [17], [17], [], [], [], []]

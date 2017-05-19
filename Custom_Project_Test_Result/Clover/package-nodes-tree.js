@@ -9,7 +9,7 @@ var Packages = {
     "text": "CustomProjectMaven",
     "package": "CustomProjectMaven",
     "url": "CustomProjectMaven/pkg-summary.html",
-            "coverage": "84.3%",
+            "coverage": "86%",
         "icon": "aui-icon aui-icon-small aui-iconfont-devtools-folder-closed",
             "li_attr": {"data-is-link": "true"},
         "a_attr": {"href": "CustomProjectMaven/pkg-summary.html"},
