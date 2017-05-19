@@ -5,28 +5,28 @@
 
     
     
-    <link rel="SHORTCUT ICON" href="img/clover.ico" />
+    <link rel="SHORTCUT ICON" href="../img/clover.ico" />
 
-    <link rel="stylesheet" href="aui/css/aui.min.css" media="all"/>
-    <link rel="stylesheet" href="aui/css/aui-experimental.min.css" media="all"/>
-    <!--[if IE 9]><link rel="stylesheet" href="aui/css/aui-ie9.min.css" media="all"/><![endif]-->
+    <link rel="stylesheet" href="../aui/css/aui.min.css" media="all"/>
+    <link rel="stylesheet" href="../aui/css/aui-experimental.min.css" media="all"/>
+    <!--[if IE 9]><link rel="stylesheet" href="../aui/css/aui-ie9.min.css" media="all"/><![endif]-->
 
     <style type="text/css" media="all">
-        @import url('style.css');
-        @import url('tree.css');
+        @import url('../style.css');
+        @import url('../tree.css');
         
     </style>
 
-    <script src="jquery-1.8.3.min.js" type="text/javascript"></script>
-    <script src="aui/js/aui.min.js" type="text/javascript"></script>
-    <script src="aui/js/aui-experimental.min.js" type="text/javascript"></script>
-    <script src="aui/js/aui-soy.min.js" type="text/javascript"></script>
+    <script src="../jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../aui/js/aui.min.js" type="text/javascript"></script>
+    <script src="../aui/js/aui-experimental.min.js" type="text/javascript"></script>
+    <script src="../aui/js/aui-soy.min.js" type="text/javascript"></script>
 
-    <script src="package-nodes-tree.js" type="text/javascript"></script>
-    <script src="clover-tree.js" type="text/javascript"></script>
-    <script src="clover.js" type="text/javascript"></script>
-    <script src="clover-descriptions.js" type="text/javascript"></script>
-    <script src="cloud.js" type="text/javascript"></script>
+    <script src="../package-nodes-tree.js" type="text/javascript"></script>
+    <script src="../clover-tree.js" type="text/javascript"></script>
+    <script src="../clover.js" type="text/javascript"></script>
+    <script src="../clover-descriptions.js" type="text/javascript"></script>
+    <script src="../cloud.js" type="text/javascript"></script>
 
             <title>SampleProjectMaven 1.0-SNAPSHOT</title>
     </head>
@@ -69,7 +69,7 @@
                     <a href="http://maven.apache.org" target="_top">
                 <div class="aui-avatar aui-avatar-large aui-avatar-project">
             <div class="aui-avatar-inner">
-                                    <img src="img/clover_logo_large.png" alt="Clover icon"/>
+                                    <img src="../img/clover_logo_large.png" alt="Clover icon"/>
                             </div>
         </div>
                     </a>
@@ -86,8 +86,8 @@
 <nav class="aui-navgroup aui-navgroup-vertical">
     <div class="aui-navgroup-inner">
                                             <ul class="aui-nav">
-                <li class="aui-nav-selected">
-                    <a href="dashboard.html">Project overview</a>
+                <li class="">
+                    <a href="../dashboard.html">Project overview</a>
                 </li>
             </ul>
         
@@ -103,7 +103,7 @@
             <p class="package-filter-no-results-message hidden">
                 <small>No results found.</small>
             </p>
-                                                  <div class="packages-tree-wrapper" data-root-relative="" data-package-name="">
+                                                <div class="packages-tree-wrapper" data-root-relative="../" data-package-name="SampleProjectMaven">
                 <div class="packages-tree-container"></div>
                 <div class="clover-packages-lozenges"></div>
             </div>
@@ -117,17 +117,14 @@
                     
                     <ol class="aui-nav aui-nav-breadcrumbs">
             
-        <li><a href="dashboard.html">Project Clover database Wed May 17 2017 00:51:06 PDT</a></li>
+        <li><a href="../dashboard.html">Project Clover database Wed May 17 2017 00:51:06 PDT</a></li> 
     </ol>
     
 <h1 class="aui-h2-clover">
-            Project overview
+            Package SampleProjectMaven
     </h1>
 <div class="aui-tabs horizontal-tabs">
             <ul class="tabs-menu">
-            <li class="menu-item ">
-            <a href="dashboard.html">Dashboard</a>
-        </li>
                 <li class="menu-item ">
             <a href="pkg-summary.html"><strong>Application code</strong></a>
         </li>
@@ -137,16 +134,13 @@
         <li class="menu-item ">
             <a href="test-pkg-summary.html"><strong>Test results</strong></a>
         </li>
-                <li class="menu-item ">
+                <li class="menu-item active-tab">
             <a href="top-risks.html"><strong>Top risks</strong></a>
         </li>
-        <li class="menu-item active-tab">
+        <li class="menu-item ">
             <a href="quick-wins.html"><strong>Quick wins</strong></a>
         </li>
-                                                <li class="menu-item ">
-                <a href="treemap.html"><strong>Coverage tree map</strong></a>
-            </li>
-            </ul>
+                            </ul>
     <div class="tabs-pane active-pane" id="tabs-first">
 
         <div>&#160;</div>
@@ -171,8 +165,8 @@
 <script>
     AJS.InlineDialog(AJS.$("#popupHelp"), "helpDialog",
             function (content, trigger, showPopup) {
-                var description = quickWinsDescription();
-                var title = 'Quick Wins';
+                var description = topRisksDescription();
+                var title = 'Top Risks';
                 content.css({"padding": "20px"}).html(
                         '<h2>' + title + '</h2>' + description);
                 showPopup();
@@ -188,16 +182,16 @@
         
 
 <div style="padding: 20px; border: 1px solid #cccccc; background-color: #f5f5f5; border-radius: 3px">
-          <div id="deepPackageCloud"  >
+   
+          <div id="shallowPackageCloud"  >
                           
     
         
     
-            <a href="SampleProjectMaven/App.html" class="tag"
+            <a href="../SampleProjectMaven/App.html" class="tag"
             style="font-size: 48px;color:#89c495"
-            title="# Elements - 12 , # Elements Covered - 12 ">App</a>
+            title="Average Method Complexity - 1 , Coverage - 100% ">App</a>
            </div>
-   
    </div>
     </div> <!-- tabs-pane active-pane -->
 </div> <!-- aui-tabs horizontal-tabs -->
