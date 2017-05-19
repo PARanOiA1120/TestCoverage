@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ParameterizedJunitTestClass.java</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link rel='stylesheet' type='text/css' href='../coverage.css'/>
+  <link rel='shortcut icon' type='image/png' href='../logo.png'/>
+  <script type='text/javascript' src='../coverage.js'></script>
+  <script type='text/javascript' src='../prettify.js'></script>
+</head>
+<body onload='prettyPrint()'>
+  <table cellpadding='0' cellspacing='1'>
+    <caption>CustomProjectMaven/src/main/java/CustomProjectMaven/ParameterizedJunitTestClass.java</caption>
+    <tr>
+      <td class='line'>1</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>package CustomProjectMaven;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'></td><td>&nbsp;</td>
+      <td class='comment' onclick='showHideLines(this)'><div>/**
+ * Created by liyuanqi on 5/18/17. referenced from: https://github.com/junit-team/junit4/wiki/parameterized-tests
+ */</div><span>/*...*/</span></td>
+    </tr>
+    <tr>
+      <td class='line'>6</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l6s0'>public class ParameterizedJunitTestClass {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>7</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public static int compute(int n) {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>8</td><td class='count'>25</td>
+      <td><pre class='prettyprint covered' id='l8s0'>        int result = 0;</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>10</td><td class='count'>25</td>
+      <td><pre class='prettyprint jmp'>        <span id='l10s0' title='Executions: 25' class='covered'>if (n &lt;= 1)</span> {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>11</td><td class='count'>13</td>
+      <td><pre class='prettyprint covered' id='l11s0'>            result = n;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>12</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        } else {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>13</td><td class='count'>12</td>
+      <td><pre class='prettyprint covered' id='l13s0'>            result = compute(n - 1) + compute(n - 2);</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>14</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>16</td><td class='count'>25</td>
+      <td><pre class='prettyprint covered' id='l16s0'>        return result;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>17</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>18</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>}</pre></td>
+    </tr>
+  </table>
+</body>
+</html>
