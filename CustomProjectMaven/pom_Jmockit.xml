@@ -32,7 +32,8 @@
        <artifactId>maven-surefire-plugin</artifactId>
        <configuration>
           <argLine>
-          -javaagent:/Users/vinc/Documents/Academic/cs230/project/jmockit.jar=coverage
+          <!-- -javaagent:/Users/vinc/Documents/Academic/cs230/project/jmockit.jar=coverage -->
+          -javaagent:./jmockit.jar=coverage
           </argLine>
        </configuration>
       </plugin>
