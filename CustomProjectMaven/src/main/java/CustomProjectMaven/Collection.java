@@ -14,4 +14,20 @@ public class Collection {
     public List<Integer> multiplyThree(ArrayList<Integer> input_list){
         return input_list.stream().map(i -> i*3).collect(Collectors.toList());
     }
+
+    public List<Integer> blockMap(ArrayList<Integer> input_list){
+        return input_list.stream().map(i -> {
+            Integer magicNumber = 0;
+            Integer anotherMagicNumber = 0;
+            if(i < 2){
+                magicNumber = 42;
+                anotherMagicNumber = 998;
+            }else{
+                magicNumber = 1;
+                anotherMagicNumber = 1;
+            }
+
+            return i*magicNumber+anotherMagicNumber;
+        }).collect(Collectors.toList());
+    }
 }

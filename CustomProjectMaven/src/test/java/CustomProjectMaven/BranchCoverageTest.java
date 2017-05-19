@@ -9,6 +9,12 @@ import static org.junit.Assert.*;
  */
 public class BranchCoverageTest {
     @Test
+    public void ternaryOperator() throws Exception {
+        assertTrue(new BranchCoverage().ternaryOperator(true,true));
+        assertTrue(!new BranchCoverage().ternaryOperator(false,false));
+    }
+
+    @Test
     // [Basic]: check if the tool support branch coverage
     public void mathCheckerTest() {
         Boolean result = new BranchCoverage().isOdd(10);

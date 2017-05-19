@@ -25,4 +25,16 @@ public class CollectionTest {
         assertTrue(result.equals(benchmark));
     }
 
+    @Test
+    public void blockMap() throws Exception {
+        ArrayList<Integer> input = new ArrayList<>();
+        List<Integer> benchmark = new ArrayList<>();
+        for(int i=0;i<3;i++){
+            input.add(new Integer(i));
+            benchmark.add(new Integer(i<2?i*42+998:i+1));
+        }
+        ArrayList<Integer> result = (ArrayList)(new Collection()).blockMap(input);
+
+        assertTrue(result.equals(benchmark));
+    }
 }

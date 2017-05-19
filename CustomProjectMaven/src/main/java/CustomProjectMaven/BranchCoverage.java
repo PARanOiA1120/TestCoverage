@@ -35,4 +35,11 @@ public class BranchCoverage
             result = false;
         }
         return result;
-    }}
+    }
+
+    public Boolean ternaryOperator (boolean A, boolean B){
+        boolean result = A?B:false;
+        return result;
+    }
+
+}
