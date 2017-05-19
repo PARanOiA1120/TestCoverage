@@ -1,7 +1,5 @@
 package CustomProjectMaven;
 
-import apple.laf.JRSUIConstants;
-
 /**
  * Created by arielxin on 5/18/17.
  */
