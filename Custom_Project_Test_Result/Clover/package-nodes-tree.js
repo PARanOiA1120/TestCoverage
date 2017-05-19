@@ -5,14 +5,14 @@ var Packages = {
                                                                                                         
                 
 {
-    "id": "SampleProjectMaven",
-    "text": "SampleProjectMaven",
-    "package": "SampleProjectMaven",
-    "url": "SampleProjectMaven/pkg-summary.html",
-            "coverage": "100%",
+    "id": "CustomProjectMaven",
+    "text": "CustomProjectMaven",
+    "package": "CustomProjectMaven",
+    "url": "CustomProjectMaven/pkg-summary.html",
+            "coverage": "86%",
         "icon": "aui-icon aui-icon-small aui-iconfont-devtools-folder-closed",
             "li_attr": {"data-is-link": "true"},
-        "a_attr": {"href": "SampleProjectMaven/pkg-summary.html"},
+        "a_attr": {"href": "CustomProjectMaven/pkg-summary.html"},
     "children": [
                     ]
 },
