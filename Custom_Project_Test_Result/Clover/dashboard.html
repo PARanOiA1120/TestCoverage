@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    
+    
+    <link rel="SHORTCUT ICON" href="img/clover.ico" />
+
+    <link rel="stylesheet" href="aui/css/aui.min.css" media="all"/>
+    <link rel="stylesheet" href="aui/css/aui-experimental.min.css" media="all"/>
+    <!--[if IE 9]><link rel="stylesheet" href="aui/css/aui-ie9.min.css" media="all"/><![endif]-->
+
+    <style type="text/css" media="all">
+        @import url('style.css');
+        @import url('tree.css');
+        
+    </style>
+
+    <script src="jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui-experimental.min.js" type="text/javascript"></script>
+    <script src="aui/js/aui-soy.min.js" type="text/javascript"></script>
+
+    <script src="package-nodes-tree.js" type="text/javascript"></script>
+    <script src="clover-tree.js" type="text/javascript"></script>
+    <script src="clover.js" type="text/javascript"></script>
+    <script src="clover-descriptions.js" type="text/javascript"></script>
+    <script src="cloud.js" type="text/javascript"></script>
+
+            <title>CustomProjectMaven 1.0-SNAPSHOT</title>
+    </head>
+
+<body onresize="processTreeMapDashJson(treeMapJson);" >
+    <div id="page">
+        
+        
+
+
+<header id="header" role="banner">
+    <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
+        <div class="aui-header-inner">
+            <div class="aui-header-primary">
+                <h1 id="logo" class="aui-header-logo aui-header-logo-clover">
+                    <a href="http://www.atlassian.com/clover" title="Open Atlassian Clover home page"><span class="aui-header-logo-device">Clover</span></a>
+                </h1>
+                            </div>
+            <div class="aui-header-secondary">
+                <ul class="aui-nav">
+                    <li id="system-help-menu">
+                        <a class="aui-nav-link" title="Open online Clover documentation" target="_blank"
+                           href="https://confluence.atlassian.com/display/CLOVER/Clover+Documentation+Home">
+                            <span class="aui-icon aui-icon-small aui-iconfont-help">&#160;Help</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+        
+        <div class="aui-page-panel">
+            <div class="aui-page-panel-inner">
+                <div class="aui-page-panel-nav aui-page-panel-nav-clover">
+                    
+
+<div class="aui-page-header-inner" style="margin-bottom: 20px;">
+    <div class="aui-page-header-image">
+                    <a href="http://maven.apache.org" target="_top">
+                <div class="aui-avatar aui-avatar-large aui-avatar-project">
+            <div class="aui-avatar-inner">
+                                    <img src="img/clover_logo_large.png" alt="Clover icon"/>
+                            </div>
+        </div>
+                    </a>
+            </div>
+    <div class="aui-page-header-main" >
+        <h1>
+                            <a href="http://maven.apache.org" target="_top">
+                                        CustomProjectMaven 1.0-SNAPSHOT
+                                        </a>
+                    </h1>
+    </div>
+</div>
+
+<nav class="aui-navgroup aui-navgroup-vertical">
+    <div class="aui-navgroup-inner">
+                                            <ul class="aui-nav">
+                <li class="aui-nav-selected">
+                    <a href="dashboard.html">Project overview</a>
+                </li>
+            </ul>
+        
+                <div class="aui-nav-heading packages-nav-heading">
+            <strong>Packages</strong>
+        </div>
+        <div class="aui-nav project-packages">
+            <form method="get" action="#" class="aui package-filter-container">
+                <input type="text" autocomplete="off" class="package-filter text"
+                       placeholder="Type to filter packages..." name="package-filter" id="package-filter"
+                       title="Start typing package name (or part of the name) to search through the tree. Use arrow keys and the Enter key to navigate."/>
+            </form>
+            <p class="package-filter-no-results-message hidden">
+                <small>No results found.</small>
+            </p>
+                                                  <div class="packages-tree-wrapper" data-root-relative="" data-package-name="">
+                <div class="packages-tree-container"></div>
+                <div class="clover-packages-lozenges"></div>
+            </div>
+        </div>
+        
+            </div>
+</nav>                </div>
+                <section class="aui-page-panel-content">
+                    <div class="aui-page-panel-content-clover">
+
+                    
+                    <ol class="aui-nav aui-nav-breadcrumbs">
+            
+        <li><a href="dashboard.html">Project Clover database Thu May 18 2017 20:55:51 PDT</a></li>
+    </ol>
+    
+<h1 class="aui-h2-clover">
+            Project overview
+    </h1>
+<div class="aui-tabs horizontal-tabs">
+        <ul class="tabs-menu">
+            <li class="menu-item active-tab">
+            <a href="dashboard.html">Dashboard</a>
+        </li>
+                <li class="menu-item ">
+            <a href="pkg-summary.html"><strong>Application code</strong></a>
+        </li>
+                <li class="menu-item ">
+            <a href="testsrc-pkg-summary.html"><strong>Test code</strong></a>
+        </li>
+        <li class="menu-item ">
+            <a href="test-pkg-summary.html"><strong>Test results</strong></a>
+        </li>
+                <li class="menu-item ">
+            <a href="top-risks.html"><strong>Top risks</strong></a>
+        </li>
+        <li class="menu-item ">
+            <a href="quick-wins.html"><strong>Quick wins</strong></a>
+        </li>
+                                                <li class="menu-item ">
+                <a href="treemap.html"><strong>Coverage tree map</strong></a>
+            </li>
+            </ul>
+    <div class="tabs-pane active-pane" id="tabs-first">
+
+        <div>&#160;</div>
+
+
+
+    <div class="aui-message aui-message-warning">
+        <p class="title">
+            <strong>Evaluation License</strong>
+        </p>
+        <p>
+            This report was generated with an evaluation server license.  <a href="http://www.atlassian.com/software/clover">Purchase Clover</a> or <a href="http://confluence.atlassian.com/x/JAgQCQ">configure your license.</a>
+        </p>
+    </div>
+
+
+
+<div class="aui-group">
+    <div class="aui-item">
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                
+                <h3>
+                    Code coverage
+                    <small style="float:right; font-weight: normal">
+                        24 classes,
+                        82 /
+                        108 elements
+                    </small>
+                </h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.7592593</span>75.9%</div><div style="display: table-cell">
+ <div title="75.9% Covered"  style="min-width:200px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:75.9%"></div></div></div></div>
+                <p><a href="pkg-summary.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>
+                    Test results
+                    <small style="float:right; font-weight: normal">
+                        21 /
+                        22 tests
+                        0.1 secs
+                    </small>
+                </h3>
+            </header>
+            <div class="dashboard-widget-content">
+                                    
+
+<div style="display: table; width: 100%">
+            <div class="barGraphValue"><span class="sortValue">0.95454544</span>95.5%</div>         <div style="display: table-cell">
+            
+            <div title="0% Errors" style="min-width: 40px;" class="testBarError">
+                <div title="95.5% of tests passed&lt;br/&gt;4.5% of tests failed" class="testBarFail" style="width: 100%"><div class="testBarPass" style="width: 95.5%"></div></div>
+            </div>
+        </div>
+    </div>                                <p><a href="test-pkg-summary.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Code metrics</h3>
+            </header>
+                         
+
+<div id="$statsId" class="aui-item" style="display: ${display}">
+<div style="display: table">
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of branches in this project">Branches:</label></div>
+        <div class="stats-box-value">18</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of statements in this project">Statements:</label></div>
+        <div class="stats-box-value">62</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of methods in this project">Methods:</label></div>
+        <div class="stats-box-value">28</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of classes in this project">Classes:</label></div>
+        <div class="stats-box-value">24</div>
+    </div>
+            <div class="stats-box">
+            <div class="stats-box-label"><label title="Total number of files in this project">Files:</label></div>
+            <div class="stats-box-value">22</div>
+        </div>
+                <div class="stats-box">
+            <div class="stats-box-label"><label title="Total number of packages in this project">Packages:</label></div>
+            <div class="stats-box-value">1</div>
+        </div>
+        <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of lines of code in this project">LOC:</label></div>
+        <div class="stats-box-value">353</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Total number of non-comment lines of code in this project">NCLOC:</label></div>
+        <div class="stats-box-value">229</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Cyclomatic complexity is the number of paths in this project">Total complexity:</label></div>
+        <div class="stats-box-value">37</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label">
+            <label title="Complexity density is the complexity divided by the number of statements in this project">Complexity density:</label>
+        </div>
+        <div class="stats-box-value">0.6</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Number of statements per method.">Statements/Method:</label></div>
+        <div class="stats-box-value">2.21</div>
+    </div>
+    <div class="stats-box">
+        <div class="stats-box-label"><label title="Number of methods per class.">Methods/Class:</label></div>
+        <div class="stats-box-value">1.17</div>
+    </div>
+            <div class="stats-box">
+            <div class="stats-box-label"><label title="Number of classes per package.">Classes/Package:</label></div>
+            <div class="stats-box-value">24</div>
+        </div>
+        <div class="stats-box">
+        <div class="stats-box-label"><label title="Complexity divided by the number of methods in this project">Average method complexity:</label></div>
+        <div class="stats-box-value">1.32</div>
+    </div>
+</div>
+
+</div>        </div>
+
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Class Coverage Distribution</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="text-align: center">                     <img src="img/classDistrubutionChart.png" alt="img/classDistrubutionChart.png" usemap="#classDistrubutionChart.png"/>
+                </div>
+                <map id="classDistrubutionChart.png" name="classDistrubutionChart.png">
+<area shape="rect" coords="288,15,310,206" title="14 classes have 91-100% coverage" alt="" nohref="nohref"/>
+<area shape="rect" coords="238,179,260,206" title="2 classes have 71-80% coverage" alt="" nohref="nohref"/>
+<area shape="rect" coords="38,165,60,206" title="3 classes have 0% coverage" alt="" nohref="nohref"/>
+</map>
+            </div>
+        </div>
+        
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Class Complexity</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <div style="text-align: center">
+                    <img src="img/classComplexityChart.png" alt="img/classComplexityChart.png" usemap="#classComplexityChart.png"/>
+                </div>
+                <map id="classComplexityChart.png" name="classComplexityChart.png">
+<area shape="poly" coords="54,65,52,68,49,65,52,63,54,65,54,65" title="Complexity: 3; Coverage: 0%; Class: UseExceptionClass" alt="" href="CustomProjectMaven/UseExceptionClass.html#UseExceptionClass"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="259,18,256,20,254,18,256,15,259,18,259,18" title="Complexity: 4; Coverage: 80%; Class: Simple" alt="" href="CustomProjectMaven/Simple.html#Simple"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,65,307,68,305,65,307,63,310,65,310,65" title="Complexity: 3; Coverage: 100%; Class: PathCoverage" alt="" href="CustomProjectMaven/PathCoverage.html#PathCoverage"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="54,113,52,116,49,113,52,111,54,113,54,113" title="Complexity: 2; Coverage: 0%; Class: ExceptionClassB" alt="" href="CustomProjectMaven/ExceptionClassB.html#ExceptionClassB"/>
+<area shape="poly" coords="54,113,52,116,49,113,52,111,54,113,54,113" title="Complexity: 2; Coverage: 0%; Class: ExceptionClassB" alt="" href="CustomProjectMaven/ExceptionClassB.html#ExceptionClassB"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="248,18,246,20,243,18,246,15,248,18,248,18" title="Complexity: 4; Coverage: 76%; Class: BranchCoverage" alt="" href="CustomProjectMaven/BranchCoverage.html#BranchCoverage"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+<area shape="poly" coords="310,113,307,116,305,113,307,111,310,113,310,113" title="Complexity: 2; Coverage: 100%; Class: Reflection" alt="" href="CustomProjectMaven/Reflection.html#Reflection"/>
+<area shape="poly" coords="310,161,307,164,305,161,307,159,310,161,310,161" title="Complexity: 1; Coverage: 100%; Class: StaticInnerClass.InnerStaticNested" alt="" href="CustomProjectMaven/StaticInnerClass.html#StaticInnerClass.InnerStaticNested"/>
+</map>
+            </div>
+        </div>
+        
+                    <div class="dashboard-widget">
+                <header class="dashboard-widget-header">
+                    <h3>Coverage tree map</h3>
+                </header>
+                <div class="dashboard-widget-content">
+                    <div id="infovis" style="width:100%; height:250px;">
+                        <div id="treemap-loader" style="position:relative;top:50px;">
+                            <p>
+                                Generating Coverage Tree Map. Please wait...
+                            </p>
+                            <p>
+                                <img src="img/ajax-loader.gif" alt="Loading Treemap"/>
+                            </p>
+                        </div>
+                    </div>
+                    <p><a href="treemap.html">See more</a></p>
+                </div>
+
+            </div>
+            </div>
+
+
+    <div class="aui-item">
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Top 9 project risks</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                
+                                                                <a class="tag" href="CustomProjectMaven/Simple.html"
+                            style="font-size: 22px;color:#89c495"
+                            title="Average Method Complexity - 2 , Coverage - 80% ">Simple</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/UseExceptionClass.html"
+                            style="font-size: 28px;color:#d04437"
+                            title="Average Method Complexity - 3 , Coverage - 0% ">UseExceptionClass</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/BranchCoverage.html"
+                            style="font-size: 22px;color:#89c495"
+                            title="Average Method Complexity - 2 , Coverage - 76.9% ">BranchCoverage</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/ExceptionClassA.html"
+                            style="font-size: 17px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">ExceptionClassA</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/ExceptionClassB.html"
+                            style="font-size: 17px;color:#d04437"
+                            title="Average Method Complexity - 1 , Coverage - 0% ">ExceptionClassB</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/Annotation.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 0 , Coverage -  -  ">Annotation</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/Annotation.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 0 , Coverage -  -  ">Annotation.ClassPreamble</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/DefaultConstructor.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 0 , Coverage -  -  ">DefaultConstructor</a>
+                                    
+                                                                <a class="tag" href="CustomProjectMaven/WeekEnum.html"
+                            style="font-size: 12px;color:#d04437"
+                            title="Average Method Complexity - 0 , Coverage -  -  ">WeekEnum</a>
+                                                    <p><a href="top-risks.html">See more</a></p>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Most complex packages</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                
+                <table class="aui">
+                                            
+                                                <tr>
+                            <td>1. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.7592593</span>75.9%</div><div style="display: table-cell">
+ <div title="75.9% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:75.9%"></div></div></div></div></td>
+                            <td>
+                                <a href="CustomProjectMaven/pkg-summary.html">CustomProjectMaven</a>
+                                <span class="aui-badge" title="Package complexity">37</span>
+                            </td>
+                        </tr>
+                                    </table>
+            </div>
+        </div>
+
+        <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Most complex classes</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <table class="aui">
+                                            
+                                                <tr>
+                            <td>1. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.8</span>80%</div><div style="display: table-cell">
+ <div title="80% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:80%"></div></div></div></div></td>
+                            <td>
+                                <a  href="CustomProjectMaven/Simple.html"  title="CustomProjectMaven.Simple">Simple</a>
+                                <span class="aui-badge" title="Class complexity">4</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>2. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.7692308</span>76.9%</div><div style="display: table-cell">
+ <div title="76.9% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:76.9%"></div></div></div></div></td>
+                            <td>
+                                <a  href="CustomProjectMaven/BranchCoverage.html"  title="CustomProjectMaven.BranchCoverage">BranchCoverage</a>
+                                <span class="aui-badge" title="Class complexity">4</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>3. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                            <td>
+                                <a  href="CustomProjectMaven/UseExceptionClass.html"  title="CustomProjectMaven.UseExceptionClass">UseExceptionClass</a>
+                                <span class="aui-badge" title="Class complexity">3</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>4. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">1.0</span>100%</div><div style="display: table-cell">
+ <div title="100% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:100%"></div></div></div></div></td>
+                            <td>
+                                <a  href="CustomProjectMaven/PathCoverage.html"  title="CustomProjectMaven.PathCoverage">PathCoverage</a>
+                                <span class="aui-badge" title="Class complexity">3</span>
+                            </td>
+                        </tr>
+                                            
+                                                <tr>
+                            <td>5. </td>
+                            <td><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">1.0</span>100%</div><div style="display: table-cell">
+ <div title="100% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:100%"></div></div></div></div></td>
+                            <td>
+                                <a  href="CustomProjectMaven/Reflection.html"  title="CustomProjectMaven.Reflection">Reflection</a>
+                                <span class="aui-badge" title="Class complexity">2</span>
+                            </td>
+                        </tr>
+                                    </table>
+            </div>
+        </div>
+
+                <div class="dashboard-widget">
+            <header class="dashboard-widget-header">
+                <h3>Least tested methods</h3>
+            </header>
+            <div class="dashboard-widget-content">
+                <table class="aui">
+                                            
+
+                    <tr>
+                        <td align="right">1.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="UseExceptionClass.UseExceptionClass(String)" href="CustomProjectMaven/UseExceptionClass.html?line=7#src-7">UseExceptionClass.UseExceptionClass(String)</a>
+                            <span class="aui-badge" title="Method complexity">3</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">2.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="ExceptionClassA.ExceptionClassA(String)" href="CustomProjectMaven/ExceptionClassA.html?line=7#src-7">ExceptionClassA.ExceptionClassA(String)</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">3.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="ExceptionClassA.ExceptionClassA(String,Throwable)" href="CustomProjectMaven/ExceptionClassA.html?line=12#src-12">ExceptionClassA.ExceptionClassA(String,Throwable)</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">4.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="ExceptionClassB.ExceptionClassB(String)" href="CustomProjectMaven/ExceptionClassB.html?line=7#src-7">ExceptionClassB.ExceptionClassB(String)</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">5.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.0</span>0%</div><div style="display: table-cell">
+ <div title="0% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:0%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="ExceptionClassB.ExceptionClassB(String,Throwable)" href="CustomProjectMaven/ExceptionClassB.html?line=12#src-12">ExceptionClassB.ExceptionClassB(String,Throwable)</a>
+                            <span class="aui-badge" title="Method complexity">1</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">6.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.6</span>60%</div><div style="display: table-cell">
+ <div title="60% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:60%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="BranchCoverage.isOdd(int)&#160;:&#160;Boolean" href="CustomProjectMaven/BranchCoverage.html?line=17#src-17">BranchCoverage.isOdd(int)&#160;:&#160;Boolean</a>
+                            <span class="aui-badge" title="Method complexity">2</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">7.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.71428573</span>71.4%</div><div style="display: table-cell">
+ <div title="71.4% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:71.4%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="Simple.stopAtN(int)&#160;:&#160;void" href="CustomProjectMaven/Simple.html?line=11#src-11">Simple.stopAtN(int)&#160;:&#160;void</a>
+                            <span class="aui-badge" title="Method complexity">3</span>
+
+                        </td>
+                    </tr>
+                                            
+
+                    <tr>
+                        <td align="right">8.</td>
+                        <td align="right"><div style="display: table; width: 100%">
+<div class="barGraphValue"><span class="sortValue">0.8333333</span>83.3%</div><div style="display: table-cell">
+ <div title="83.3% Covered"  style="min-width:40px;" class="barNegative contribBarNegative "><div class="barPositive contribBarPositive " style="width:83.3%"></div></div></div></div></td>
+                        <td>
+                              <!-- normal method -->
+                                                      <a title="BranchCoverage.concat(boolean,String,String)&#160;:&#160;String" href="CustomProjectMaven/BranchCoverage.html?line=9#src-9">BranchCoverage.concat(boolean,String,String)&#160;:&#160;String</a>
+                            <span class="aui-badge" title="Method complexity">2</span>
+
+                        </td>
+                    </tr>
+                                    </table>
+            </div>
+        </div>
+        
+    </div>
+</div>
+                            </div> <!-- tabs-pane active-pane -->
+                        </div>
+
+    <script type="text/javascript" src="jit.js" ></script>
+    <script type="text/javascript" src="treemap-dash-json.js" ></script>
+
+                        </div> <!-- class="aui-page-panel-content-clover" -->
+                    <footer id="footer" role="contentinfo">
+    <section class="footer-body">
+        <ul>
+            <li>
+                Report generated by <a target="_new" href="http://www.atlassian.com/software/clover">Atlassian Clover</a> v 4.1.2
+                on Thu May 18 2017 20:55:56 PDT using coverage data from Thu May 18 2017 20:55:54 PDT.
+            </li>
+        </ul>
+        <ul>
+            <li>Clover Evaluation License registered to Clover Maven Plugin. You have 14 day(s) before your license expires.</li>
+        </ul>
+        <div id="footer-logo">
+            <a target="_blank" href="http://www.atlassian.com/">
+                Atlassian
+            </a>
+        </div>
+    </section>
+</footer>                </section> <!-- class="aui-page-panel-content" -->
+            </div> <!-- class="aui-page-panel-inner" -->
+        </div> <!-- class="aui-page-panel" -->
+    </div> <!-- id="page" -->
+</body>
+</html>
