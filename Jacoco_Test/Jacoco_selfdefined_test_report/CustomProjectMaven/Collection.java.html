@@ -14,5 +14,21 @@ import java.util.stream.Collectors;
     public List&lt;Integer&gt; multiplyThree(ArrayList&lt;Integer&gt; input_list){
 <span class="fc" id="L15">        return input_list.stream().map(i -&gt; i*3).collect(Collectors.toList());</span>
     }
+
+    public List&lt;Integer&gt; blockMap(ArrayList&lt;Integer&gt; input_list){
+<span class="fc" id="L19">        return input_list.stream().map(i -&gt; {</span>
+<span class="fc" id="L20">            Integer magicNumber = 0;</span>
+<span class="fc" id="L21">            Integer anotherMagicNumber = 0;</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            if(i &lt; 2){</span>
+<span class="fc" id="L23">                magicNumber = 42;</span>
+<span class="fc" id="L24">                anotherMagicNumber = 998;</span>
+            }else{
+<span class="fc" id="L26">                magicNumber = 1;</span>
+<span class="fc" id="L27">                anotherMagicNumber = 1;</span>
+            }
+
+<span class="fc" id="L30">            return i*magicNumber+anotherMagicNumber;</span>
+<span class="fc" id="L31">        }).collect(Collectors.toList());</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
