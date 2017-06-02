@@ -28,5 +28,33 @@ public class BranchCoverageTest {
         assertEquals("hello world", result);
     }
 
+    @Test
+    public void switchTest() {
+        int result = new BranchCoverage().switchOperator(1);
+        int result2 = new BranchCoverage().switchOperator(2);
+        assertEquals(result, 1);
+        assertEquals(result2, 2);
 
+    }
+
+    @Test
+    public void orOperatorTest(){
+        int result1 = new BranchCoverage().orOperator(1, 1);
+        int result2 = new BranchCoverage().orOperator(-6, 0);
+        int result3 = new BranchCoverage().orOperator(-1, -1);
+
+        assertEquals(result1, 2);
+        assertEquals(result2, -6);
+        assertEquals(result3, -1);
+    }
+
+    @Test
+    public void andOperation(){
+        new BranchCoverage().andOperator(1,-1);
+    }
+
+    @Test
+    public void oneLineIfTest(){
+        new BranchCoverage().oneLineIf(-1);
+    }
 }
