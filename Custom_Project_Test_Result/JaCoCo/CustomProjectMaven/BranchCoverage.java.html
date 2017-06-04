@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BranchCoverage.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CustomProjectMaven</a> &gt; <a href="index.source.html" class="el_package">CustomProjectMaven</a> &gt; <span class="el_source">BranchCoverage.java</span></div><h1>BranchCoverage.java</h1><pre class="source lang-java linenums">package CustomProjectMaven;
+
+/**
+ * Hello world!
+ *
+ */
+<span class="fc" id="L7">public class BranchCoverage</span>
+{
+    public String concat(boolean append, String a,String b) {
+<span class="fc" id="L10">        String result = null;</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">        if (append) {</span>
+<span class="fc" id="L12">            result = a + b;</span>
+        }
+<span class="fc" id="L14">        return result.toLowerCase();</span>
+    }
+
+    public Boolean isOdd(int n) {
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if (n%2 != 0)</span>
+<span class="nc" id="L19">            return true;</span>
+        else
+<span class="fc" id="L21">            return false;</span>
+    }
+
+
+    public Boolean ternaryOperator (boolean A, boolean B){
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        boolean result = A?B:false;</span>
+<span class="fc" id="L27">        return result;</span>
+    }
+
+    public int switchOperator (int c){
+<span class="fc" id="L31">        int result = 0;</span>
+<span class="pc bpc" id="L32" title="1 of 3 branches missed.">        switch (c) {</span>
+            case 1:
+<span class="fc" id="L34">                result = 1;</span>
+<span class="fc" id="L35">                break;</span>
+            case 2:
+<span class="fc" id="L37">                result = 2;</span>
+<span class="fc" id="L38">                break;</span>
+            default:
+<span class="nc" id="L40">                result = 3;</span>
+        }
+
+<span class="fc" id="L43">        return result;</span>
+    }
+
+    public int orOperator (int x, int y){
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">        if(x &gt; 0 || y &gt; 0){</span>
+<span class="fc" id="L48">            return x+y;</span>
+        }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        else if (x &lt; -5){</span>
+<span class="fc" id="L51">            return x;</span>
+        }
+<span class="fc" id="L53">        return y;</span>
+    }
+
+    public void andOperator(int x, int y){
+<span class="pc bpc" id="L57" title="2 of 4 branches missed.">        if(x &gt; 0 &amp;&amp; y &gt; 0){</span>
+<span class="nc" id="L58">            System.out.println(&quot;x and y are both greater than 0&quot;);</span>
+        }
+<span class="fc" id="L60">    }</span>
+
+    public void oneLineIf(int x){
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if(x &gt; 0) System.out.println(&quot;x is greater than 0&quot;);</span>
+<span class="fc" id="L64">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

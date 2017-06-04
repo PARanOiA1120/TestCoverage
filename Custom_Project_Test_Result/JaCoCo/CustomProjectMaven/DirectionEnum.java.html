@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DirectionEnum.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CustomProjectMaven</a> &gt; <a href="index.source.html" class="el_package">CustomProjectMaven</a> &gt; <span class="el_source">DirectionEnum.java</span></div><h1>DirectionEnum.java</h1><pre class="source lang-java linenums">package CustomProjectMaven;
+
+
+/**
+ * Created by arielxin on 5/18/17.
+ */
+<span class="pc" id="L7">public enum DirectionEnum {</span>
+<span class="fc" id="L8">    EAST,</span>
+<span class="fc" id="L9">    SOUTH,</span>
+<span class="fc" id="L10">    WEST,</span>
+<span class="fc" id="L11">    NORTH;</span>
+
+    private DirectionEnum opposite;
+
+    static {
+<span class="fc" id="L16">        EAST.opposite = WEST;</span>
+<span class="fc" id="L17">        SOUTH.opposite = NORTH;</span>
+<span class="fc" id="L18">        WEST.opposite = EAST;</span>
+<span class="fc" id="L19">        NORTH.opposite = SOUTH;</span>
+<span class="fc" id="L20">    }</span>
+
+    public DirectionEnum getOppositeDirection(){
+<span class="fc" id="L23">        return opposite;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
