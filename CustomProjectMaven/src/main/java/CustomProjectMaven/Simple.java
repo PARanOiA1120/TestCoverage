@@ -10,8 +10,9 @@ public class Simple {
 
     public void stopAtN(int n){
         for(int i=0; i<n; i++){
-            if(this.divide(n, 2) == 10)
+            if(i == 0)
                 break;
+            System.out.println("This line will not execute");
         }
     }
 }
