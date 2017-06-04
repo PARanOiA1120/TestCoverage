@@ -24,7 +24,7 @@
  */</div><span>/*...*/</span></td>
     </tr>
     <tr>
-      <td class='line'>7</td><td class='count'>3</td>
+      <td class='line'>7</td><td class='count'>30</td>
       <td><pre class='prettyprint covered' id='l7s0'>public class BranchCoverage</pre></td>
     </tr>
     <tr>
@@ -36,15 +36,23 @@
       <td><pre class='prettyprint'>    public String concat(boolean append, String a,String b) {</pre></td>
     </tr>
     <tr>
-      <td class='line'>10</td><td class='count'>1</td>
+      <td></td><td class='count'>2</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#7f8000' onclick='hidePath()'>Path coverage: 1/2</span>
+        <span class='uncovered' onclick="showPath(this,'l10s0 l11s0 l14s0')">A: 0</span>
+        <span class='covered' onclick="showPath(this,'l10s0 l11s0 l11s1 l14s0')">B: 2</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>10</td><td class='count'>3</td>
       <td><pre class='prettyprint covered' id='l10s0'>        String result = null;</pre></td>
     </tr>
     <tr>
-      <td class='line'>11</td><td class='count'>1</td>
-      <td><pre class='prettyprint jmp'>        <span id='l11s0' title='Executions: 1' class='covered'>if (append)</span> {</pre></td>
+      <td class='line'>11</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l11s0' title='Executions: 2' class='covered'>if (append)</span> <span id='l11s1' title='Executions: 1' class='covered'>{</span></pre></td>
     </tr>
     <tr>
-      <td class='line'>12</td><td class='count'>1</td>
+      <td class='line'>12</td><td class='count'>2</td>
       <td><pre class='prettyprint covered' id='l12s0'>            result = a + b;</pre></td>
     </tr>
     <tr>
@@ -52,7 +60,7 @@
       <td><pre class='prettyprint'>        }</pre></td>
     </tr>
     <tr>
-      <td class='line'>14</td><td class='count'>1</td>
+      <td class='line'>14</td><td class='count'>2</td>
       <td><pre class='prettyprint covered' id='l14s0'>        return result.toLowerCase();</pre></td>
     </tr>
     <tr>
@@ -65,8 +73,16 @@
       <td><pre class='prettyprint'>    public Boolean isOdd(int n) {</pre></td>
     </tr>
     <tr>
-      <td class='line'>18</td><td class='count'>1</td>
-      <td><pre class='prettyprint jmp'>        <span id='l18s0' title='Executions: 1' class='covered'>if (n%2 != 0)</span></pre></td>
+      <td></td><td class='count'>2</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#7f8000' onclick='hidePath()'>Path coverage: 1/2</span>
+        <span class='uncovered' onclick="showPath(this,'l18s0 l18s1 l19s0')">A: 0</span>
+        <span class='covered' onclick="showPath(this,'l18s0 l21s0')">B: 2</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>18</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l18s0' title='Executions: 3' class='covered'>if (n%2 != 0)</span></pre></td>
     </tr>
     <tr>
       <td class='line'>19</td><td class='count'>0</td>
@@ -77,7 +93,7 @@
       <td><pre class='prettyprint'>        else</pre></td>
     </tr>
     <tr>
-      <td class='line'>21</td><td class='count'>1</td>
+      <td class='line'>21</td><td class='count'>2</td>
       <td><pre class='prettyprint covered' id='l21s0'>            return false;</pre></td>
     </tr>
     <tr>
@@ -86,24 +102,196 @@
     </tr>
     <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
     <tr>
-      <td class='line'>26</td><td>&nbsp;</td>
+      <td class='line'>25</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>    public Boolean ternaryOperator (boolean A, boolean B){</pre></td>
     </tr>
     <tr>
-      <td class='line'>27</td><td class='count'>1</td>
-      <td><pre class='prettyprint jmp'>        <span id='l27s0' title='Executions: 1' class='covered'>boolean result = A?B:false;</span></pre></td>
+      <td></td><td class='count'>2</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#7f8000' onclick='hidePath()'>Path coverage: 1/2</span>
+        <span class='uncovered' onclick="showPath(this,'l26s0 l26s2 l26s3 l27s0')">A: 0</span>
+        <span class='covered' onclick="showPath(this,'l26s0 l26s1 l26s3 l27s0')">B: 2</span>
+      </td>
     </tr>
     <tr>
-      <td class='line'>28</td><td class='count'>1</td>
-      <td><pre class='prettyprint covered' id='l28s0'>        return result;</pre></td>
+      <td class='line'>26</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l26s0' title='Executions: 3' class='covered'>boolean result = A?B:false;</span></pre></td>
     </tr>
     <tr>
-      <td class='line'>29</td><td>&nbsp;</td>
+      <td class='line'>27</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l27s0'>        return result;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>28</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>    }</pre></td>
     </tr>
     <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
     <tr>
-      <td class='line'>31</td><td>&nbsp;</td>
+      <td class='line'>30</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int switchOperator (int c){</pre></td>
+    </tr>
+    <tr>
+      <td></td><td class='count'>4</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#55aa00' onclick='hidePath()'>Path coverage: 2/3</span>
+        <span class='covered' onclick="showPath(this,'l31s0 l32s0 l34s0 l43s0')">A: 2</span>
+        <span class='covered' onclick="showPath(this,'l31s0 l32s0 l37s0 l43s0')">B: 2</span>
+        <span class='uncovered' onclick="showPath(this,'l31s0 l32s0 l40s0 l43s0')">C: 0</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>31</td><td class='count'>6</td>
+      <td><pre class='prettyprint covered' id='l31s0'>        int result = 0;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>32</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l32s0'>        switch (c) {</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>33</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case 1:</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>34</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l34s0'>                result = 1;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>35</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l35s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>36</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            case 2:</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>37</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l37s0'>                result = 2;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>38</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l38s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>39</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>            default:</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>40</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l40s0'>                result = 3;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>41</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>43</td><td class='count'>4</td>
+      <td><pre class='prettyprint covered' id='l43s0'>        return result;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>44</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>46</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public int orOperator (int x, int y){</pre></td>
+    </tr>
+    <tr>
+      <td></td><td class='count'>3</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#40bf00' onclick='hidePath()'>Path coverage: 3/4</span>
+        <span class='covered' onclick="showPath(this,'l47s0 l48s0')">A: 1</span>
+        <span class='uncovered' onclick="showPath(this,'l47s0 l47s1 l47s2 l48s0')">B: 0</span>
+        <span class='covered' onclick="showPath(this,'l47s0 l47s1 l50s0 l50s1 l51s0')">C: 1</span>
+        <span class='covered' onclick="showPath(this,'l47s0 l47s1 l50s0 l53s0')">D: 1</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>47</td><td class='count'>9</td>
+      <td><pre class='prettyprint jmp'>        <span id='l47s0' title='Executions: 9' class='covered'>if(x > 0</span> || <span id='l47s1' title='Executions: 2' class='covered'>y > 0)</span><span id='l47s2' title='Executions: 0' class='uncovered'>{</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>48</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l48s0'>            return x+y;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>49</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>50</td><td class='count'>4</td>
+      <td><pre class='prettyprint jmp'>        else <span id='l50s0' title='Executions: 4' class='covered'>if (x &lt; -5)</span><span id='l50s1' title='Executions: 1' class='covered'>{</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>51</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l51s0'>            return x;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>52</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>53</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l53s0'>        return y;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>54</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>56</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void andOperator(int x, int y){</pre></td>
+    </tr>
+    <tr>
+      <td></td><td class='count'>1</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#aa5500' onclick='hidePath()'>Path coverage: 1/3</span>
+        <span class='covered' onclick="showPath(this,'l57s0 l60s0')">A: 1</span>
+        <span class='uncovered' onclick="showPath(this,'l57s0 l57s1 l60s0')">B: 0</span>
+        <span class='uncovered' onclick="showPath(this,'l57s0 l57s1 l57s2 l60s0')">C: 0</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>57</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l57s0' title='Executions: 3' class='covered'>if(x > 0</span> && <span id='l57s1' title='Executions: 0' class='uncovered'>y > 0)</span><span id='l57s2' title='Executions: 0' class='uncovered'>{</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>58</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l58s0'>            System.out.println("x and y are both greater than 0");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>59</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>        }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>60</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l60s0'>    }</pre></td>
+    </tr>
+    <tr><td class='line'></td><td colspan='2'>&nbsp;</td></tr>
+    <tr>
+      <td class='line'>62</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>    public void oneLineIf(int x){</pre></td>
+    </tr>
+    <tr>
+      <td></td><td class='count'>1</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#7f8000' onclick='hidePath()'>Path coverage: 1/2</span>
+        <span class='covered' onclick="showPath(this,'l63s0 l64s0')">A: 1</span>
+        <span class='uncovered' onclick="showPath(this,'l63s0 l63s1 l64s0')">B: 0</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>63</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l63s0' title='Executions: 3' class='covered'>if(x > 0)</span> <span id='l63s1' title='Executions: 0' class='uncovered'>System.out.println("x is greater than 0");</span></pre></td>
+    </tr>
+    <tr>
+      <td class='line'>64</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l64s0'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>65</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>}</pre></td>
     </tr>
   </table>

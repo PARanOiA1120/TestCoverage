@@ -31,31 +31,44 @@
       <td><pre class='prettyprint'>    public UseExceptionClass(String type) throws ExceptionClassA, ExceptionClassB</pre></td>
     </tr>
     <tr>
-      <td class='line'>8</td><td class='count'>1</td>
+      <td></td><td class='count'>2</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#aa5500' onclick='hidePath()'>Path coverage: 1/3</span>
+        <span class='covered' onclick="showPath(this,'l8s0 l9s0 l9s1 l10s0')">A: 2</span>
+        <span class='uncovered' onclick="showPath(this,'l8s0 l9s0 l12s0 l12s1 l13s0')">B: 0</span>
+        <span class='uncovered' onclick="showPath(this,'l8s0 l9s0 l12s0 l14s0')">C: 0</span>
+      </td>
+    </tr>
+    <tr>
+      <td class='line'>8</td><td class='count'>3</td>
       <td><pre class='prettyprint covered' id='l8s0'>    {</pre></td>
     </tr>
     <tr>
-      <td class='line'>9</td><td class='count'>1</td>
-      <td><pre class='prettyprint jmp'>        <span id='l9s0' title='Executions: 1' class='covered'>if(type.equals("A"))</span></pre></td>
+      <td class='line'>9</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>        <span id='l9s0' title='Executions: 2' class='covered'>if(type.equals("A"))</span><span id='l9s1' title='Executions: 1' class='covered'>{</span></pre></td>
     </tr>
     <tr>
-      <td class='line'>10</td><td class='count'>1</td>
+      <td class='line'>10</td><td class='count'>2</td>
       <td><pre class='prettyprint covered' id='l10s0'>            throw new ExceptionClassA("Throw ExceptionA");</pre></td>
     </tr>
     <tr>
-      <td class='line'>11</td><td class='count'>0</td>
-      <td><pre class='prettyprint jmp'>        else <span id='l11s0' title='Executions: 0' class='uncovered'>if(type.equals("B"))</span></pre></td>
+      <td class='line'>11</td><td>&nbsp;</td>
+      <td><pre class='prettyprint'>		}</pre></td>
     </tr>
     <tr>
       <td class='line'>12</td><td class='count'>0</td>
-      <td><pre class='prettyprint uncovered' id='l12s0'>            throw new ExceptionClassB("Throw ExceptionB");</pre></td>
+      <td><pre class='prettyprint jmp'>        else <span id='l12s0' title='Executions: 0' class='uncovered'>if(type.equals("B"))</span></pre></td>
     </tr>
     <tr>
       <td class='line'>13</td><td class='count'>0</td>
-      <td><pre class='prettyprint uncovered' id='l13s0'>    }</pre></td>
+      <td><pre class='prettyprint uncovered' id='l13s0'>            throw new ExceptionClassB("Throw ExceptionB");</pre></td>
     </tr>
     <tr>
-      <td class='line'>14</td><td>&nbsp;</td>
+      <td class='line'>14</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l14s0'>    }</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>15</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>}</pre></td>
     </tr>
   </table>

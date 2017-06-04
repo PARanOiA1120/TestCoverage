@@ -23,7 +23,7 @@
  */</div><span>/*...*/</span></td>
     </tr>
     <tr>
-      <td class='line'>6</td><td class='count'>2</td>
+      <td class='line'>6</td><td class='count'>6</td>
       <td><pre class='prettyprint covered' id='l6s0'>public class Simple {</pre></td>
     </tr>
     <tr>
@@ -31,7 +31,7 @@
       <td><pre class='prettyprint'>    public int divide(int a, int b) {</pre></td>
     </tr>
     <tr>
-      <td class='line'>8</td><td class='count'>8</td>
+      <td class='line'>8</td><td class='count'>3</td>
       <td><pre class='prettyprint covered' id='l8s0'>        return a/b;</pre></td>
     </tr>
     <tr>
@@ -44,27 +44,40 @@
       <td><pre class='prettyprint'>    public void stopAtN(int n){</pre></td>
     </tr>
     <tr>
-      <td class='line'>12</td><td class='count'>8</td>
-      <td><pre class='prettyprint jmp'>        <span id='l12s0' title='Executions: 8' class='covered'>for(int i=0</span>; i&lt;n; i++){</pre></td>
+      <td></td><td class='count'>1</td>
+      <td class='paths'>
+        <span style='cursor:default; background-color:#aa5500' onclick='hidePath()'>Path coverage: 1/3</span>
+        <span class='uncovered' onclick="showPath(this,'l12s0 l17s0')">A: 0</span>
+        <span class='uncovered' onclick="showPath(this,'l12s0 l12s1 l13s0 l15s0 l17s0')">B: 0</span>
+        <span class='covered' onclick="showPath(this,'l12s0 l12s1 l13s0 l13s1 l17s0')">C: 1</span>
+      </td>
     </tr>
     <tr>
-      <td class='line'>13</td><td class='count'>7</td>
-      <td><pre class='prettyprint jmp'>            <span id='l13s0' title='Executions: 7' class='covered'>if(this.divide(n, 2) == 10)</span></pre></td>
+      <td class='line'>12</td><td class='count'>3</td>
+      <td><pre class='prettyprint jmp'>        <span id='l12s0' title='Executions: 3' class='covered'>for(int i=0</span>; <span id='l12s1' title='Executions: 1' class='covered'>i&lt;n</span>; i++){</pre></td>
     </tr>
     <tr>
-      <td class='line'>14</td><td class='count'>0</td>
-      <td><pre class='prettyprint uncovered' id='l14s0'>                break;</pre></td>
+      <td class='line'>13</td><td class='count'>2</td>
+      <td><pre class='prettyprint jmp'>            <span id='l13s0' title='Executions: 2' class='covered'>if(i == 0)</span></pre></td>
     </tr>
     <tr>
-      <td class='line'>15</td><td>&nbsp;</td>
+      <td class='line'>14</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l14s0'>                break;</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>15</td><td class='count'>0</td>
+      <td><pre class='prettyprint uncovered' id='l15s0'>            System.out.println("111111");</pre></td>
+    </tr>
+    <tr>
+      <td class='line'>16</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>        }</pre></td>
     </tr>
     <tr>
-      <td class='line'>16</td><td class='count'>1</td>
-      <td><pre class='prettyprint covered' id='l16s0'>    }</pre></td>
+      <td class='line'>17</td><td class='count'>2</td>
+      <td><pre class='prettyprint covered' id='l17s0'>    }</pre></td>
     </tr>
     <tr>
-      <td class='line'>17</td><td>&nbsp;</td>
+      <td class='line'>18</td><td>&nbsp;</td>
       <td><pre class='prettyprint'>}</pre></td>
     </tr>
   </table>
