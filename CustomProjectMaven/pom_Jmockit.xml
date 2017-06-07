@@ -35,6 +35,10 @@
           <!-- -javaagent:/Users/vinc/Documents/Academic/cs230/project/jmockit.jar=coverage -->
           -javaagent:./jmockit.jar=coverage
           </argLine>
+          <systemPropertyVariables>
+            <coverage-metrics>all</coverage-metrics>
+          </systemPropertyVariables>
+          
        </configuration>
       </plugin>
       <plugin>
