@@ -83,6 +83,9 @@
             <argLine>
             -javaagent:./jmockit.jar=coverage
             </argLine>
+            <systemPropertyVariables>
+              <coverage-metrics>all</coverage-metrics>
+            </systemPropertyVariables>
          </configuration>
       </plugin>
 
